@@ -1,0 +1,786 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+http://www.coreyh.org/diablo-2-files/documentation/d2s_save_file_format_1.13d.html
+-------------------------------------------------------------------------------
+
+
+                        Diablo II Save Game File Format
+
+                      for Diablo II Expansion Set v1.13d
+
+                             Updated July 1, 2012
+
+This page was originally written by Trevin Beattie, whose site is no more (his
+latest version of this page is available here though).
+Now this page is maintained by me, Yuri Sakhno (George1).
+
+Introduction
+
+This page describes the format of saved game files for the game Diablo II
+Expansion Set v1.13d. While the information presented here is mostly aplicable
+to earlier versions of the game, there were some drastic changes in version
+1.10 (particularly, in how character stats are saved), so if you intend to read
+files of the versions of the game erlier than that, you would probably be
+better off opening that save in some recent version of the game and then saving
+it again (upgrading the saved game file).
+
+(Note: all values larger than a byte are stored in x86 little-endian order —
+i.e., least significant byte first. A "short" is 2 bytes long, and a "long" is
+4 bytes long. Values starting with "0x" are given in hexadecimal notation;
+otherwise they are decimal.)
+
+File Header
+
+Each save file starts with a file header. Depending on the circumstances, this
+may be the only section present in saved game file.
+
+┌────────┬──────┬─────────────────────────────────────────────────────────────────┐
+│  Byte  │ Size │                            Contents                             │
+│Position│      │                                                                 │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│0       │long  │File identifier. This must be the value 0xAA55AA55.              │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │File version. The following values are known:                    │
+│        │      │    0x47  v1.00 through v1.06                                    │
+│        │      │    0x57  v1.07 or Expansion Set v1.08                           │
+│        │      │    0x59  standard game v1.08                                    │
+│4       │long  │    0x5C  v1.09 (both the standard game and the Expansion        │
+│        │      │Set.)                                                            │
+│        │      │    0x60  v1.10 and above                                        │
+│        │      │As it was outlined above, this document only covers version      │
+│        │      │0x60 of the file format.                                         │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│8       │long  │Size of the file, in bytes.                                      │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Checksum of the netire save file. If you attempt to hack the     │
+│        │      │file without storing the correct checksum afterwards, your       │
+│        │      │game will fail to load. Fortunately, the checksum algorithm is   │
+│12      │long  │very simple. After clearing the checksum field, you add up the   │
+│        │      │values of all the bytes in the file, rotating the running        │
+│        │      │total one bit to the left before adding each byte. Then store    │
+│        │      │the result in this field.                                        │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│16      │long  │Active arms. Determines which weapon set is currently active.    │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Character name. The name may be up to 15 characters long; the    │
+│        │      │rest of the field must be padded with null-characters.           │
+│        │16    │Remember the rules for Diablo II character names: 2-15           │
+│20      │chars │characters, containing only upper and lower case letters         │
+│        │      │(A-Z), with the possible addition of one dash ( - ) or           │
+│        │      │underscore ( _ ) as long as it is not the first or last          │
+│        │      │character of the name.                                           │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Character status. This is a bit field:                           │
+│        │      │┌────┬────┬─────────┬───────┬────┬────────┬────┬────┐            │
+│        │      ││ 7  │ 6  │    5    │   4   │ 3  │   2    │ 1  │ 0  │            │
+│        │      │├────┴────┼─────────┼───────┼────┼────────┼────┴────┤            │
+│        │      ││unknown  │Expansion│unknown│Died│Hardcore│unknown  │            │
+│        │      ││         │Character│       │    │        │         │            │
+│36      │byte  │└─────────┴─────────┴───────┴────┴────────┴─────────┘            │
+│        │      │Note: the "died" bit indicates that your character has died at   │
+│        │      │some point in the past. It is never cleared when you resume      │
+│        │      │the game. To find out whether your character is currently        │
+│        │      │dead, you need to look in the item list below to see if there    │
+│        │      │is some corpse data. Obviously, if you have a hardcore           │
+│        │      │character and this bit is set, you won't be able to play the     │
+│        │      │game with that charcter anymore.                                 │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Character progression. This number tells (sort of) how many      │
+│        │      │acts you have completed from all difficulty levels. It appears   │
+│        │      │to be incremented when you kill the final demon in an act —      │
+│        │      │i.e., Andarial, Duriel, Mephisto, and Diablo / Baal. There's a   │
+│        │      │catch to that last one: in an Expansion game, the value is not   │
+│        │      │incremented after killing Diablo, but is incremented by 2        │
+│        │      │after killing Baal. (The reason is unknown.) So it skips the     │
+│        │      │values 4, 9, and 14.                                             │
+│        │      │                                                                 │
+│        │      │I believe this value is used in determining your character's     │
+│        │      │title. The title is one of the following values (depending on    │
+│37      │byte  │the character class' gender):                                    │
+│        │      │                                                                 │
+│        │      │Value  Standard   Hardcore  Value Expansion   Hardcode           │
+│        │      │                                             Expansion           │
+│        │      │0-3   (no title)            0-3   (no title)                     │
+│        │      │4-7   Sir / Dame Count /    5-8   Slayer     Destroyer           │
+│        │      │                 Countess                                        │
+│        │      │8-11  Lord /     Duke /     10-13 Champion   Conqueror           │
+│        │      │      Lady       Duchess                                         │
+│        │      │      Baron /    King /           Patriarch                      │
+│        │      │12    Baroness   Queen      15    /          Guardian            │
+│        │      │                                  Matriarch                      │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│38      │2     │unknown; probably some kind of padding                           │
+│        │bytes │                                                                 │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Character class. The defined classes are:                        │
+│        │      │     0x00  Amazon                                                │
+│        │      │     0x01  Sorceress                                             │
+│40      │byte  │     0x02  Necromancer                                           │
+│        │      │     0x03  Paladin                                               │
+│        │      │     0x04  Barbarian                                             │
+│        │      │     0x05  Druid (Expansion character only)                      │
+│        │      │     0x06  Assassin (Expansion character only)                   │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│41      │2     │unknown; I've only seen the values { 16, 30 } here.              │
+│        │bytes │                                                                 │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Character's level. This is the level shown on the character      │
+│43      │byte  │selection screen, but it should equal the level given in the     │
+│        │      │character statistics section.                                    │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│44      │long  │unknown                                                          │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Time stamp. This is in the standard time() format of the         │
+│48      │long  │number of seconds which have elapsed since midnight, January     │
+│        │      │1, 1970 (UTC).                                                   │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│52      │long  │unknown                                                          │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │These are the skill Ids assigned to the hotkeys for Skill 1      │
+│        │      │through Skill 16. If a skill hotkey is not assigned to a         │
+│56      │16    │skill, the value is 0xFFFF.                                      │
+│        │longs │                                                                 │
+│        │      │Hotkey definitions are stored in the character.key file. The     │
+│        │      │structure of that file is not covered by this document.          │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│120     │long  │The action assigned to the left mouse button. The value of       │
+│        │      │this field is a skill Id.                                        │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│124     │long  │The action assigned to the right mouse button. The value of      │
+│        │      │this field is also a skill Id.                                   │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │In an Expansion character, the action assigned to the            │
+│128     │long  │alternate left mouse button. (The button assignments are         │
+│        │      │swapped when you swap weapons.)                                  │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│132     │long  │In an Expansion character, the action assigned to the            │
+│        │      │alternate right mouse button.                                    │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│136     │32    │unknown                                                          │
+│        │bytes │                                                                 │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │These bytes indicate which difficulty the character is           │
+│        │      │playing. The first byte corresponds to Normal, the second        │
+│        │      │Nightmare, and the third Hell. If the value is zero, the         │
+│        │      │character is not playing at that level. Otherwise, the value     │
+│        │      │looks like this:                                                 │
+│168     │3     │┌──────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐               │
+│        │bytes ││  7   │  6  │  5  │  4  │  3  │  2  │  1  │  0  │               │
+│        │      │├──────┼─────┴─────┴─────┴─────┼─────┴─────┴─────┤               │
+│        │      ││      │                       │Which Act the    │               │
+│        │      ││Active│unknown                │character is in  │               │
+│        │      ││      │                       │(0-4)            │               │
+│        │      │└──────┴───────────────────────┴─────────────────┘               │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │Map Id. This value looks like a random number, but it            │
+│171     │long  │corresponds with one of the longs found in the character.map     │
+│        │      │file, according to the difficulty being played.                  │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│175     │short │unknown                                                          │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│177     │short │If your Expansion character has a mercenary who is currently     │
+│        │      │dead, this field is non-zero.                                    │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │This looks like a random Id for your mercenary. It is 0 if you   │
+│        │      │have never had a mercenary. If your mercenary has died or (in    │
+│179     │long  │the standard game) been left behind when you move on to the      │
+│        │      │next act, this field is still set to the last mercenary you      │
+│        │      │had.                                                             │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │This is a numerical index into the game's language-dependent     │
+│        │      │string table for mercenary names. There is a separate list for   │
+│183     │short │each type of mercenary (Rogue Scout, Desert Mercenary, Eastern   │
+│        │      │Sorceror, and Barbarian). Trevin wrote a list of mercenary       │
+│        │      │names for the English 1.09 patch.                                │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│        │      │This code determines the difficulty level and act where your     │
+│185     │short │mercenary was found, as well as the attribute of your            │
+│        │      │mercenary (i.e. Cold, Fire, Lightning). Trevin wrote a list of   │
+│        │      │the mercenary codes appended to the end of the mercenary name.   │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│187     │long  │Your mercenary's experience points.                              │
+├────────┼──────┼─────────────────────────────────────────────────────────────────┤
+│191     │144   │unknown                                                          │
+│        │bytes │                                                                 │
+└────────┴──────┴─────────────────────────────────────────────────────────────────┘
+
+For the newly-created character, this is the only information present in the
+file (i.e. the file consists of just the header). The save file is extended
+(all other sections added) when you exit the game (even if you haven't done
+anything in it), but the very first save created by the game (i.e. right after
+you click the OK button on the character-creation screen) will be the save with
+just the header present. Such a save is still a legitimate save, which the game
+can successfully load.
+
+Quest Completion Data
+
+The quest data begins with the following header:
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│335     │4 chars│The string identifier "Woo!".                               │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│339     │6 bytes│unknown; there are values { 0x06, 0x00, 0x00, 0x00, 0x2A,   │
+│        │       │0x01 } always present here.                                 │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+The header is followed by three structures, one for each difficulty level. Note
+that the byte offsets given here are offsets into the structure; the first
+structure is at offset 345 in the file, the second one is at offset 441, and
+the third one at 537. You have to add the offsets from the table to these
+values to get the actual offset in the file for the corresponding field for the
+specific difficulty level.
+
+Although there is some variation in the meaning of the bits per quest, some of
+the bits appear to have constant meaning.
+
+Bit 0 indicates the quest is complete. If bit 0 is not set but the rest of the
+field is non-zero, then the quest has been started, but not finished.
+
+Bit 1 generally means you have completed the requirements for the quest (i.e.,
+killed the boss demon), and all that's left is to collect the reward — for
+example, "Charsi will imbue an item with magical power." Not all quests have
+this option. If this bit is set, bit 0 must be cleared.
+
+Bit 2 is often set when an NPC gives you a quest.
+
+Bit 12 is set when you have seen the swirling fire animation that closes a
+quest icon.
+
+Bit 13 indicates the quest was completed in the current game; when you save the
+game and then reload it, all bit 13's are cleared.
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │short  │This field contains a 1 if you have been introduced (by     │
+│        │       │Warriv) to Act I.                                           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │These fields contain quest completion data for each quest in│
+│        │       │Act I.                                                      │
+│        │       │┌──────┬───────────────────┬───────────────────────────────┐│
+│        │       ││short │       Quest       │             Notes             ││
+│        │       ││  #   │                   │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││0     │Den of Evil        │Bit 4 is set when you enter the││
+│        │       ││      │                   │Den.                           ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││1     │Sisters' Burial    │Bit 4 is set when you enter the││
+│        │       ││      │Grounds            │Burial Grounds.                ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││2     │Tools of the Trade │Bit 6 is set when you pick up  ││
+│        │       ││      │                   │the Horadric Malus.            ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 4 is set when you enter    ││
+│        │       ││      │                   │Tristram.                      ││
+│        │       ││      │                   │Bit 10 indicates whether you   ││
+│        │       ││      │                   │have completed the secret Cow  ││
+│2       │6      ││      │                   │Level ("Moo"). If you want to  ││
+│        │shorts ││      │                   │fight the Cow King again, just ││
+│        │       ││      │                   │clear this bit!                ││
+│        │       ││3     │The Search for Cain│If you enter Act II without    ││
+│        │       ││      │                   │rescuing Deckard Cain, bit 14  ││
+│        │       ││      │                   │will get set. You will not be  ││
+│        │       ││      │                   │able to rescue Cain yourself;  ││
+│        │       ││      │                   │the Rogues will have done it   ││
+│        │       ││      │                   │instead, and as a consequence, ││
+│        │       ││      │                   │you will be charged a fee if   ││
+│        │       ││      │                   │you want Cain to identify items││
+│        │       ││      │                   │for you.                       ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 2 is set when you read the ││
+│        │       ││4     │The Forgotten Tower│Moldy Tome.                    ││
+│        │       ││      │                   │Bit 6 is set when you enter the││
+│        │       ││      │                   │Forgotten Tower.               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││5     │Sisters to the     │                               ││
+│        │       ││      │Slaughter          │                               ││
+│        │       │└──────┴───────────────────┴───────────────────────────────┘│
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│14      │short  │uncertain; perhaps this gets set to a non-zero value after  │
+│        │       │you travel from Act I to Act II.                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│16      │short  │This field contains a 1 if you have been introduced (by     │
+│        │       │Jerhyn) to Act II.                                          │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │These fields contain quest completion data for each quest in│
+│        │       │Act II.                                                     │
+│        │       │┌──────┬───────────────────┬───────────────────────────────┐│
+│        │       ││short │       Quest       │             Notes             ││
+│        │       ││  #   │                   │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││0     │Radament's Lair    │Bit 4 is set when you find     ││
+│        │       ││      │                   │Radament.                      ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 4 is set when Cain tells   ││
+│        │       ││      │                   │you about the Viper Amulet.    ││
+│        │       ││      │                   │Bit 5 is set when Cain tells   ││
+│        │       ││1     │The Horadric Staff │you about the Staff of Kings.  ││
+│        │       ││      │                   │Bit 10 is set when Cain tells  ││
+│        │       ││      │                   │you about the Horadric Staff.  ││
+│        │       ││      │                   │Bit 11 is set when you make the││
+│        │       ││      │                   │Horadric Staff.                ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 2 is set when the sun goes ││
+│        │       ││2     │Tainted Sun        │out.                           ││
+│18      │6      ││      │                   │Bit 3 is set when Drognan tells││
+│        │shorts ││      │                   │you why.                       ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││3     │Arcane Sanctuary   │                               ││
+│        │       │├──────┼───────────────────┤                               ││
+│        │       ││4     │The Summoner       │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 3 is set when you talk to  ││
+│        │       ││      │                   │Tyrael.                        ││
+│        │       ││      │                   │Bit 4 is set when you talk to  ││
+│        │       ││      │                   │Jerhyn (after killing Duriel). ││
+│        │       ││      │                   │Bit 5 is set when you kill     ││
+│        │       ││      │                   │Duriel.                        ││
+│        │       ││5     │The Seven Tombs    │Bit 6 is set when Atma         ││
+│        │       ││      │                   │congratulates you.             ││
+│        │       ││      │                   │Bit 7 is set when Warriv       ││
+│        │       ││      │                   │congratulates you.             ││
+│        │       ││      │                   │Bit 8 is set by Drognan.       ││
+│        │       ││      │                   │Bit 9 is set by Lysander.      ││
+│        │       ││      │                   │Bit 10 is set by Cain.         ││
+│        │       ││      │                   │Bit 11 is set by Fara.         ││
+│        │       │└──────┴───────────────────┴───────────────────────────────┘│
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│30      │short  │uncertain; perhaps this gets set to a non-zero value after  │
+│        │       │you travel from Act II to Act III.                          │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│32      │short  │This field contains a 1 if you have been introduced (by     │
+│        │       │Hratli) to Act III.                                         │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │These fields contain quest completion data for each quest in│
+│        │       │Act III.                                                    │
+│        │       │┌──────┬───────────────────┬───────────────────────────────┐│
+│        │       ││short │       Quest       │             Notes             ││
+│        │       ││  #   │                   │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││0     │Lam Esen's Tome    │                               ││
+│        │       │├──────┼───────────────────┤                               ││
+│        │       ││1     │Khalim's Will      │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 2 is set when you pick up  ││
+│        │       ││2     │Blade of the Old   │the Gidbinn.                   ││
+│        │       ││      │Religion           │Bit 3 is set when Hratli asks  ││
+│        │       ││      │                   │you to find the Gidbinn.       ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │6      ││      │                   │Bit 2 is set when Cain tells   ││
+│34      │shorts ││      │                   │you about the Jade Figurine.   ││
+│        │       ││      │                   │Bit 4 is set when Cain tells   ││
+│        │       ││      │                   │you about the Golden Bird.     ││
+│        │       ││      │                   │Bit 5 is set when you are given││
+│        │       ││3     │The Golden Bird    │the Potion of Life, and cleared││
+│        │       ││      │                   │again when you drink the       ││
+│        │       ││      │                   │Potion. (This prevents you from││
+│        │       ││      │                   │drinking more than one in a    ││
+│        │       ││      │                   │game.)                         ││
+│        │       ││      │                   │Bit 6 is set when you find the ││
+│        │       ││      │                   │Jade Figurine.                 ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││4     │The Blackened      │                               ││
+│        │       ││      │Temple             │                               ││
+│        │       │├──────┼───────────────────┤                               ││
+│        │       ││5     │The Guardian       │                               ││
+│        │       │└──────┴───────────────────┴───────────────────────────────┘│
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│46      │short  │uncertain; perhaps this gets set to a non-zero value after  │
+│        │       │you travel from Act III to Act IV.                          │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│48      │short  │This field contains a 1 if you have been introduced to Act  │
+│        │       │IV.                                                         │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │These fields contain quest completion data for each quest in│
+│        │       │Act IV. Note that there are only three quests here, as      │
+│        │       │opposed to 6 for the first three Acts.                      │
+│        │       │┌──────┬───────────────────┬───────────────────────────────┐│
+│        │       ││short │       Quest       │             Notes             ││
+│        │       ││  #   │                   │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││0     │The Fallen Angel   │                               ││
+│50      │6      │├──────┼───────────────────┤                               ││
+│        │shorts ││1     │Terror's End       │                               ││
+│        │       │├──────┼───────────────────┤                               ││
+│        │       ││2     │Hell's Forge       │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │It looks like quest data for   ││
+│        │       ││3-5   │unused             │Act IV still has place for 6   ││
+│        │       ││      │                   │quests, despite the fact that  ││
+│        │       ││      │                   │this act only has 3.           ││
+│        │       │└──────┴───────────────────┴───────────────────────────────┘│
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │uncertain; perhaps this gets set to a non-zero value after  │
+│62      │short  │you travel from Act IV to Act V in an Expansion game, but   │
+│        │       │this assumption has not been verified yet.                  │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│64      │short  │unknown; in an Expansion character, this was set to 1 after │
+│        │       │completing Terror's End and talking to Cain in act IV.      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│66      │2      │unknown                                                     │
+│        │shorts │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │These fields contain quest completion data for each quest in│
+│        │       │Act V.                                                      │
+│        │       │┌──────┬───────────────────┬───────────────────────────────┐│
+│        │       ││short │       Quest       │             Notes             ││
+│        │       ││  #   │                   │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 3 is set when you find     ││
+│        │       ││0     │Siege on Harrogath │Shenk.                         ││
+│        │       ││      │                   │Bit 5 is set when Larzuk offers││
+│        │       ││      │                   │to socket an item for you.     ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││1     │Rescue on Mount    │                               ││
+│        │       ││      │Arreat             │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 7 is set when you read the ││
+│        │       ││2     │Prison of Ice      │Scroll of Resistance.          ││
+│70      │6      ││      │                   │Bit 8 is set after you rescue  ││
+│        │shorts ││      │                   │Anya and talk to Malah.        ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││3     │Betrayal of        │Bit 4 is set when Anya offers  ││
+│        │       ││      │Harrogath          │to personalize an item for you.││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││4     │Rite of Passage    │                               ││
+│        │       │├──────┼───────────────────┼───────────────────────────────┤│
+│        │       ││      │                   │Bit 4 is set when Larzuk       ││
+│        │       ││      │                   │congratulates you.             ││
+│        │       ││      │                   │Bit 5 is set when Cain         ││
+│        │       ││      │                   │congratulates you.             ││
+│        │       ││5     │Eve of Destruction │Bit 6 is set when Malah        ││
+│        │       ││      │                   │congratulates you.             ││
+│        │       ││      │                   │Bit 7 is set by Tyrael.        ││
+│        │       ││      │                   │Bit 8 is set by Qual-Kehk.     ││
+│        │       ││      │                   │Bit 9 is set by Anya.          ││
+│        │       │└──────┴───────────────────┴───────────────────────────────┘│
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│82      │7      │unknown                                                     │
+│        │shorts │                                                            │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+Waypoints Data
+
+The waypoints data begins with the following header:
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│633     │2 chars│The string identifier "WS".                                 │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│635     │6 bytes│unknown; there are values { 0x01, 0x00, 0x00, 0x00, 0x50,   │
+│        │       │0x00 } always present here.                                 │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+The header is followed by three structures, one per each difficulty level. Note
+that the byte offsets given here are offsets into the structure; the first
+structure is at offset 641 in the file, the second one is at offset 665, and
+the third at 689. You have to add the offsets from the table to these values to
+get the actual offset in the file for the corresponding field for the specific
+difficulty level.
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │2 bytes│unknown; there are values { 0x02, 0x01 } always present     │
+│        │       │here.                                                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Waypoints. This is a bitfield, with one bit assigned to each│
+│        │       │waypoint in LSB order — so bit 0 in the Rogue Encampment    │
+│        │       │waypoint for Act I. The first waypoint in every Act is      │
+│        │       │activated as soon as you enter that Act. There are 9        │
+│        │       │waypoints (bits) in each of Acts I, II, and III, and 3      │
+│        │       │waypoints (bits) in Act IV, so the last waypoint before     │
+│2       │5 bytes│Diablo (River of Flame) is bit 29 (since we start counting  │
+│        │       │from 0). The first waypoint for Act V follows at bit 30, and│
+│        │       │continues to the last (ninth) waypoint in Act V at bit 38.  │
+│        │       │                                                            │
+│        │       │The first waypoint in each of the difficulty levels is      │
+│        │       │always activated, even if you have never been to that       │
+│        │       │difficulty level.                                           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│7       │17     │unknown                                                     │
+│        │bytes  │                                                            │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+There is an additional byte value at file offset 713 after the three waypoints
+structures. This byte always has value 0x01 and probably serves as some kind of
+trailer.
+
+NPC Introductions
+
+Trevin's data on the next section was very sketchy, and hasn't improved since
+at all.
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│714     │2 chars│The string identifier "w4".                                 │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│716     │1 byte │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │You have been introduced to:                                │
+│        │       │┌──────┬────┬──────┬────┬──────┬─────┬─────┬────┐           │
+│717     │1 byte ││  7   │ 6  │  5   │ 4  │  3   │  2  │  1  │ 0  │           │
+│        │       │├──────┼────┼──────┼────┼──────┼─────┼─────┼────┤           │
+│        │       ││Warriv│    │Charsi│    │Kashya│Akara│Gheed│    │           │
+│        │       │└──────┴────┴──────┴────┴──────┴─────┴─────┴────┘           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬───┬──────┬───────┬────────┬────┬───────┬───┐        │
+│        │       ││  7  │ 6 │  5   │   4   │   3    │ 2  │   1   │ 0 │        │
+│718     │1 byte │├─────┼───┼──────┼───────┼────────┼────┼───────┼───┤        │
+│        │       ││Greiz│   │Meshif│Geglash│Lysander│Fara│Drognan│   │        │
+│        │       │└─────┴───┴──────┴───────┴────────┴────┴───────┴───┘        │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬────┬───────┬────┬────┬─────┬────┬─────┐             │
+│        │       ││  7  │ 6  │   5   │ 4  │ 3  │  2  │ 1  │  0  │             │
+│719     │1 byte │├─────┼────┼───────┼────┴────┼─────┼────┼─────┤             │
+│        │       ││Alkor│    │Asheara│         │Cain │    │Elzix│             │
+│        │       │└─────┴────┴───────┴─────────┴─────┴────┴─────┘             │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬─────┬────┬───────┬──────┬────┬────┬─────┐           │
+│        │       ││  7  │  6  │ 5  │   4   │  3   │ 2  │ 1  │  0  │           │
+│720     │1 byte │├─────┼─────┼────┼───────┼──────┼────┴────┼─────┤           │
+│        │       ││Malah│Anya │    │Natalya│Meshif│         │Ormus│           │
+│        │       │└─────┴─────┴────┴───────┴──────┴─────────┴─────┘           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌────┬────┬────┬────┬────┬────┬─────────┬─────────┐         │
+│        │       ││ 7  │ 6  │ 5  │ 4  │ 3  │ 2  │    1    │    0    │         │
+│721     │1 byte │├────┴────┴────┴────┴────┼────┼─────────┼─────────┤         │
+│        │       ││                        │Cain│Qual-Kehk│Nihlathak│         │
+│        │       │└────────────────────────┴────┴─────────┴─────────┘         │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│722     │3 bytes│unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│725     │8 bytes│Introductions repeated for Nightmare difficulty.            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│733     │8 bytes│Introductions repeated for Hell difficulty.                 │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │It would appear that bits 1-6 of byte 741 get set after you │
+│        │       │take the caravan to Act II in Normal difficulty. Bit 7 of   │
+│        │       │byte 741 through bit 1 of byte 743 get set after you sail to│
+│        │       │Act III. On entering Act IV, bits 2, 5, 6, & 7 of byte 743  │
+│        │       │and bits 0, 3, & 4 of byte 744 get set.                     │
+│        │       │                                                            │
+│        │       │When you return to a previous act and talk to the NPC's,    │
+│741     │1 byte │these bits are cleared.                                     │
+│        │       │                                                            │
+│        │       │You have yet to be welcomed back by:                        │
+│        │       │┌──────┬───┬──────┬──────┬──────┬─────┬─────┬───┐           │
+│        │       ││  7   │ 6 │  5   │  4   │  3   │  2  │  1  │ 0 │           │
+│        │       │├──────┼───┼──────┼──────┼──────┼─────┼─────┼───┤           │
+│        │       ││Warriv│?  │Charsi│Warriv│Kashya│Akara│Gheed│   │           │
+│        │       │└──────┴───┴──────┴──────┴──────┴─────┴─────┴───┘           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬──────┬──────┬───────┬───┬────┬───────┬───┐          │
+│        │       ││  7  │  6   │  5   │   4   │ 3 │ 2  │   1   │ 0 │          │
+│742     │1 byte │├─────┼──────┼──────┼───────┼───┼────┼───────┼───┤          │
+│        │       ││Greiz│Jerhyn│Meshif│Geglash│?  │Fara│Drognan│?  │          │
+│        │       │└─────┴──────┴──────┴───────┴───┴────┴───────┴───┘          │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬──────┬───────┬────┬────┬────┬────┬─────┐            │
+│        │       ││  7  │  6   │   5   │ 4  │ 3  │ 2  │ 1  │  0  │            │
+│743     │1 byte │├─────┼──────┼───────┼────┴────┼────┼────┼─────┤            │
+│        │       ││Alkor│Hratli│Asheara│         │?   │?   │Elzix│            │
+│        │       │└─────┴──────┴───────┴─────────┴────┴────┴─────┘            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐           │
+│        │       ││  7  │  6  │  5  │  4  │  3  │  2  │  1  │  0  │           │
+│744     │1 byte │├─────┴─────┴─────┼─────┼─────┼─────┴─────┼─────┤           │
+│        │       ││                 │?    │?    │           │Ormus│           │
+│        │       │└─────────────────┴─────┴─────┴───────────┴─────┘           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│745     │4 bytes│unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│749     │8 bytes│Greetings repeated for Nightmare difficulty.                │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│757     │8 bytes│Greetings repeated for Hell difficulty.                     │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+Character Statistics
+
+The character statistics begin with 2-character identifier:
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│765     │2 chars│The string identifier "gf".                                 │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+From this point on, the contents of the file are variable, because character
+stats are stored in packed format and certain stats may be absent (if the stat
+is absent in the save file, its value is 0.
+
+Starting from patch version 1.10 Diablo II stores stats differently than it
+used to be in previous game version. Every character stat is stored as a
+two-value pair. These pairs (and even the values inside them are not
+byte-aligned. They may start in the middle of one byte, and continue to the
+second. Here is the basic structure of the pair (note that field sizes are
+given in bits):
+
+┌────────┬────────────────────────────────────────────────────────────────────┐
+│ Field  │                            Description                             │
+│  Size  │                                                                    │
+├────────┼────────────────────────────────────────────────────────────────────┤
+│        │Stat Id. This field determines the stat whose value is stored in the│
+│9       │value-pair and, more importantly, the size of the next field in the │
+│        │pair.                                                               │
+├────────┼────────────────────────────────────────────────────────────────────┤
+│        │The value that is to be assigned to the corresponding stat. The size│
+│variable│of the field, in bits, is determined by the stat itself. Read on to │
+│        │find out where this information can be obtained.                    │
+└────────┴────────────────────────────────────────────────────────────────────┘
+
+The stats list is terminated by the 9-bit value of 0x1FF (all 9 bits are set),
+i.e. the entire list is read in a loop, where you read the Id first and, if
+that Id is 0x1FF, you exit the loop, otherwise you read the next n bits as a
+stat value and repeat the loop.
+
+The Ids of stats (and sizes of values) are determined by the data-tables
+normally stored inside the game archive (the MPQ files). The file for this
+specific purpose is named ItemStatCost.txt, which is a kind of CSV file, but
+with tabulation characters used as separators instead of commas. The game
+actually uses the ItemStatCost.bin one, which is sort of a compiled version of
+the corresponding text file.
+
+Here is an Excel-formatted ItemStatCost.xlsx file that contains the data for
+1.13d patch with some nice formatting and extra comments. This file actually
+contains data from two tables, the one needed for the purpose of reading
+character stats is given on the ItemStatCost sheet.
+
+The column ID specifies the Id of the stat, as stored in the 9-bit field of the
+two-value pair. The row containing that Id describes the stat. There is a
+textual name of the stat in the Stat column, as well as the size of the value,
+in bits, that follows the Id in the two-value pair. This size is specified by
+the CSvBits column. Only values that have value 1 in the Saved column (first 16
+stats) are actually saved in the character stats section of the save file.
+
+The stats described by the ItemStatCost table are as follows (in table below
+Stat Name corresponds to the value in the Stat column from the data table):
+
+┌──────────┬───────────────────────────────────────────────────────────────────┐
+│Stat Name │                              Details                              │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│strength  │                                                                   │
+├──────────┤                                                                   │
+│energy    │                                                                   │
+├──────────┤These stats are self-explanatory. They are always present.         │
+│dexterity │                                                                   │
+├──────────┤                                                                   │
+│vitality  │                                                                   │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │The number of Stat Points earned but not distributed. This stat may│
+│statpts   │be absent from the save file if you have distibuted all stat       │
+│          │points.                                                            │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │The number of Skill Choices earned but not distributed. This stat  │
+│newskills │may be absent from the save file if you have distibuted all skill  │
+│          │points.                                                            │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │Current amount of Life points.                                     │
+│          │                                                                   │
+│          │These 6 stats are (usually) always present. (There is an exception:│
+│          │if your character is dead, the current Life stat will be gone!)    │
+│          │They are also not plain integer values! Instead, each field is a   │
+│          │fixed-point binary number, with a 24-bit integer part and an 8-bit │
+│hitpoints │fraction part. For example, if the Current Life stat contains the  │
+│          │value 0x020AC0, then to get the amount of life remaining you take  │
+│          │that value and divide by 256.0 to get 522.75 (rounding the number  │
+│          │to an integer for display. Note that the current amount of Life,   │
+│          │Mana or Stamina may be more than the base amount, because the base │
+│          │does not take into account any blessings bestowed by magical items │
+│          │you are carrying.                                                  │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│maxhp     │Base amount of Life points.                                        │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│mana      │Current amount of Mana points.                                     │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│maxmana   │Base amount of Mana points.                                        │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│stamina   │Current amount of Stamina points.                                  │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│maxstamina│Base amount of Stamina points.                                     │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │Your character's level. This value must be in the range 1-99 (and  │
+│level     │is therefore always present, even on a new character, with a minor │
+│          │exception) and should be the same as byte 43 in the file header.   │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │The amount of experience your character has. If you haven't killed │
+│experience│a single monster in the game, your experience will be 0, and this  │
+│          │field is not stored. Otherwise, this field is always present.      │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │The amount of gold you are carrying with you (in your inventory or │
+│          │backpack). Just as a helpful reminder, the maximum amount of gold  │
+│gold      │you may carry is directly proportional to your level, at 10,000    │
+│          │gold per level. Thus, a new character can only carry 10,000 gold   │
+│          │pieces, but a level 99 character (the maximum) can carry nearly a  │
+│          │million in gold (990,000).                                         │
+├──────────┼───────────────────────────────────────────────────────────────────┤
+│          │The amount of gold you have stowed away (in stash). Just as a      │
+│goldbank  │helpful reminder, starting from the 1.13c patch onwards, the       │
+│          │maximum amount of gold in your stash does not depend on your       │
+│          │character's level, and is now a flat cap of 2,500,000 instead.     │
+└──────────┴───────────────────────────────────────────────────────────────────┘
+
+As it was specified above, the stats list is terminated with a stat Id with a
+special meaning (the Id has value 0x1FF in this case), and the stat value for
+this stat Id is not stored (you may view it as a stat whose stat value is 0
+bits in size). After that the remaining bits are padded with 0-bits to the
+nearest byte-boundary so that the next section is byte-aligned.
+
+Character Skills
+
+The character skills section begins with the 2-character header, "if". This is
+followed by 30 bytes, each byte corresponding to one of the character's special
+skills. To save space, Trevin listed the skills in a separate table.
+
+Item List
+
+The next major section of the save file is the item list. It begins with the
+following header:
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│2 chars        │The string identifier "JM".                                  │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │The number of items your character has. This includes items  │
+│               │equipped, tucked in your belt, stored in your inventory,     │
+│short          │stored in your stash, and hidden in the Horadric Cube. It    │
+│               │does not, however, include gems, runes, or jewels which have │
+│               │been inserted into a socketed item. (Those are counted as    │
+│               │part of the item.)                                           │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+This header is followed by a list of items. The format of the items is
+described on the Item Format page.
+
+After the list of items, you will find another item list header similar to the
+one shown above; only this time the item count will be either 0 or 1. The value
+0 means that your character is currently alive. If the value is 1, then that
+means your character is dead (if you load this save, a corpse will be lying at
+your feet in town), in which case 12 bytes of (unknown) data will follow, after
+which there will be another items list header (the one with the identifier "JM"
+and item count) and item list for items on your corpse. Sadly, the meaning of
+the 12 bytes is unknown.
+
+If you have an Expansion character, then the corpse item list (if there is one)
+will be followed by the 2-character identifier "jf". If and only if you have a
+mercenary (alive or dead), this header is followed by an item list header and
+(possibly empty) item list containing items equipped on the mercenary. This
+item list is followed by the 2-character trailer "kf".
+
+If you have a necromancer, it is possible for you to have an Iron Golem that is
+preserved when your game is saved and restored. The Iron Golem is based on an
+item. Following the mercenary item list, there will be a single byte that is
+0x00 if there is no golem, or 0x01 if there is. If there is a golem, this byte
+is followed by a single item.
+

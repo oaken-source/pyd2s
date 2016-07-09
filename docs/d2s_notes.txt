@@ -1,0 +1,223 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+http://www.coreyh.org/diablo-2-files/documentation/d2s_notes.txt
+-------------------------------------------------------------------------------
+
+Summary of the various sections. Note the header's ID is actually a file ID, but you get the idea :)
+
+[color=blue]ID, content[/color]
+0xaa55aa55, header
+"Woo!", Quest info
+"WS", Waypoint info
+0x7701, NPC info
+"gf", Main stats info
+"if", Skill info
+"JM", Main itemlist
+"JM", Corpse item list
+"jf", Mercenary section (expansion char only)
+"kf", Iron Golem list (expansion char only)
+
+Note that individual items ALSO has the JM ID as do the Mercenary section if you have one. Confusing, yes :)
+
+
+[color=blue]Header[/color]
++0000 file identifier, 0xaa55aa55
++0004 file version 92
++0008 file size
++000c checksum, d2fog.27f5
++0010 0 if [ptClient+428]b is 0, otherwise 1
++0014 character name, 16 bytes
++0024 flags from [ptClient+0a]b, bit 5 (of 0-7) is set by SAVE code if expansion game
++0025 acts done (see link in post below for more info)
+(+0024 and +0025 is actually returned as a word from [ptClient+0a]w
++0026 empty filler to the 2 previous bytes, 0
++0027 empty filler to the 2 previous bytes, 0
++0028 character class from [ptClient+08]b, hopefully matches that of hUnit :)
++0029 hard coded to 0x10
++002a hard coded to 0x1e
++002b clvl from hUnit
++002c ? from [ptClient+454]dw
++0030 time
++0034 -1, function always return -1
++0038 32 2-byte values, supposedly skills assigned to function keys
++0078 8 2-byte values, supposedly skills assigned to mouse buttons
++0088 16 2-byte values (could be 8 4-byte values) set by d2common.283a, seems to relate to appearance of items/character
++00a8 act playing in normal difficulty
++00a9 act playing in nightmare difficulty
++00aa act playing in hell difficulty
+
+Of the three values above, 2 will be 0 the other will be the actual value with bit 7 set to indicate which difficulty is saved
+
++00ab from [ptGame+78], should be initial seed of game
++00af start of mercenary info, much comes from 6fc71c10 (as ebx+xx), needs checking anyway:
+
++00af flags, only 00100000 seems to be in use set if 6fcad880 returns non 0
++00b3 ebx+00
++00b7 ebx+04, then subtract [d2common.2957+148], should be from mercenary txt
++00b9 ebx+08
++00b9 exp of mercenary from hUnit
+
++00bf to +014e empty, all 0. These bytes can be used for your own custom saved information. just make sure you load it properly too :)
+
+That concludes the main header of the save file. Next follow various sections of information.
+
+[color=blue]Quest info[/color]
++014f "Woo!"
++0153 version of block? 0x00000006
++0157 blocksize, 0x012a
++0159 quest info stuff (to come)
+
+[color=blue]Waypoint info[/color]
++0279 "WS"
++027b version of block? 0x00000001
++027f block size 0x0050
++0281 waypoint info stuff (to come)
+
+[color=blue]NPC info[/color]
++02c9 0x7701
++02cb block size, 0x0034
++02cd NPW info stuff (to come)
+
+[color=blue]Main stats info[/color]
++02fd "gf"
++02ff bitfield indicating which of the 16 main stats follow
++0301 stats (dw) indicated by bitfield, from hUnit
+
+The above section is of variable length
+
+[color=blue]Skill info[/color]
++03xx+00 "if"
++03xx+02 base slvl (b) for 30 skills
+
+[color=blue]Item info[/color]
++03xx+30 Start of item info
+
+The item info is mostly made up of various lists of items. A list will usually contain a header that has a two byte "string", for example "JM" (I would say many of those strings you find are actually short for various programmer names) followed by a word indicating the number of items in the list to follow. Next follow each item itself and I think most (all?) of them will start of with the "JM" string (yes confusing since it is used in two different cases so to speak) followed by item specific data. Socketed items follow right after the item they are socketed into and are not counted in the list header for number of items in the list.
+
+The various lists (of which not all need to be present) are:
+
+[color=blue]Main itemlist[/color]
++00 "JM"
++02 number of items in list
++04 List of items
+
+This includes all items your character have, including those in the stash.
+
+
+[color=blue]Corpse item list[/color]
++00 "JM"
++02 number of corpses
++04 if coprse exists, 12 bytes not used
++10 if corpse exists, list of items
+
+The game obviously have had the ability to save several corpses for a character. Currently, only one corpse is supported though. The "number of corpses" can only be set to 0 or 1 and can thus be thought of as a flag for the existance of a corpse. If the corpse exists there follow 4 dwords of random data. The first value is actually set from an uninitialized local variable and can thus be anything that happens to sit on the stack. The next two values are x and y coordinates (not sure if they actually make any sense though). None of the three values are read by the code by the way. I guess the first value was once which map the coprse was on or something. In any case, thsoe 12 bytes can be ignored. Next follows a normal list of items if a corpse existed.
+
+[color=blue]Mercenary item list[/color]
++00 "jf" (only exists if expansion game regardless of if you have a mercenary or not)
++02 "JM" (only exists if you actually have a mercenary)
++04 number of items in list (only exists if you actuall have a mercenary)
++06 List of items (only exists if you actually have a mercenary)
+
+In an expansion game you then get:
+
+[color=blue]Iron Golem list[/color]
++00 "kf"
++02 0 or 1 (b), a 1 indictaing an Iron Golem exists
++03 if an Iron Golem eixts the item used to create it will follow here
+
+
+
+
+Next to be added is detailed info on the data for each item saved in a list. It is a quite variable content depending on the item and also quite large. It will follow below. Note that the same function that compress an item for saving seems to be used to compress items for sending between server and client. It has the ability to mask many properties in such cases for non identified items for example when you gamble I would guess. I will not at all handle that here but only the case for actually saving an item.
+
+Since items are saved in a very compressed way on bit levels (and not bytes). In addition, what actually is saved varies with the item type and so on. I will thus not give offsetts but rather the number of bits (in decimal notation) something is saved in. The order would be the one the game places them though, so disregarding the fact that some section might be missing for some items the order should NEVER be another than the one I list below.
+
+
+[color=blue]Common item data[/color]
+16 "JM"
+32 flags [ptItemstats+18], ptItemstats is [hUnit+70]
+
+Note, the flags are somewhat modified, some removed and some set by the save code but in much should be identical with the run time flags.
+
+10 version of item, 0, 1 or 100. 100 are new expansion items, 1 are new classic items and 0 is old pre expansion items. Note that all items should be converted to new ones in a current game (I think) at least no item should remain as version 0.
+
+3 mode, from hUnit+0c
+
+The mode of items seems to mostly be were the item actually is "located", as oposed to some action it performs. See the thread maping out the ptUnit (which I call hUnit in this thread) for more info. Although I can't imagine a situation were the item is in mode 3 (ground) or 5 (whatever that might be) the save file has a special case for them. In that case, the mode would be followed by 2 32 bit x and y coordinates (from d2common.2856 and 2859). For other items we instead have the three following entries.
+
+4 body location [ptItemstats+40]. This tells were, if at all, the item is equiped
+
+4 x coordinate in inventory (d2common.2856)
+
+4 y coordinate in inventory (d2common.2859)
+
+3 page number PLUS 1. The page tells where in the invenotry the item is. Example of different pages are stash cube, main invenotry on character and so on. Pages like trade screen and such should not matter although I am not sure what happens if the game tries to save your character while the trade screen is open, you might end up with items on that page too for example. Same with an item on the cursor.
+
+32 item code
+
+The 3 letter code each base item have. This is for  non ears only (flag 00010000 in the flag data above is set for ears). Ears does not save the code, instead they have:
+
+ 3 class of ear
+ n*7 name of ear. This is the character name of the ear and is ended by a 0 value. The name is stored at [ptItemstats+44] (first letter) and the following at [ptItemstats+46] and onwards.
+
+For the interested, in non saved structures, if the item is gold (which obviously never save as items), the ammount of gold is inserted after the item code. First comes a 1 bit indicating the size. A 1 indicate a 32 bit value a 0 indicate a 12 bit value. That 12/32 bit value then follows and specify the ammount of gold.
+
+Compact save items will have no other data than the above one. Flag 00200000 is set on compact save items. Note that flag is set only upon save, not normally in the flag register. It will be cleared in the process of loading. The compact saving info of an item is fetched from the appropriate item.txt file upon saving and checked for.
+
+
+
+
+[color=blue]Non compact save item data[/color]
+3 number of socketed items
+32 creation seed, from [hUnit+34]
+7 ilvl, from [ptItemstats+28]
+4 quality, from [ptItemstats+00]
+1 flag for variable picture (itemtypes "varinvgfx")
+3 if flag=1, number indicating which picture to use
+1 flag for autoprefix on item
+11 if flag=1, info on which autoprefix
+
+Next follows data depending on the quality of the item.
+
+Low quality
+3 type of low quality property
+
+Normal quality
+No special data saved
+
+Superior
+3 type of superiorproperty
+
+Magic
+11 which prefix the item has
+11 which suffix the item has
+
+In both cases it is the entry in the appropriate affix table (were a 0 value indicate none). This applies to the autoprefix above as well.
+
+Rare and Crafted
+8 which prefix name the item has
+8 which suffix name the item has
+1 flag indicating if a prefix follows
+11 if flag=1, which prefix the item has
+1 flag indicating if a suffix follows
+11 if flag=1, which suffix the item has
+1 flag indicating if a prefix follows
+11 if flag=1, which prefix the item has
+1 flag indicating if a suffix follows
+11 if flag=1, which suffix the item has
+1 flag indicating if a prefix follows
+11 if flag=1, which prefix the item has
+1 flag indicating if a suffix follows
+11 if flag=1, which suffix the item has
+
+Each rare item can have up to 3 prefixes and 3 suffixes.
+
+Set
+12 which set (in setitems.txt) the item is part of
+
+Unique
+12 which unique (in unqiue.txt) the item is
+
+
+...more to come
+

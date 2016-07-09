@@ -1,0 +1,802 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+http://www.coreyh.org/diablo-2-files/documentation/d2s_save_item_format_1.13d.html
+-------------------------------------------------------------------------------
+
+
+                             Diablo II Item Format
+
+            for Diablo II v1.13d Expansion Set: Lord of Destruction
+
+                             Updated June 23, 2012
+
+This file was originally written by Trevin Beattie, whose site is no more (his
+latest version of this file is available here though).
+
+Welcome!
+
+Thanks for showing an interest in my Diablo II Item Format page. While you're
+browsing, be sure to check out the preview of my game editor for unix+Motif. I
+currently have the item editor in development!
+
+Introduction
+
+Having searched the web, I found very few references to the Diablo II .d2s file
+format, and most of them covered the old (pre-1.08) version. Diablo II v1.09
+has significantly changed the file format. I have started another page which
+details the layout of the major parts of the .d2s file. This document focuses
+specifically on the item structure — all those pieces of the file tagged "JM".
+
+Rather than describe everything in terms of byte offsets, I'm going to define
+the layout as a series of variable-length bit fields. This is a critical part
+of the item format, because the position of many of the fields can change
+depending on what comes before it. If I say a certain value is a 3-bit field
+starting at bit position 150, for example, this translates to bits 6 and 7 of
+the byte 18 and bit 0 of byte 19 in the data structure. You can read an
+arbitrary bit field programatically using the following code (in C):
+
+#define read_bits(start,size) \
+    ((*((unsigned long *) &data[(start) / 8])
+      >> ((start) & 7)) & ((1 << (size)) - 1))
+
+Item List Header
+
+An item list begins with the following simple header:
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │2 chars│Identifier string "JM" { 0x4A, 0x4D }                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │The number of items your character has. This does not       │
+│2       │16 bits│include gems or jewels which have been glued into socketed  │
+│        │       │items.                                                      │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+Your item list ends with another 4-byte structure similar to the above, except
+the second field is zero (i.e., { 0x4A, 0x4D, 0x00, 0x00 }).
+
+In the Expansion Set, your hireling has his/her own item list. This list is
+separated from yours by the 2-character identifier "jf". This is followed by an
+item list header for the hireling, and then his/her items. The second item list
+is not terminated with the same 4-byte structure as the first; instead, it is
+followed by the 2-character identifier "kf".
+
+Item Structure part 1: Simple Items
+
+There are still many fields in the item structure which I haven't figured out
+yet, but I'll leave placeholders for them in case I find out what they mean in
+the future. All sizes are in bits unless otherwise specified.
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Bit   │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │2 chars│Identifier string "JM" { 0x4A, 0x4D }                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│16      │4      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│20      │1      │Item has been identified                                    │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│21      │6      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│27      │1      │Item is Socketed                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│28      │1      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│29      │1      │This bit is set on items which you have picked up since the │
+│        │       │last time the game was saved. Why?...                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│30      │2      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│32      │1      │Item is a Player Ear                                        │
+│        │       │Thanks go to Mike of Denmark for identifying this bit.      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │"Newbie" item. This bit is set on the weapon and shield your│
+│33      │1      │character is given when you start the game. Apparently, this│
+│        │       │gives the item the property of having a repair cost of 1gp, │
+│        │       │as well as a sell value of 1gp.                             │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│34      │3      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Item is simple (only 111 bits {14 bytes} of item data)      │
+│37      │1      │Thanks go to Guillaume Courtin of France for discovering the│
+│        │       │meaning of this bit.                                        │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│38      │1      │Item is Ethereal (Cannot be Repaired)                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│39      │1      │unknown; this bit is 1 on the items I've looked at          │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│40      │1      │Item has been personalized (by Anya in Act V)               │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│41      │1      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│42      │1      │It looks like this bit indicates the item has been given a  │
+│        │       │Rune Word.                                                  │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│43      │15     │unknown; some of these bits may be set                      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Item location. Actually, I have only seen a few values for  │
+│        │       │these bits, so I'm not 100% certain of its validity. If you │
+│        │       │see any other value here, let me know what it is and where  │
+│        │       │the item is located.                                        │
+│        │       │┌───────────┬──────────────────────────────────┐            │
+│        │       ││0          │Item is stored (see bit field 73) │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││1          │Item is equipped (somewhere on    │            │
+│58      │3      ││           │your body)                        │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││2          │Item is tucked in your belt (or   │            │
+│        │       ││           │sash)                             │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││4          │Item is being moved (i.e., has    │            │
+│        │       ││           │been picked up by the mouse).     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││6          │Item is glued into a socket.      │            │
+│        │       │└───────────┴──────────────────────────────────┘            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │If the item is equipped, this field tells where it is.      │
+│        │       │Possible values are:                                        │
+│        │       │┌───────────┬──────────────────────────────────┐            │
+│        │       ││1          │head (helmet)                     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││2          │neck (amulet)                     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││3          │torso (armor)                     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││4          │right hand (weapon)               │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││5          │left hand (shield)                │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││6          │right finger (ring)               │            │
+│61      │4      │├───────────┼──────────────────────────────────┤            │
+│        │       ││7          │left finger (ring)                │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││8          │waist (belt)                      │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││9          │feet (boots)                      │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││10         │hands (gloves)                    │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││11         │alternate right hand (Expansion   │            │
+│        │       ││           │Set only)                         │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││12         │alternate left hand (Expansion Set│            │
+│        │       ││           │only)                             │            │
+│        │       │└───────────┴──────────────────────────────────┘            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Column number of the left corner of the item, counting from │
+│        │       │0. Your inventory has ten columns (numbered 0-9), your stash│
+│        │       │has six, and the Horadric Cube has four.                    │
+│        │       │                                                            │
+│        │       │Note: Your belt is considered (for the purposes of the item │
+│        │       │format) to have no rows, but either 4, 8, 12, or 16 columns.│
+│65      │4      │If you prefer, you can divide this field and use the 2 bits │
+│        │       │at position 67-68 for the row (but only for belts).         │
+│        │       │                                                            │
+│        │       │Note 2: If the item is equipped, glued to a socket, or in   │
+│        │       │transit, then this field appears to contain old data from   │
+│        │       │the last time the item was stored. I.e., it may be non-zero,│
+│        │       │but the value is unused.                                    │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Row number of the top of the item, counting from 0. Your    │
+│        │       │inventory has four rows (numbered 0-3), your stash has four │
+│        │       │in normal characters or eight in Expansion Set characters,  │
+│        │       │and the Horadric Cube has four. (In the belt, this field is │
+│69      │3      │always zero.)                                               │
+│        │       │                                                            │
+│        │       │Note: If the item is equipped, tucked in your belt, glued to│
+│        │       │a socket, or in transit, then this field appears to contain │
+│        │       │old data from the last time the item was stored. I.e., it   │
+│        │       │may be non-zero, but the value is unused.                   │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│72      │1      │unknown                                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Actually, bit 74 seems to always be 0, but since bits 73 and│
+│        │       │75 are related I just lump them all together. If the item is│
+│        │       │neither equipped nor in your belt, this field tells where it│
+│        │       │is. Possible values are:                                    │
+│        │       │┌───────────┬──────────────────────────────────┐            │
+│        │       ││0          │not here (check bit field 58)     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│73      │3      ││1          │inventory                         │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││4          │Horadric Cube                     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││5          │stash                             │            │
+│        │       │└───────────┴──────────────────────────────────┘            │
+│        │       │If you find an item having any other value in this field,   │
+│        │       │let me know what the value is and the item's location!      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Item's type. The type is 3 lower-case letters or numbers    │
+│        │       │followed by a space; e.g., "amu " (Amulet) or "2hs "        │
+│        │4 chars│(Two-Handed Sword). I have started a list of item           │
+│76      │(8 bits│identifiers (not posted; sorry), but it is by no means      │
+│        │ea.)   │complete; I'm sure I don't even have half of what's out     │
+│        │       │there!                                                      │
+│        │       │Warning: This field is not byte-aligned! It starts in the   │
+│        │       │middle of byte 9 and runs to the middle of byte 13.         │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │The number of gems (or skulls or jewels) which have been    │
+│        │       │glued to this item (if socketed). There will be this many   │
+│108     │3      │additional item structures for the gems immediately         │
+│        │       │following this item, in the order that the gems were        │
+│        │       │inserted.                                                   │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+Item Variant: Player Ears
+
+The following information was provided by Mike of Denmark.
+
+If the item is a Player Ear, its structure is slightly different than the
+Simple Items above. The last two fields in the Simple Item structure are
+replaced by the following:
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Bit   │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Character class of the ear's former owner. The defined      │
+│        │       │classes are:                                                │
+│        │       │     0  Amazon                                              │
+│        │       │     1  Sorceress                                           │
+│76      │3      │     2  Necromancer                                         │
+│        │       │     3  Paladin                                             │
+│        │       │     4  Barbarian                                           │
+│        │       │     5  Druid (Expansion character only)                    │
+│        │       │     6  Assassin (Expansion character only)                 │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│79      │7      │Character level of the ear's former owner.                  │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│86      │7      │First character of the former owner's name.                 │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│93      │7 × N-1│Second character of the former owner's name; Repeat until   │
+│        │       │you get the whole name (15 characters maximum).             │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│86 + 7 ×│7      │0  (this indicates the end of the name)                     │
+│N       │       │                                                            │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+Following the end of the name, the rest of the final byte will be padded with
+0's if necessary, and the Player Ear structure ends there.
+
+Item Structure part 2: Extended Items
+
+By "extended items" I mean any items which are not simple. Simple items are
+those which need no further information than that given above — such as gems,
+potions, and small quest items — and their structure length is fixed at 14
+bytes. Everything else has an extended structure with a possibly variable
+length set of bit fields. First, I'll describe the part of the structure that
+appears to be the same for all extended items. From that point on, there will
+be no more "bit positions"; only "this field follows that field, if it exists".
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Bit   │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Unique identifier. Diablo II randomly generates a value for │
+│        │       │this field in order to discourage cheaters from "duping"    │
+│111     │32     │items. Supposedly, if it detects more than one extended item│
+│        │       │with the same unique Id, it will delete the duplicates. (It │
+│        │       │hasn't done that for me in single player mode, though.)     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │This appears to be the item's level; i.e., the level with   │
+│        │       │which the item was created (or 'dropped'). The item level is│
+│        │       │based on the level of the monster who dropped it, the level │
+│143     │7      │of the area you're in if found in a chest, or, in rare      │
+│        │       │cases, your characters level. The item level determines what│
+│        │       │modifiers are allowed on the item.                          │
+│        │       │Note: this is just a theory at this point, but it seems to  │
+│        │       │hold for the items I've examined.                           │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Item quality. This field can be one of the following values,│
+│        │       │which determines the quality-specific bit fields that       │
+│        │       │follow:                                                     │
+│        │       │┌───────────┬──────────────────────────────────┐            │
+│        │       ││1          │low quality                       │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││2          │normal                            │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││3          │high quality                      │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│150     │4      ││4          │magically enhanced                │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││5          │part of a set                     │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││6          │rare                              │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││7          │unique                            │            │
+│        │       │├───────────┼──────────────────────────────────┤            │
+│        │       ││8          │crafted                           │            │
+│        │       │└───────────┴──────────────────────────────────┘            │
+│        │       │Thanks go to Guillaume Courtin of France for finding the    │
+│        │       │value of crafted items.                                     │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+               WARNING: DATA BELOW THIS POINT MAY CONTAIN ERRORS
+
+Ring Data
+
+After the above data, if the item is a ring, amulet, jewel, or charm, then it
+has a 1 bit followed by three more bits. All other items (that I've seen) have
+just a single 0 bit.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │If this bit is set, the item has one of multiple pictures    │
+│               │associated with it; the next field determines which picture a│
+│1              │particular item uses. If this bit is 0, the next field is    │
+│               │absent. The picture field is used for rings, amulets, jewels,│
+│               │and charms.                                                  │
+├───────────────┼───────────────────────────────────┬─────────────────────────┤
+│               │Picture. Optional; only present if │                         │
+│3              │the previous bit is 1. This field  │[Ring_of_the_Leech]      │
+│               │chooses the particular graphic used│                         │
+│               │to display the ring.               │                         │
+└───────────────┴───────────────────────────────────┴─────────────────────────┘
+
+From this point on, my information is very iffy.
+
+Unknown Field
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │This bit apparently is set for certain class-specific        │
+│1              │Expansion Set items. It indicates the presence of the next   │
+│               │11-bit field. If this bit is 0, the next field is absent.    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Credit for the discovery of this field's meaning goes        │
+│               │entirely to Guillaume Courtin of France. Thanks!             │
+│               │This field indicates magic properties which are inherent in  │
+│               │certain class-specific items. A given class-specific item    │
+│               │will (almost) always start with the same set of properties,  │
+│               │even if its quality is "normal". Other quality ratings may   │
+│11             │add more properties to the standard set. It appears that     │
+│               │items which will have this field are:                        │
+│               │                                                             │
+│               │  • Amazon-only bows, spears, and javelins                   │
+│               │  • Voodoo heads (Necromancer-only shields)                  │
+│               │  • Paladin-only shields                                     │
+│               │  • Orbs (Sorceress-Only wands)                              │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Low Quality Item Data
+
+If the item is one of low quality, it has 3 more bits that give the quality
+details:
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼────────────────────────────────────┬────────────────────────┤
+│               │Quality:                            │                        │
+│               │┌──────┬───────────────────┐        │                        │
+│               ││0     │Crude              │        │                        │
+│               │├──────┼───────────────────┤        │                        │
+│               ││1     │Cracked            │        │                        │
+│               │├──────┼───────────────────┤        │                        │
+│               ││2     │Damaged            │        │                        │
+│               │├──────┼───────────────────┤        │                        │
+│3              ││3     │Low Quality        │        │[Crude_Heavy_Boots]     │
+│               │└──────┴───────────────────┘        │                        │
+│               │I haven't recorded any instances of │                        │
+│               │other values, but that doesn't mean │                        │
+│               │there won't be any. Also, I'm       │                        │
+│               │certain the value has something to  │                        │
+│               │do with mods on an item's inherent  │                        │
+│               │(non-recorded) properties, such as  │                        │
+│               │weapon damage, but I haven't figured│                        │
+│               │out yet what the correlation is.    │                        │
+└───────────────┴────────────────────────────────────┴────────────────────────┘
+
+Normal Item Data
+
+Normal items have no extra quality data.
+
+High Quality ("Superior") Item Data
+
+If the item is one of high quality, it has 3 additional bits.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │unknown. I'm certain the value has something to do with mods │
+│3              │on an item's inherent (non-recorded) properties, such as     │
+│               │weapon damage, but I haven't figured out yet what the        │
+│               │correlation is.                                              │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Magically Enhanced Item Data
+
+[Sturdy_Spi] Magically enhanced items have two 11-bit fields representing the
+item's prefix and suffix. Either one (but not both) may be omitted. The prefix
+and suffix each are used in choosing the magical enhancements for an item
+(although the enhancements are modifiable), and can also increase the minimum
+level required to use them item and affect the item's color.
+
+[Mesh_Belt_]
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Item prefix (i.e., "Gold" or "Tangerine"). I've started a    │
+│11             │list of prefix identifiers, but it is very sparse at this    │
+│               │time. If this field is 0, the item has no prefix.            │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Item suffix (i.e., "of Greed" or "of Life"). I've started a  │
+│11             │list of suffix identifiers, but it is very sparse at this    │
+│               │time. If this field is 0, the item has no suffix.            │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Set Item Data
+
+Set items have a 12-bit field containing the ID of the set. (Not the set
+member, but the whole set.) The set member is identified by cross-referencing
+the item type with the set Id. Also note that set items have an extra field
+following the item-specific data.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────┬───────────────────────────────────┤
+│               │Set identifier; i.e., all│                                   │
+│               │items which are part of  │                                   │
+│               │the set will have the    │                                   │
+│               │same value in this field.│                                   │
+│               │Since I've only          │                                   │
+│               │identified a few set     │                                   │
+│               │items, I'll give their   │                                   │
+│               │ID's here:               │                                   │
+│               │┌────┬─────────────┐     │                                   │
+│               ││2   │Cleglaw's    │     │                                   │
+│               ││    │Brace        │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││3   │Iratha's     │     │                                   │
+│               ││    │Finery       │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││4   │Isenhart's   │     │                                   │
+│12             ││    │Armory       │     │[Deaths_Hand_Leather_Gloves]       │
+│               │├────┼─────────────┤     │                                   │
+│               ││6   │Milabrega's  │     │                                   │
+│               ││    │Regalia      │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││7   │Cathan's     │     │                                   │
+│               ││    │Traps        │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││11  │Berserker's  │     │                                   │
+│               ││    │Arsenal      │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││12  │Death's      │     │                                   │
+│               ││    │Disguise     │     │                                   │
+│               │├────┼─────────────┤     │                                   │
+│               ││13  │Angelic      │     │                                   │
+│               ││    │Raiment      │     │                                   │
+│               │└────┴─────────────┘     │                                   │
+└───────────────┴─────────────────────────┴───────────────────────────────────┘
+
+Rare Item Data
+
+[Loath_Song_Battle_Axe] This is by far the worst beast to decode. Rare items
+have a variable number of bits before we get to the item contents, and this
+number can vary anywhere from 55 to 88!
+
+[Eagle_Mark_Amulet] Update 3/14/2002: EUREKA!! I've finally figured out the
+variable fields!; See the table below.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│8              │This is the Id for the first word of the item's name (i.e.,  │
+│               │"Stone" or "Doom").                                          │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│8              │This is the ID for the second word of the item's name (i.e., │
+│               │"Finger" or "Shroud").                                       │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │First magic prefix (optional). Although this "prefix" isn't  │
+│11             │actually shown in the item name, it is used in determining   │
+│               │the magical properties, required level, coloring, and other  │
+│               │attributes of the rare item.                                 │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │First magic suffix (optional). Although this "suffix" isn't  │
+│11             │actually shown in the item name, it is used in determining   │
+│               │the magical properties, required level, coloring, and other  │
+│               │attributes of the rare item.                                 │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Second magic prefix (optional)                               │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Second magic suffix (optional)                               │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Third magic prefix (optional)                                │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Third magic suffix (optional)                                │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Unique Item Data
+
+Unique items have an additional 12 bit field, which in most cases is the unique
+item ID. The few exceptions are certain quest items (e.g., the Horadric Malus).
+
+┌──────────────┬─────────────────────────────────────────────────────────────────┐
+│     Size     │                            Contents                             │
+├──────────────┼─────────────────────┬───────────────────────────────────────────┤
+│              │Item identifier.     │                                           │
+│              │Since I've only      │                                           │
+│              │identified a few     │                                           │
+│              │unique items, I'll   │                                           │
+│              │give their ID's      │                                           │
+│              │here:                │                                           │
+│              │┌───────┬───────────┐│                                           │
+│              ││       │Ume's      ││                                           │
+│              ││13     │Lament Grim││                                           │
+│              ││       │Wand       ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││31     │Hellplague ││                                           │
+│              ││       │Long Sword ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││75     │Wormskull  ││                                           │
+│              ││       │Bone Helm  ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││       │Undead     ││                                           │
+│              ││       │Crown Crown││                                           │
+│              ││77     │(no, that  ││                                           │
+│              ││       │is not a   ││                                           │
+│              ││       │typo!)     ││                                           │
+│12            │├───────┼───────────┤│[Hellplague]                               │
+│              ││       │Goldskin   ││                                           │
+│              ││91     │Full Plate ││                                           │
+│              ││       │Mail       ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││       │Nagelring  ││                                           │
+│              ││       │Ring (not a││                                           │
+│              ││120    │typo       ││                                           │
+│              ││       │either; I  ││                                           │
+│              ││       │checked)   ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││123    │Amulet of  ││                                           │
+│              ││       │the Viper  ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││125    │Horadric   ││                                           │
+│              ││       │Staff      ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││126    │Hell Forge ││                                           │
+│              ││       │Hammer     ││                                           │
+│              │├───────┼───────────┤│                                           │
+│              ││4095   │(other;    ││                                           │
+│              ││(0xFFF)│probably a ││                                           │
+│              ││       │quest item)││                                           │
+│              │└───────┴───────────┘│                                           │
+└──────────────┴─────────────────────┴───────────────────────────────────────────┘
+
+Crafted Item Data
+
+Crafted items appear to be coded exactly like rare items, having a rare name
+(two parts) and six optional prefixes / suffixes.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│8              │This is the Id for the first word of the item's name (i.e.,  │
+│               │"Stone" or "Doom").                                          │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│8              │This is the Id for the second word of the item's name (i.e., │
+│               │"Finger" or "Shroud").                                       │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │First magic prefix (optional). Although this "prefix" isn't  │
+│11             │actually shown in the item name, it is used in determining   │
+│               │the magical properties, required level, coloring, and other  │
+│               │attributes of the crafted item.                              │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │First magic suffix (optional). Although this "suffix" isn't  │
+│11             │actually shown in the item name, it is used in determining   │
+│               │the magical properties, required level, coloring, and other  │
+│               │attributes of the crafted item.                              │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Second magic prefix (optional)                               │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Second magic suffix (optional)                               │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Third magic prefix (optional)                                │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │If this field is 1, the next 11-bit field is present. If 0,  │
+│               │the next field is absent.                                    │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│11             │Third magic suffix (optional)                                │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Rune Word
+
+If the item has a rune word (indicated by bit 42 being set), there is an
+additional field at this point.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │This appears to be an index to the rune word, although I     │
+│12             │can't say what the index is based on. The first rune word,   │
+│               │"Ancient's Pledge", has a value of 27. The next rune word,   │
+│               │"Black", has a value of 32. etc.                             │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│4              │Unknown; the value is 5 on all items I've looked at.         │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Personalization
+
+The following segment is present if and only if the item is personalized (i.e.,
+bit 40 is set). Only armor and weapons (except for quest items) can be
+personalized.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│7              │First character of the owner's name (just plain ASCII!)      │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│7              │Second character of the owner's name                         │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│7 × N-2        │Repeat until you get the whole name (15 characters maximum)  │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│7              │0  (this indicates the end of the name)                      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Unknown Field
+
+All items have this field between the personalization (if it exists) and the
+item-specific data:
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│1              │unknown; this usually is 0, but is 1 on a Tome of Identify.  │
+│               │(It's still 0 on a Tome of Townportal.)                      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Item Structure part 3: Item-Specific Data
+
+The presence of the following fields depends on the item type. Fields which are
+present will be stored in the order shown. Unfortunately there is no means of
+telling which fields are present from the item data itself; you need to look up
+the item type in a table to figure out whether it is a weapon, armor, or stack,
+and read the fields accordingly.
+
+Armor: Defense Rating
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Defense value +10. i.e., a defense rating of 23 would be     │
+│               │stored in this field as 33; thus the maximum defense value   │
+│10             │you can store is 1013 (although I haven't tried it). Note    │
+│               │that this is the base defense rating, before applying any    │
+│               │magical enhancements (i.e., the number shown in white).      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Armor and Weapons: Durability
+
+Even though stacked weapons don't show any durability rating in the game, they
+still have two 8-bit fields in the same spot. This includes bombs (exploding
+and gas potions). The values in such cases are very small, so I'm not sure what
+they mean.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Maximum Durability. Note that this is the base durability,   │
+│               │before applying any magical enhancements (i.e., the number   │
+│8              │shown in white).                                             │
+│               │Note: I've found an indestructable item, and it appears that │
+│               │in such a case the maximum durability field is zero!         │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │Current Durability. This may be greater than the maximum     │
+│8              │durability if the item is magically enhanced.                │
+│               │Note: I've found an indestructable item, and it appears that │
+│               │in such a case the current durability field is missing!      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Armor and (non-stacked) Weapons: Sockets
+
+The following field is present if and only if the item is socketed (i.e., bit
+27 is set).
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼───────────────────────────────────┬─────────────────────────┤
+│               │Number of sockets                  │                         │
+│               │Note that even though this field is│                         │
+│               │4 bits wide, each item type has a  │                         │
+│4              │built-in upper limit to the total  │[Socketed_Mask]          │
+│               │number of sockets. This limit is   │                         │
+│               │built into the game. The most I've │                         │
+│               │ever seen is 6 for, e.g., a gothic │                         │
+│               │axe.                               │                         │
+└───────────────┴───────────────────────────────────┴─────────────────────────┘
+
+Tomes:
+
+Tomes have an extra 5 bits inserted at this point. I have no idea what purpose
+they serve. It looks like the value is 0 on all of my tomes.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│5              │unknown                                                      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Stacked Weapons, Quivers, Keys, and Tomes: Quantity
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│9              │Quantity                                                     │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Item Structure part 3: Magical Enhancements
+
+Item Structure part 2^bis: Set Item Data Revisited
+
+Items which are part of a set have an additional 5 bits following the
+item-specific data.
+
+┌───────────────┬─────────────────────────────────────────────────────────────┐
+│     Size      │                          Contents                           │
+├───────────────┼─────────────────────────────────────────────────────────────┤
+│               │This appears to be an indicator of how many lists of magic   │
+│               │properties follows. The first list are the properties the    │
+│5              │item has if you do not have any other members of the set.    │
+│               │Following lists are applied once you equip other items in the│
+│               │set. The value is 1 if there are two (total) property lists, │
+│               │or 3 if there are three property lists.                      │
+└───────────────┴─────────────────────────────────────────────────────────────┘
+
+Following the item-specific data are a variable number of variable length bit
+fields describing any magical enhancements placed on the item. Each property
+begins with a 9-bit identifier. An identifier of 0x1FF (all 1's) indicates the
+end of the property list ... except in the event the item belongs to a set, in
+which case there will be another one or two groups of magical properties
+following, depending on whether the set item data (above) is 1 or 3,
+respectively. Also, if an item has been given a Rune Word, it appears that the
+Rune Word's properties begin with a 0x1FF identifier (presumably to set them
+apart from the item's normal properties... but I need to examine more items to
+be certain.)
+
+Because the number of bits (and fields) after the 9-bit identifier varies, I do
+not give a field width here. Instead, check my table of magic properties for
+field sizes. I'm sure it's not complete, but it does have most of the common
+properties.
+
+Following the last 9-bit value of 0x1FF, the rest of the final byte will be
+padded with 0's if necessary, and the item structure ends there. For example,
+if the item had 341 bits of data, the last (43^rd) byte will be 0x1F. If the
+item had 248 bits of data, the last (31^st) byte will be 0xFF.
+

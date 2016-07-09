@@ -1,0 +1,120 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+http://www.coreyh.org/diablo-2-files/documentation/d2s_110_format_table.htm
+-------------------------------------------------------------------------------
+
+
+D2S File Format - Version 1.10
+
+type   name              bits      desc                      cond1   condvar1   condval1 cond2  condvar2  condval2 comment
+ASC8   dwMajic           4         File ID                                                                          +0
+DWRD   dwVersion         32        File Version                                                                     +4
+DWRD   dwSize            32        File Size                                                                        +8
+DWRD   dwCRC             32        File CRC                                                                         +c
+DWRD   dwWeaponSet       32        Weapon Set                                                                       +10
+ASCI   Name              16        Character Name                                                                   +14
+BYTE   charType          8         Character Type                                                                   +24 // 0x40 = ladder 0x20 = expansion 0x10 =? 0x08 = HasDied 0x04 = Hardcore
+                                                                                                                   0x02 = ? 0x01 = new character format
+BYTE   charTitle         8         Character Title                                                                  +25
+WORD   unk1              16        Unknown                                                                          +26 // 00 00
+BYTE   charClass         8         Character Class                                                                  +28
+WORD   unk2              16        Unknown                                                                          +29 // 10 1E
+BYTE   charLevel         8         Level                                                                            +2b
+DWRD   unk3              32        Unknown                                                                          +2c
+DWRD   dwTime            32        Time Stamp                                                                       +30
+DWRD   unk4              32        Unknown                                                                         // FF FF FF FF +34
+DWRD   dwSkillKey[16]    32        Skill Keys                                                                      // No Array support in format !!! +38
+DWRD   dwLeftSkill1      32        Left Skill Weapon Set 1                                                          +78
+DWRD   dwRightSkill1     32        Right Skill Weapon Set 1                                                         +7c
+DWRD   dwLeftSkill2      32        Left Skill Weapon Set 2                                                          +80
+DWRD   dwRightSkill2     32        Right Skill Weapon Set 2                                                         +84
+BYTE   outfit[16]        8         Character Load graphics                                                         // No Array support in format !!! +88
+BYTE   colors[16]        8         Character Load Colors                                                           // No Array support in format !!! +98
+BYTE   Town1             8         Normal Town                                                                     // Only town for last played mode is set
+BYTE   Town2             8         Nightmare Town
+BYTE   Town3             8         Hell Town
+DWRD   dwMapSeed         32        Map Random Seed
+WORD   unk5              16        Unknown                                                                         // 00 00
+BYTE   bMercDead         8         Merc Dead Flag
+BYTE   unk6              8         Unknown
+DWRD   dwMercControl     32        Merc Control seed
+WORD   wMercName         16        Merc Name Index
+WORD   wMercType         16        Merc Type
+DWRD   dwMercExp         32        Merc Experience
+BYTE   unk7[0x90]        8         Unknown                                                                         // No Array support in format !!!
+
+FILE   d2Woo.txt         0         Questinfo Header                                                                // Act/Quest info header
+
+FILE   d2Ws.txt          0         Waypoints                                                                       // waypoints
+
+FILE   d2W4.txt          0         Greetings                                                                       // NPC greeting control
+
+PROP   Stats             0         Player Stats                                                                    // stats read like properties
+
+FILE   d2if.txt          0         Player Skills                                                                   // skills
+
+FILE   itemlist.txt      0         Player Item List
+
+WORD   iCorpses          16        Number of Corpses
+FILE   corpse.txt        iCorpses  Corpse List                                                                     // need to add support for variable 'bits'
+
+ASC8   d2jf              2         Merc List majic                                                                 // jf
+FILE   itemlist.txt      0         Merc Item List                  0 bHasMerc          1
+
+ASC8   d2kf              2         Iron Golem majic                                                                // kf
+BYTE   bHasGolem         8         Iron Golem Flag
+FILE   fields.txt        0         Golem Item                      0 bHasGolem         1
+
+
+
+       //========== corpse.txt                                                                                     // dead body info
+
+BYTE   bodyInfo[12]      8         Corpse Info
+FILE   itemlist.txt      0         Corpse Item List
+
+
+       //========== itemlist.txt                                                                                   // Item record list
+
+ASC8   dwMajic           2         Item List majic                                                                 // JM
+WORD   nItems            16        Number of Items
+FILE   fields.txt        nItems    Item Records
+
+
+
+
+       //========== d2Woo.txt                                                                                      // Act/Quest info header
+
+ASC8   dwMajic           4         Record ID                                                                       // Woo!
+DWRD   dwActs            32        Numer of acts
+WORD   wSize             16        Size in bytes
+
+FILE   d2Act.txt         3*wActs   Quest/Act states
+
+       //========== d2Acts.txt                                                                                     // Act status flags
+
+WORD   wActStart         16        Act Start info
+WORD   wQuestStatus[6]   16        Quest Status
+WORD   wActEnd           16        Act End flags
+
+       //========== d2Ws.txt                                                                                       // waypoints
+
+ASC8   wMajic            2         Record ID                                                                       // ws
+BYTE   unk[6]            8         Unknown
+DWRD   wp[3*6]           32        Waypoint Data
+
+       //========== d2W4.txt                                                                                       // NPC state control
+
+ASC8   wMajic            2         Record ID (0x7701)
+WORD   wSize             16        size of struct
+DWRD   normal[2]         32        Normal
+DWRD   nightmare[2]      32        Nightmare
+DWRD   hell[2]           32        Hell
+DWRD   normal1[2]        32        Normal1
+DWRD   nightmare1[2]     32        Nightmare1
+DWRD   hell1[2]          32        Hell1
+
+
+       //========== d2if.txt                                                                                       // skills
+
+ASC8   wMajic            2         Record ID                                                                       // if
+BYTE   skill_lvls[30]    8         Skill Levels
