@@ -225,7 +225,7 @@ class D2SaveCharacter(object):
         '''
         the last played act
         '''
-        return D2Act(self._buffer[168 + self.current_difficulty] & 0x3)
+        return D2Act(self._buffer[168 + self.current_difficulty.value] & 0x3)
 
     @property
     def map_seed(self):
