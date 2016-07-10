@@ -62,6 +62,7 @@ class D2SaveFile(object):
 
         self.character = D2SaveCharacter(self, self._buffer)
         self.mercenary = D2SaveMercenary(self, self._buffer)
+        self.questdata = D2SaveQuestData(self, self._buffer) if self.size > 335 else None
 
     @property
     def _magic(self):
@@ -281,3 +282,43 @@ class D2SaveMercenary(object):
         the experience points of the active mercenary
         '''
         return struct.unpack('<L', self._buffer[187:191])[0]
+
+
+class D2SaveQuestData(object):
+    '''
+    save data referring to quest completion
+    '''
+
+    class QuestData(object):
+        '''
+        the quest completion data of a specific difficulty level
+        '''
+
+        def __init__(self, d2s, buffer, offset):
+            '''
+            constructor - propagate parent structure and buffer
+            '''
+            self._d2s = d2s
+            self._buffer = buffer
+            self._offset = offset
+
+    def __init__(self, d2s, buffer):
+        '''
+        constructor - propagate parent structure and buffer
+        '''
+        self._d2s = d2s
+        self._buffer = buffer
+
+        if self._header != 'Woo!':
+            raise ValueError('invalid save file')
+
+        self.normal = self.QuestData(d2s, buffer, 0)
+        self.nightmare = self.QuestData(d2s, buffer, 0x60)
+        self.hell = self.QuestData(d2s, buffer, 0xc0)
+
+    @property
+    def _header(self):
+        '''
+        the header of the quest data section - should be 'Woo!'
+        '''
+        return self._buffer[335:339].decode('ascii')
