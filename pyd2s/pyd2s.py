@@ -8,36 +8,47 @@ import mmap
 import struct
 
 
-class D2Save(object):
-    '''
-    This class represents an instance of a D2 save file.
-    '''
+class D2SaveFile(object):
 
-    def __init__(self, filename):
-        self._filename = filename
-        self._fd = os.open(filename, os.O_RDWR)
+    def __init__(self, path):
+        self.path = path
+        self._fd = os.open(path, os.O_RDWR)
         self._buffer = mmap.mmap(self._fd, 0)
 
-        if self.file_magic != 0xaa55aa55:
-            raise ValueError('invalid save file - mismatched magic number')
-        if self.file_version != 0x60:
-            raise NotImplementedError('File Version %#x not supported' % version)
+        if self._magic != 0xaa55aa55:
+            raise ValueError('invalid save file')
+        if self.version != 0x60:
+            raise NotImplementedError('File Version %#x not supported' % self.version)
+
+        self.character = D2SaveCharacter(self, self._buffer)
+        self.mercenary = D2SaveMercenary(self, self._buffer)
 
     @property
-    def file_magic(self):
+    def _magic(self):
         return struct.unpack('<L', self._buffer[0:4])[0]
 
     @property
-    def file_version(self):
+    def version(self):
         return struct.unpack('<L', self._buffer[4:8])[0]
 
     @property
-    def file_size(self):
+    def size(self):
         return struct.unpack('<L', self._buffer[8:12])[0]
 
     @property
-    def file_checksum(self):
+    def checksum(self):
         return struct.unpack('<L', self._buffer[12:16])[0]
+
+    @property
+    def timestamp(self):
+        return struct.unpack('<L', self._buffer[48:52])
+
+
+class D2SaveCharacter(object):
+
+    def __init__(self, d2s, buffer):
+        self._d2s = d2s
+        self._buffer = buffer
 
     @property
     def active_arms(self):
@@ -45,18 +56,22 @@ class D2Save(object):
 
     @property
     def name(self):
-        return self._buffer[20:36].decode('utf-8').rstrip('\0')
+        return self._buffer[20:36].decode('ascii').rstrip('\0')
 
     @property
-    def expansion_character(self):
+    def is_ladder(self):
+        return (self._buffer[36] & (1 << 6)) != 0
+
+    @property
+    def is_expansion(self):
         return (self._buffer[36] & (1 << 5)) != 0
 
     @property
-    def died(self):
+    def has_died(self):
         return (self._buffer[36] & (1 << 3)) != 0
 
     @property
-    def hardcore(self):
+    def is_hardcore(self):
         return (self._buffer[36] & (1 << 2)) != 0
 
     @property
@@ -68,12 +83,8 @@ class D2Save(object):
         return self._buffer[40]
 
     @property
-    def character_level(self):
+    def level(self):
         return self._buffer[43]
-
-    @property
-    def timestamp(self):
-        return struct.unpack('<L', self._buffer[48:52])
 
     @property
     def skill_hotkeys(self):
@@ -96,33 +107,40 @@ class D2Save(object):
         return struct.unpack('<L', self._buffer[132:136])[0]
 
     @property
-    def played_difficulty(self):
+    def current_difficulty(self):
         return 0 if self._buffer[168] else 1 if self._buffer[169] else 2
 
     @property
-    def played_act(self):
-        return self._buffer[168 + self.played_difficulty] & 0x3
+    def current_act(self):
+        return self._buffer[168 + self.current_difficulty] & 0x3
 
     @property
     def map_id(self):
         return struct.unpack('<L', self._buffer[171:175])[0]
 
+
+class D2SaveMercenary(object):
+
+    def __init__(self, d2s, buffer):
+        self._d2s = d2s
+        self._buffer = buffer
+
     @property
-    def mercenary_dead(self):
+    def is_dead(self):
         return struct.unpack('<H', self._buffer[177:179])[0] != 0
 
     @property
-    def mercenary_id(self):
+    def control_seed(self):
         return struct.unpack('<L', self._buffer[179:183])[0]
 
     @property
-    def mercenary_name_id(self):
+    def name_id(self):
         return struct.unpack('<H', self._buffer[183:185])[0]
 
     @property
-    def mercenary_attributes(self):
+    def type(self):
         return struct.unpack('<H', self._buffer[185:187])[0]
 
     @property
-    def mercenary_experience(self):
+    def experience(self):
         return struct.unpack('<L', self._buffer[187:191])[0]
