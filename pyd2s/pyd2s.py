@@ -63,6 +63,7 @@ class D2SaveFile(object):
         self.character = D2SaveCharacter(self, self._buffer)
         self.mercenary = D2SaveMercenary(self, self._buffer)
         self.questdata = D2SaveQuestData(self, self._buffer) if self.size > 335 else None
+        self.waypoints = D2SaveWaypoints(self, self._buffer) if self.size > 335 else None
 
     @property
     def _magic(self):
@@ -322,3 +323,43 @@ class D2SaveQuestData(object):
         the header of the quest data section - should be 'Woo!'
         '''
         return self._buffer[335:339].decode('ascii')
+
+
+class D2SaveWaypoints(object):
+    '''
+    save data referring to waypoints
+    '''
+
+    class WaypointData(object):
+        '''
+        the waypoint data of a specific difficulty level
+        '''
+
+        def __init__(self, d2s, buffer, offset):
+            '''
+            constructor - propagate parent structure and buffer
+            '''
+            self._d2s = d2s
+            self._buffe = buffer
+            self._offset = offset
+
+    def __init__(self, d2s, buffer):
+        '''
+        constructor - propagate parent structure and buffer
+        '''
+        self._d2s = d2s
+        self._buffer = buffer
+
+        if self._header != 'WS':
+            raise ValueError('invalid save file')
+
+        self.normal = self.WaypointData(d2s, buffer, 0)
+        self.nightmare = self.WaypointData(d2s, buffer, 0x18)
+        self.hell = self.WaypointData(d2s, buffer, 0x30)
+
+    @property
+    def _header(self):
+        '''
+        the header of the waypoint data section - should be 'WS'
+        '''
+        return self._buffer[633:635].decode('ascii')
