@@ -3,11 +3,10 @@
 This module provides classes to manage D2 save games.
 '''
 
-import os
-import mmap
 import struct
 
-from pyd2s.types import CharacterClass, Difficulty, Act
+from pyd2s.savebuffer import SaveBuffer
+from pyd2s.basictypes import CharacterClass, Difficulty, Act
 
 
 class D2SaveFile(object):
@@ -19,22 +18,21 @@ class D2SaveFile(object):
         '''
         constructor - mmap file data and do sanity checks
         '''
-        self.path = path
-        self._fd = os.open(path, os.O_RDWR)
-        self._buffer = mmap.mmap(self._fd, 0)
+        self._path = path
+        self._buffer = SaveBuffer(path)
 
-        if self._magic != 0xaa55aa55:
-            raise ValueError('invalid save file')
+        if self.magic != 0xaa55aa55:
+            raise ValueError('invalid save: mismatched magic number')
         if self.version != 0x60:
-            raise NotImplementedError('File Version %#x not supported' % self.version)
+            raise NotImplementedError('invalid save: unsupported version %#x' % self.version)
 
-        self.character = D2SaveCharacter(self, self._buffer)
-        self.mercenary = D2SaveMercenary(self, self._buffer)
-        self.questdata = D2SaveQuestData(self, self._buffer) if self.size > 335 else None
-        self.waypoints = D2SaveWaypoints(self, self._buffer) if self.size > 335 else None
+        self.character = Character(self._buffer)
+        self.mercenary = Mercenary(self._buffer)
+        self.questdata = QuestData(self._buffer)
+        self.waypoints = WaypointData(self._buffer)
 
     @property
-    def _magic(self):
+    def magic(self):
         '''
         the magic number of d2s files - should be 0xaa55aa55
         '''
@@ -47,38 +45,16 @@ class D2SaveFile(object):
         '''
         return struct.unpack('<L', self._buffer[4:8])[0]
 
-    @property
-    def size(self):
-        '''
-        the size of the save file in bytes
-        '''
-        return struct.unpack('<L', self._buffer[8:12])[0]
 
-    @property
-    def _checksum(self):
-        '''
-        the checksum of the save data - automatically maintained
-        '''
-        return struct.unpack('<L', self._buffer[12:16])[0]
-
-    @property
-    def timestamp(self):
-        '''
-        the last save timestamp
-        '''
-        return struct.unpack('<L', self._buffer[48:52])
-
-
-class D2SaveCharacter(object):
+class Character(object):
     '''
     save data referring to the character itself
     '''
 
-    def __init__(self, d2s, buffer):
+    def __init__(self, buffer):
         '''
-        constructor - propagate parent structure and buffer
+        constructor - propagate buffer
         '''
-        self._d2s = d2s
         self._buffer = buffer
 
     @property
@@ -205,16 +181,15 @@ class D2SaveCharacter(object):
         return struct.unpack('<L', self._buffer[171:175])[0]
 
 
-class D2SaveMercenary(object):
+class Mercenary(object):
     '''
     save data referring to the characters mercenary
     '''
 
-    def __init__(self, d2s, buffer):
+    def __init__(self, buffer):
         '''
-        constructor - propagate parent structure and buffer
+        constructor - propagate buffer
         '''
-        self._d2s = d2s
         self._buffer = buffer
 
     @property
@@ -253,7 +228,7 @@ class D2SaveMercenary(object):
         return struct.unpack('<L', self._buffer[187:191])[0]
 
 
-class D2SaveQuestData(object):
+class QuestData(object):
     '''
     save data referring to quest completion
     '''
@@ -263,27 +238,25 @@ class D2SaveQuestData(object):
         the quest completion data of a specific difficulty level
         '''
 
-        def __init__(self, d2s, buffer, offset):
+        def __init__(self, buffer, offset):
             '''
-            constructor - propagate parent structure and buffer
+            constructor - propagate buffer and offset
             '''
-            self._d2s = d2s
             self._buffer = buffer
             self._offset = offset
 
-    def __init__(self, d2s, buffer):
+    def __init__(self, buffer):
         '''
-        constructor - propagate parent structure and buffer
+        constructor - propagate buffer
         '''
-        self._d2s = d2s
         self._buffer = buffer
 
         if self._header != 'Woo!':
             raise ValueError('invalid save file')
 
-        self.normal = self.QuestData(d2s, buffer, 0)
-        self.nightmare = self.QuestData(d2s, buffer, 0x60)
-        self.hell = self.QuestData(d2s, buffer, 0xc0)
+        self.normal = self.QuestData(buffer, 0)
+        self.nightmare = self.QuestData(buffer, 0x60)
+        self.hell = self.QuestData(buffer, 0xc0)
 
     @property
     def _header(self):
@@ -293,7 +266,7 @@ class D2SaveQuestData(object):
         return self._buffer[335:339].decode('ascii')
 
 
-class D2SaveWaypoints(object):
+class WaypointData(object):
     '''
     save data referring to waypoints
     '''
@@ -303,27 +276,25 @@ class D2SaveWaypoints(object):
         the waypoint data of a specific difficulty level
         '''
 
-        def __init__(self, d2s, buffer, offset):
+        def __init__(self, buffer, offset):
             '''
-            constructor - propagate parent structure and buffer
+            constructor - propagate buffer and offset
             '''
-            self._d2s = d2s
             self._buffer = buffer
             self._offset = offset
 
-    def __init__(self, d2s, buffer):
+    def __init__(self, buffer):
         '''
-        constructor - propagate parent structure and buffer
+        constructor - propagate buffer
         '''
-        self._d2s = d2s
         self._buffer = buffer
 
         if self._header != 'WS':
             raise ValueError('invalid save file')
 
-        self.normal = self.WaypointData(d2s, buffer, 0)
-        self.nightmare = self.WaypointData(d2s, buffer, 0x18)
-        self.hell = self.WaypointData(d2s, buffer, 0x30)
+        self.normal = self.WaypointData(buffer, 0)
+        self.nightmare = self.WaypointData(buffer, 0x18)
+        self.hell = self.WaypointData(buffer, 0x30)
 
     @property
     def _header(self):
@@ -331,6 +302,3 @@ class D2SaveWaypoints(object):
         the header of the waypoint data section - should be 'WS'
         '''
         return self._buffer[633:635].decode('ascii')
-
-
-
