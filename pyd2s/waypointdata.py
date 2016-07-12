@@ -36,17 +36,17 @@ class WaypointData(object):
             low, high = struct.unpack('<LB', self._buffer[643 + self._offset:648 + self._offset])
             return (high << 32) | low
 
-        def is_active(self, waypoint):
+        def __getitem__(self, waypoint):
             '''
             True if the given waypoint is active, False otherwise
             '''
             return (self._value & waypoint.value) != 0
 
-        def get_all(self):
+        def __iter__(self):
             '''
             produce a dict of all waypoints and their current status
             '''
-            return {waypoint: self.is_active(waypoint) for waypoint in Waypoint}
+            return {waypoint: self[waypoint] for waypoint in Waypoint}.__iter__()
 
 
     def __init__(self, buffer):
@@ -62,6 +62,7 @@ class WaypointData(object):
         self.nightmare = self.WaypointData(buffer, 0x18)
         self.hell = self.WaypointData(buffer, 0x30)
 
+    @property
     def _header(self):
         '''
         produce the header of the section - should be 'WS'
