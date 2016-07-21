@@ -1,0 +1,19 @@
+
+stat id	| stat name     | value width in bits
+---------------------------------------------
+ 0x00     strength        10
+ 0x01     energy          10
+ 0x02     dexterity       10
+ 0x03     vitality        10
+ 0x04     statpts         10
+ 0x05     newskills        8
+ 0x06     hitpoints       21
+ 0x07     maxhp           21
+ 0x08     mana            21
+ 0x09     maxmana         21
+ 0x0A     stamina         21
+ 0x0B     maxstamina      21
+ 0x0C     level            7
+ 0x0D     experience      32
+ 0x0E     gold            25
+ 0x0F     goldbank        25
