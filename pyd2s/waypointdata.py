@@ -1,6 +1,6 @@
 
 '''
-this module pnovides classes to manage waypoint data of a d2s save
+this module provides classes to manage waypoint data of a d2s save
 '''
 
 import struct

@@ -51,5 +51,3 @@ class Mercenary(object):
         the experience points of the active mercenary
         '''
         return struct.unpack('<L', self._buffer[187:191])[0]
-
-

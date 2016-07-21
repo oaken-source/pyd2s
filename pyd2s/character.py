@@ -6,6 +6,7 @@ this module provides a class that manages character data
 import struct
 
 from pyd2s.basictypes import CharacterClass, Difficulty, Act
+from pyd2s.statdata import StatData
 
 
 class Character(object):
@@ -18,6 +19,8 @@ class Character(object):
         constructor - propagate buffer
         '''
         self._buffer = buffer
+
+        self._statdata = StatData(self._buffer)
 
     @property
     def active_arms(self):
@@ -62,7 +65,7 @@ class Character(object):
         return (self._buffer[36] & (1 << 2)) != 0
 
     @property
-    def progression(self):
+    def _progression(self):
         '''
         an integer representing the characters progress in the game and its title
         '''
@@ -142,4 +145,107 @@ class Character(object):
         '''
         return struct.unpack('<L', self._buffer[171:175])[0]
 
+    @property
+    def strength(self):
+        '''
+        the characters strength
+        '''
+        return self._statdata.strength
 
+    @property
+    def energy(self):
+        '''
+        the characters energy
+        '''
+        return self._statdata.energy
+
+    @property
+    def dexterity(self):
+        '''
+        the characters dexterity
+        '''
+        return self._statdata.dexterity
+
+    @property
+    def vitality(self):
+        '''
+        the characters vitality
+        '''
+        return self._statdata.vitality
+
+    @property
+    def statpts(self):
+        '''
+        the characters unassigned stat points
+        '''
+        return self._statdata.statpts
+
+    @property
+    def newskills(self):
+        '''
+        the characters unassigned skill points
+        '''
+        return self._statdata.newskills
+
+    @property
+    def hitpoints(self):
+        '''
+        the characters current hit points
+        '''
+        return self._statdata.hitpoints
+
+    @property
+    def maxhp(self):
+        '''
+        the characters maximum hitpoints
+        '''
+        return self._statdata.maxhp
+
+    @property
+    def mana(self):
+        '''
+        the characters current mana points
+        '''
+        return self._statdata.mana
+
+    @property
+    def maxmana(self):
+        '''
+        the characters maximum mana points
+        '''
+        return self._statdata.maxmana
+
+    @property
+    def stamina(self):
+        '''
+        the characters current stamina points
+        '''
+        return self._statdata.stamina
+
+    @property
+    def maxstamina(self):
+        '''
+        the characters maximum stamina points
+        '''
+        return self._statdata.maxstamina
+
+    @property
+    def experience(self):
+        '''
+        the characters current experience points
+        '''
+        return self._statdata.experience
+
+    @property
+    def gold(self):
+        '''
+        the characters current gold
+        '''
+        return self._statdata.gold
+
+    @property
+    def goldbank(self):
+        '''
+        the characters current gold in the stash
+        '''
+        return self._statdata.goldbank
