@@ -3,10 +3,11 @@
 this module provides a change-aware buffer for d2s files
 '''
 
+import time
 import struct
 
 
-class SaveBuffer(object):
+class SaveBuffer(bytearray):
     '''
     manage the buffer of a save file and maintain its checksum
     '''
@@ -17,40 +18,63 @@ class SaveBuffer(object):
         '''
         self._path = path
         with open(path, 'rb') as save:
-            self._buffer = save.read()
-
-        self._dirty = False
+            super(SaveBuffer, self).__init__(save.read())
 
     @property
-    def size(self):
+    def _size(self):
         '''
-        the size of the save file in bytes
+        get the size of the save file in bytes
         '''
-        return struct.unpack('<L', self[8:12])[0]
+        return struct.unpack_from('<L', self, 8)[0]
+
+    @_size.setter
+    def _size(self, value):
+        '''
+        set the size of the save file in bytes
+        '''
+        struct.pack_into('<L', self, 8, value)
 
     @property
-    def checksum(self):
+    def _checksum(self):
         '''
-        the checksum of the save data - automatically maintained
+        get the checksum of the save data
         '''
-        return struct.unpack('<L', self[12:16])[0]
+        return struct.unpack_from('<L', self, 12)[0]
+
+    @_checksum.setter
+    def _checksum(self, value):
+        '''
+        set the checksum of the save data
+        '''
+        struct.pack_into('<L', self, 12, value)
 
     @property
-    def timestamp(self):
+    def _timestamp(self):
         '''
-        the last save timestamp
+        get the last save timestamp
         '''
-        return struct.unpack('<L', self[48:52])
+        return struct.unpack_from('<L', self, 48)[0]
 
-    def __getitem__(self, key):
+    @_timestamp.setter
+    def _timestamp(self, value):
         '''
-        produce an item or a slice of the underlying buffer
+        set the last save timestamp
         '''
-        return self._buffer[key]
+        struct.pack_into('<L', self, 48, value)
 
-    def __setitem__(self, key, value):
+    def flush(self):
         '''
-        propagate changes to the underlying buffer and set the dirty flag
+        write the changed data back to disk
         '''
-        self._dirty = True
-        self._buffer[key] = value
+        self._size = len(self)
+        self._timestamp = int(time.time())
+        self._checksum = 0
+
+        checksum = 0
+        for byte in self:
+            checksum = (((checksum << 1) | (checksum & 0x80000000 > 0)) + byte) & 0xffffffff
+
+        self._checksum = checksum
+
+        with open(self._path, 'wb') as save:
+            save.write(self)

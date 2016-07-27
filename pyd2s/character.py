@@ -22,12 +22,24 @@ class Character(object):
 
         self._statdata = StatData(self._buffer)
 
+        print(self.active_arms)
+        self.active_arms = not self.active_arms
+        self._buffer.flush()
+        print(self.active_arms)
+
     @property
     def active_arms(self):
         '''
-        the number of the currently active weapon set of the character
+        get the currently active weapon set of the character
         '''
-        return struct.unpack('<L', self._buffer[16:20])[0]
+        return struct.unpack_from('<L', self._buffer, 16)[0]
+
+    @active_arms.setter
+    def active_arms(self, value):
+        '''
+        set the currently active weapon set of the character
+        '''
+        struct.pack_into('<L', self._buffer, 16, value)
 
     @property
     def name(self):

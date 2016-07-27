@@ -111,8 +111,6 @@ class StatData(object):
             else:
                 break
 
-        print(self.__dict__)
-
     @property
     def _header(self):
         '''

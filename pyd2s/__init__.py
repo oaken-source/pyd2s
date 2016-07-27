@@ -8,6 +8,7 @@ import struct
 from pyd2s.savebuffer import SaveBuffer
 from pyd2s.character import Character
 from pyd2s.mercenary import Mercenary
+from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
 
 
@@ -29,19 +30,20 @@ class D2SaveFile(object):
             raise NotImplementedError('invalid save: unsupported version %#x' % self.version)
 
         self.character = Character(self._buffer)
-        self.mercenary = Mercenary(self._buffer)
-        self.waypointdata = WaypointData(self._buffer)
+        #self.mercenary = Mercenary(self._buffer)
+        #self.questdata = QuestData(self._buffer)
+        #self.waypointdata = WaypointData(self._buffer)
 
     @property
     def magic(self):
         '''
         the magic number of d2s files - should be 0xaa55aa55
         '''
-        return struct.unpack('<L', self._buffer[0:4])[0]
+        return struct.unpack_from('<L', self._buffer)[0]
 
     @property
     def version(self):
         '''
         the version of the file - supported values are 0x60 for >=1.10
         '''
-        return struct.unpack('<L', self._buffer[4:8])[0]
+        return struct.unpack_from('<L', self._buffer, 4)[0]
