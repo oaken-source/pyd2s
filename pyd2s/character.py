@@ -4,10 +4,9 @@ this module provides a class that manages character data
 '''
 
 import re
-import struct
 from os.path import dirname, join, isfile
 
-from pyd2s.basictypes import CharacterClass, Difficulty, Act
+from pyd2s.basictypes import CharacterClass
 from pyd2s.statdata import StatData
 
 
@@ -22,22 +21,7 @@ class Character(object):
         '''
         self._buffer = buffer
 
-        self._statdata = StatData(self._buffer)
-
-    @property
-    def active_arms(self):
-        '''
-        get the currently active weapon set of the character
-        '''
-        return struct.unpack_from('<L', self._buffer, 16)[0]
-
-    @active_arms.setter
-    def active_arms(self, value):
-        '''
-        set the currently active weapon set of the character
-        '''
-        struct.pack_into('<L', self._buffer, 16, value)
-        raise NotImplementedError('todo: actually switch out weapon sets')
+        #self._statdata = StatData(self._buffer)
 
     @property
     def name(self):
@@ -62,7 +46,6 @@ class Character(object):
             raise ValueError('a character with this name already exists')
 
         self._buffer.path = newpath
-
         self._buffer[20:36] = value.ljust(16, '\0').encode('ascii')
 
     @property
@@ -72,12 +55,28 @@ class Character(object):
         '''
         return (self._buffer[36] & (1 << 6)) != 0
 
+    @is_ladder.setter
+    def is_ladder(self, value):
+        '''
+        set wether the character is in the ladder
+        '''
+        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 6)
+
     @property
     def is_expansion(self):
         '''
         True if an extension (LoD) character, False otherwise
         '''
         return (self._buffer[36] & (1 << 5)) != 0
+
+    @is_expansion.setter
+    def is_expansion(self, value):
+        '''
+        set wether the character is in the expansion
+        '''
+        if not value and self.character_class in (CharacterClass.Assassin, CharacterClass.Druid):
+            raise ValueError('assassins and druids need expansion flag set')
+        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 5)
 
     @property
     def has_died(self):
@@ -86,6 +85,13 @@ class Character(object):
         '''
         return (self._buffer[36] & (1 << 3)) != 0
 
+    @has_died.setter
+    def has_died(self, value):
+        '''
+        set wether the character has died in the past
+        '''
+        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 3)
+
     @property
     def is_hardcore(self):
         '''
@@ -93,188 +99,149 @@ class Character(object):
         '''
         return (self._buffer[36] & (1 << 2)) != 0
 
-    @property
-    def _progression(self):
+    @is_hardcore.setter
+    def is_hardcore(self, value):
         '''
-        an integer representing the characters progress in the game and its title
+        set wether the character is a hardcore character
         '''
-        return self._buffer[37]
+        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 2)
 
     @property
     def character_class(self):
         '''
-        the class of the character
+        get the class of the character
         '''
         return CharacterClass(self._buffer[40])
+
+    @character_class.setter
+    def character_class(self, value):
+        '''
+        set the class of the character
+        '''
+        if not isinstance(value, CharacterClass):
+            raise ValueError('character class is invalid')
+        if value in (CharacterClass.Assassin, CharacterClass.Druid):
+            self.is_expansion = True
+        self._buffer[40] = value.value
 
     @property
     def level(self):
         '''
-        the current level of the character
+        get the current level of the character
         '''
         return self._buffer[43]
 
-    @property
-    def skill_hotkeys(self):
+    @level.setter
+    def level(self, value):
         '''
-        the list of assigned skills to the 16 hot keys
+        set the current level of the character
         '''
-        return struct.unpack('<16L', self._buffer[56:120])
+        if not 0 < value < 100:
+            raise ValueError('character level is invalid')
+        self._buffer[43] = value
+        raise NotImplementedError('todo: update level and experience in stats section')
 
-    @property
-    def skill_leftclick(self):
-        '''
-        the skill assigned to left click of weapon set 1
-        '''
-        return struct.unpack('<L', self._buffer[120:124])[0]
+    # @property
+    # def strength(self):
+    #     '''
+    #     the characters strength
+    #     '''
+    #     return self._statdata.strength
 
-    @property
-    def skill_rightclick(self):
-        '''
-        the skill assigned to right click of weapon set 1
-        '''
-        return struct.unpack('<L', self._buffer[124:128])[0]
+    # @property
+    # def energy(self):
+    #     '''
+    #     the characters energy
+    #     '''
+    #     return self._statdata.energy
 
-    @property
-    def skill_alt_leftclick(self):
-        '''
-        the skill assigned to left click of weapon set 2
-        '''
-        return struct.unpack('<L', self._buffer[128:132])[0]
+    # @property
+    # def dexterity(self):
+    #     '''
+    #     the characters dexterity
+    #     '''
+    #     return self._statdata.dexterity
 
-    @property
-    def skill_alt_rightclick(self):
-        '''
-        the skill assigned to right click of weapon set 2
-        '''
-        return struct.unpack('<L', self._buffer[132:136])[0]
+    # @property
+    # def vitality(self):
+    #     '''
+    #     the characters vitality
+    #     '''
+    #     return self._statdata.vitality
 
-    @property
-    def current_difficulty(self):
-        '''
-        the last played difficulty
-        '''
-        if self._buffer[168]:
-            return Difficulty.Normal
-        if self._buffer[169]:
-            return Difficulty.Nightmare
-        return Difficulty.Hell
+    # @property
+    # def statpts(self):
+    #     '''
+    #     the characters unassigned stat points
+    #     '''
+    #     return self._statdata.statpts
 
-    @property
-    def current_act(self):
-        '''
-        the last played act
-        '''
-        return Act(self._buffer[168 + self.current_difficulty.value] & 0x3)
+    # @property
+    # def newskills(self):
+    #     '''
+    #     the characters unassigned skill points
+    #     '''
+    #     return self._statdata.newskills
 
-    @property
-    def map_seed(self):
-        '''
-        the map generation seed
-        '''
-        return struct.unpack('<L', self._buffer[171:175])[0]
+    # @property
+    # def hitpoints(self):
+    #     '''
+    #     the characters current hit points
+    #     '''
+    #     return self._statdata.hitpoints
 
-    @property
-    def strength(self):
-        '''
-        the characters strength
-        '''
-        return self._statdata.strength
+    # @property
+    # def maxhp(self):
+    #     '''
+    #     the characters maximum hitpoints
+    #     '''
+    #     return self._statdata.maxhp
 
-    @property
-    def energy(self):
-        '''
-        the characters energy
-        '''
-        return self._statdata.energy
+    # @property
+    # def mana(self):
+    #     '''
+    #     the characters current mana points
+    #     '''
+    #     return self._statdata.mana
 
-    @property
-    def dexterity(self):
-        '''
-        the characters dexterity
-        '''
-        return self._statdata.dexterity
+    # @property
+    # def maxmana(self):
+    #     '''
+    #     the characters maximum mana points
+    #     '''
+    #     return self._statdata.maxmana
 
-    @property
-    def vitality(self):
-        '''
-        the characters vitality
-        '''
-        return self._statdata.vitality
+    # @property
+    # def stamina(self):
+    #     '''
+    #     the characters current stamina points
+    #     '''
+    #     return self._statdata.stamina
 
-    @property
-    def statpts(self):
-        '''
-        the characters unassigned stat points
-        '''
-        return self._statdata.statpts
+    # @property
+    # def maxstamina(self):
+    #     '''
+    #     the characters maximum stamina points
+    #     '''
+    #     return self._statdata.maxstamina
 
-    @property
-    def newskills(self):
-        '''
-        the characters unassigned skill points
-        '''
-        return self._statdata.newskills
+    # @property
+    # def experience(self):
+    #     '''
+    #     the characters current experience points
+    #     '''
+    #     return self._statdata.experience
 
-    @property
-    def hitpoints(self):
-        '''
-        the characters current hit points
-        '''
-        return self._statdata.hitpoints
+    # @property
+    # def gold(self):
+    #     '''
+    #     the characters current gold
+    #     '''
+    #     return self._statdata.gold
 
-    @property
-    def maxhp(self):
-        '''
-        the characters maximum hitpoints
-        '''
-        return self._statdata.maxhp
-
-    @property
-    def mana(self):
-        '''
-        the characters current mana points
-        '''
-        return self._statdata.mana
-
-    @property
-    def maxmana(self):
-        '''
-        the characters maximum mana points
-        '''
-        return self._statdata.maxmana
-
-    @property
-    def stamina(self):
-        '''
-        the characters current stamina points
-        '''
-        return self._statdata.stamina
-
-    @property
-    def maxstamina(self):
-        '''
-        the characters maximum stamina points
-        '''
-        return self._statdata.maxstamina
-
-    @property
-    def experience(self):
-        '''
-        the characters current experience points
-        '''
-        return self._statdata.experience
-
-    @property
-    def gold(self):
-        '''
-        the characters current gold
-        '''
-        return self._statdata.gold
-
-    @property
-    def goldbank(self):
-        '''
-        the characters current gold in the stash
-        '''
-        return self._statdata.goldbank
+    # @property
+    # def goldbank(self):
+    #     '''
+    #     the characters current gold in the stash
+    #     '''
+    #     return self._statdata.goldbank

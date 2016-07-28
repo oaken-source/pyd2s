@@ -27,7 +27,9 @@ class D2SaveFile(object):
         if self.magic != 0xaa55aa55:
             raise ValueError('invalid save: mismatched magic number')
         if self.version != 0x60:
-            raise NotImplementedError('invalid save: unsupported version %#x' % self.version)
+            raise ValueError('invalid save: pre 1.10 saves are not supported')
+        if len(self._buffer) <= 335:
+            raise ValueError('invalid save: incomplete data (log in once)')
 
         self.character = Character(self._buffer)
         #self.mercenary = Mercenary(self._buffer)

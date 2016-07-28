@@ -89,11 +89,11 @@ class SaveBuffer(bytearray):
         if self._newpath is not None:
             oldprefix = join(dirname(self._path), basename(self._path).partition('.')[0])
             newprefix = join(dirname(self._newpath), basename(self._newpath).partition('.')[0])
-            extensions = ['.' + basename(file).partition('.')[2] for file in glob.glob(oldprefix + '.*')]
+            extensions = ['.' + basename(f).partition('.')[2] for f in glob.glob(oldprefix + '.*')]
             for extension in extensions:
                 rename(oldprefix + extension, newprefix + extension)
 
-        self._path, self._newpath = self._newpath, None
+            self._path, self._newpath = self._newpath, None
 
         # update size, timestamp and checksum
         self._size = len(self)
