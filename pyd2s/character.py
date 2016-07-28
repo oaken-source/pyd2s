@@ -3,7 +3,9 @@
 this module provides a class that manages character data
 '''
 
+import re
 import struct
+from os.path import dirname, join, isfile
 
 from pyd2s.basictypes import CharacterClass, Difficulty, Act
 from pyd2s.statdata import StatData
@@ -22,11 +24,6 @@ class Character(object):
 
         self._statdata = StatData(self._buffer)
 
-        print(self.active_arms)
-        self.active_arms = not self.active_arms
-        self._buffer.flush()
-        print(self.active_arms)
-
     @property
     def active_arms(self):
         '''
@@ -40,13 +37,33 @@ class Character(object):
         set the currently active weapon set of the character
         '''
         struct.pack_into('<L', self._buffer, 16, value)
+        raise NotImplementedError('todo: actually switch out weapon sets')
 
     @property
     def name(self):
         '''
-        the name of the character
+        get the name of the character
         '''
         return self._buffer[20:36].decode('ascii').rstrip('\0')
+
+    @name.setter
+    def name(self, value):
+        '''
+        set the name of the character, this also updates save file locations
+        '''
+        if value == self.name:
+            return
+
+        if not re.fullmatch('(?=.{2,15})[a-zA-Z]+[-_]?[a-zA-Z]+', value):
+            raise ValueError('character name is invalid')
+
+        newpath = join(dirname(self._buffer.path), "%s.d2s" % value)
+        if isfile(newpath):
+            raise ValueError('a character with this name already exists')
+
+        self._buffer.path = newpath
+
+        self._buffer[20:36] = value.ljust(16, '\0').encode('ascii')
 
     @property
     def is_ladder(self):

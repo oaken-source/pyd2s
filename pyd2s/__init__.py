@@ -47,3 +47,9 @@ class D2SaveFile(object):
         the version of the file - supported values are 0x60 for >=1.10
         '''
         return struct.unpack_from('<L', self._buffer, 4)[0]
+
+    def flush(self):
+        '''
+        flush the save data back to file
+        '''
+        self._buffer.flush()

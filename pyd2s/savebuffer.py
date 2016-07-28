@@ -4,7 +4,10 @@ this module provides a change-aware buffer for d2s files
 '''
 
 import time
+import glob
 import struct
+from os import rename
+from os.path import dirname, basename, join
 
 
 class SaveBuffer(bytearray):
@@ -17,6 +20,8 @@ class SaveBuffer(bytearray):
         constructor - read the input file into memory
         '''
         self._path = path
+        self._newpath = None
+
         with open(path, 'rb') as save:
             super(SaveBuffer, self).__init__(save.read())
 
@@ -62,10 +67,35 @@ class SaveBuffer(bytearray):
         '''
         struct.pack_into('<L', self, 48, value)
 
+    @property
+    def path(self):
+        '''
+        produce the path to the save file
+        '''
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        '''
+        set the new path to the save file - move on flush
+        '''
+        self._newpath = value
+
     def flush(self):
         '''
         write the changed data back to disk
         '''
+        # move the character files, if the path has been changed
+        if self._newpath is not None:
+            oldprefix = join(dirname(self._path), basename(self._path).partition('.')[0])
+            newprefix = join(dirname(self._newpath), basename(self._newpath).partition('.')[0])
+            extensions = ['.' + basename(file).partition('.')[2] for file in glob.glob(oldprefix + '.*')]
+            for extension in extensions:
+                rename(oldprefix + extension, newprefix + extension)
+
+        self._path, self._newpath = self._newpath, None
+
+        # update size, timestamp and checksum
         self._size = len(self)
         self._timestamp = int(time.time())
         self._checksum = 0
@@ -76,5 +106,6 @@ class SaveBuffer(bytearray):
 
         self._checksum = checksum
 
+        # write back
         with open(self._path, 'wb') as save:
             save.write(self)
