@@ -4,6 +4,7 @@ this module provides a change-aware buffer for d2s files
 '''
 
 import glob
+import math
 import struct
 from os import rename
 from os.path import dirname, basename, join
@@ -72,15 +73,28 @@ class SaveBuffer(bytearray):
         '''
         res = 0
         for i in range(length):
-            position = start + i
-            res |= ((self[position >> 3] & (1 << (position & 0x07))) != 0) << i
+            pos = start + i
+            res |= ((self[pos >> 3] & (1 << (pos & 0x07))) != 0) << i
         return res
 
-    def setbits(self, position, value, length):
+    def setbits(self, start, value, length):
         '''
-        todo
+        set the given bits to the given value
         '''
-        pass
+        if value.bit_length() > length:
+            raise ValueError('value exceeds maximum range')
+        for i in range(length):
+            pos = start + i
+            self[pos >> 3] ^= (-((value >> i) & 0x1) ^ self[pos >> 3]) & (1 << (pos & 0x07))
+
+    def addbits(self, start, length, align_at):
+        '''
+        add the given bits to the given position, keeping the byte-aligntment intact
+        '''
+        fill = math.ceil((length - (7 - (align_at & 0x07))) / 8.0) * [0]
+        byte = math.ceil(align_at / 8.0)
+        self[byte:byte] = fill
+        self.setbits(start + length, self.getbits(start, align_at - start), align_at - start)
 
     def flush(self):
         '''

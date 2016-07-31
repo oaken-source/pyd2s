@@ -48,7 +48,7 @@ class D2SaveFile(object):
         '''
         get the last save timestamp
         '''
-        return struct.unpack_from('<L', self, 48)[0]
+        return struct.unpack_from('<L', self._buffer, 48)[0]
 
     def flush(self):
         '''
