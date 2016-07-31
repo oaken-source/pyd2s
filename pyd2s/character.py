@@ -7,7 +7,26 @@ import re
 from os.path import dirname, join, isfile
 
 from pyd2s.basictypes import CharacterClass
-from pyd2s.statdata import StatData
+
+
+STATS = [
+    ('strength', 10),
+    ('energy', 10),
+    ('dexterity', 10),
+    ('vitality', 10),
+    ('statpts', 10),
+    ('newskills', 8),
+    ('hitpoints', 21),
+    ('maxhp', 21),
+    ('mana', 21),
+    ('maxmana', 21),
+    ('stamina', 21),
+    ('maxstama', 21),
+    ('level', 7),
+    ('experience', 32),
+    ('gold', 25),
+    ('goldbank', 25),
+]
 
 
 class Character(object):
@@ -21,7 +40,27 @@ class Character(object):
         '''
         self._buffer = buffer
 
-        #self._statdata = StatData(self._buffer)
+        self._strength = None
+        self._energy = None
+        self._dexterity = None
+        self._vitality = None
+
+        self._statpts = None
+        self._newskills = None
+
+        self._hitpoints = None
+        self._maxhp = None
+        self._mana = None
+        self._maxmana = None
+        self._stamina = None
+        self._maxstamina = None
+
+        self._level = None
+        self._experience = None
+        self._gold = None
+        self._goldbank = None
+
+        self._extract_stats()
 
     @property
     def name(self):
@@ -139,109 +178,240 @@ class Character(object):
         if not 0 < value < 100:
             raise ValueError('character level is invalid')
         self._buffer[43] = value
-        raise NotImplementedError('todo: update level and experience in stats section')
+        self._set_stat(self._level, value, 7)
 
-    # @property
-    # def strength(self):
-    #     '''
-    #     the characters strength
-    #     '''
-    #     return self._statdata.strength
+    def _extract_stats(self):
+        '''
+        parse the stats section for positions of stat fields
+        '''
 
-    # @property
-    # def energy(self):
-    #     '''
-    #     the characters energy
-    #     '''
-    #     return self._statdata.energy
+        position = 767 * 8
+        while True:
+            statid = self._buffer.getbits(position, 9)
+            if statid == 0x1FF:
+                break
+            setattr(self, '_' + STATS[statid][0], position + 9)
+            position += 9 + STATS[statid][1]
 
-    # @property
-    # def dexterity(self):
-    #     '''
-    #     the characters dexterity
-    #     '''
-    #     return self._statdata.dexterity
+    def _get_stat(self, position, length):
+        '''
+        produce a stat info field from a given position and length
+        '''
+        return 0 if position is None else self._buffer.getbits(position, length)
 
-    # @property
-    # def vitality(self):
-    #     '''
-    #     the characters vitality
-    #     '''
-    #     return self._statdata.vitality
+    def _set_stat(self, position, value, length):
+        '''
+        set a stat info field
+        '''
+        if position is not None:
+            self._buffer.setbits(position, value, length)
 
-    # @property
-    # def statpts(self):
-    #     '''
-    #     the characters unassigned stat points
-    #     '''
-    #     return self._statdata.statpts
+    @property
+    def strength(self):
+        '''
+        the characters strength
+        '''
+        return self._get_stat(self._strength, 10)
 
-    # @property
-    # def newskills(self):
-    #     '''
-    #     the characters unassigned skill points
-    #     '''
-    #     return self._statdata.newskills
+    @strength.setter
+    def strength(self, value):
+        '''
+        set the characters strength
+        '''
+        self._set_stat(self._strength, value, 10)
 
-    # @property
-    # def hitpoints(self):
-    #     '''
-    #     the characters current hit points
-    #     '''
-    #     return self._statdata.hitpoints
+    @property
+    def energy(self):
+        '''
+        the characters energy
+        '''
+        return self._get_stat(self._energy, 10)
 
-    # @property
-    # def maxhp(self):
-    #     '''
-    #     the characters maximum hitpoints
-    #     '''
-    #     return self._statdata.maxhp
+    @energy.setter
+    def energy(self, value):
+        '''
+        set the characters energy
+        '''
+        self._set_stat(self._energy, value, 10)
 
-    # @property
-    # def mana(self):
-    #     '''
-    #     the characters current mana points
-    #     '''
-    #     return self._statdata.mana
+    @property
+    def dexterity(self):
+        '''
+        the characters dexterity
+        '''
+        return self._get_stat(self._dexterity, 10)
 
-    # @property
-    # def maxmana(self):
-    #     '''
-    #     the characters maximum mana points
-    #     '''
-    #     return self._statdata.maxmana
+    @dexterity.setter
+    def dexterity(self, value):
+        '''
+        set the characters dexterity
+        '''
+        self._set_stat(self._dexterity, value, 10)
 
-    # @property
-    # def stamina(self):
-    #     '''
-    #     the characters current stamina points
-    #     '''
-    #     return self._statdata.stamina
+    @property
+    def vitality(self):
+        '''
+        the characters vitality
+        '''
+        return self._get_stat(self._vitality, 10)
 
-    # @property
-    # def maxstamina(self):
-    #     '''
-    #     the characters maximum stamina points
-    #     '''
-    #     return self._statdata.maxstamina
+    @vitality.setter
+    def vitality(self, value):
+        '''
+        set the characters vitality
+        '''
+        self._set_stat(self._vitality, value, 10)
 
-    # @property
-    # def experience(self):
-    #     '''
-    #     the characters current experience points
-    #     '''
-    #     return self._statdata.experience
+    @property
+    def statpts(self):
+        '''
+        the characters unassigned stat points
+        '''
+        return self._get_stat(self._statpts, 10)
 
-    # @property
-    # def gold(self):
-    #     '''
-    #     the characters current gold
-    #     '''
-    #     return self._statdata.gold
+    @statpts.setter
+    def statpts(self, value):
+        '''
+        set the characters unassigned stat points
+        '''
+        self._set_stat(self._statpts, value, 10)
 
-    # @property
-    # def goldbank(self):
-    #     '''
-    #     the characters current gold in the stash
-    #     '''
-    #     return self._statdata.goldbank
+    @property
+    def newskills(self):
+        '''
+        the characters unassigned skill points
+        '''
+        return self._get_stat(self._newskills, 8)
+
+    @newskills.setter
+    def newskills(self, value):
+        '''
+        set the characters unassigned skill points
+        '''
+        self._set_stat(self._newskills, value, 8)
+
+    @property
+    def hitpoints(self):
+        '''
+        the characters current hit points
+        '''
+        return self._get_stat(self._hitpoints, 21) / 256.0
+
+    @hitpoints.setter
+    def hitpoints(self, value):
+        '''
+        set the characters current hit points
+        '''
+        self._set_stat(self._hitpoints, value * 256, 21)
+
+    @property
+    def maxhp(self):
+        '''
+        the characters maximum hitpoints
+        '''
+        return self._get_stat(self._maxhp, 21) / 256.0
+
+    @maxhp.setter
+    def maxhp(self, value):
+        '''
+        set the characters maximum hitpoints
+        '''
+        self._set_stat(self._maxhp, value * 256, 21)
+
+    @property
+    def mana(self):
+        '''
+        the characters current mana points
+        '''
+        return self._get_stat(self._mana, 21) / 256.0
+
+    @mana.setter
+    def mana(self, value):
+        '''
+        set the characters current mana points
+        '''
+        self._set_stat(self._mana, value * 256, 21)
+
+    @property
+    def maxmana(self):
+        '''
+        the characters maximum mana points
+        '''
+        return self._get_stat(self._maxmana, 21) / 256.0
+
+    @maxmana.setter
+    def maxmana(self, value):
+        '''
+        set the characters maximum mana points
+        '''
+        self._set_stat(self._maxmana, value * 256, 21)
+
+    @property
+    def stamina(self):
+        '''
+        the characters current stamina points
+        '''
+        return self._get_stat(self._stamina, 21) / 256.0
+
+    @stamina.setter
+    def stamina(self, value):
+        '''
+        set the characters current stamina points
+        '''
+        self._set_stat(self._stamina, value * 256, 21)
+
+    @property
+    def maxstamina(self):
+        '''
+        the characters maximum stamina points
+        '''
+        return self._get_stat(self._maxstamina, 21) / 256.0
+
+    @maxstamina.setter
+    def maxstamina(self, value):
+        '''
+        set the characters maximum stamina points
+        '''
+        self._set_stat(self._maxstamina, value * 256, 21)
+
+    @property
+    def experience(self):
+        '''
+        the characters current experience points
+        '''
+        return self._get_stat(self._experience, 32)
+
+    @experience.setter
+    def experience(self, value):
+        '''
+        set the characters current experience points
+        '''
+        self._set_stat(self._experience, value, 32)
+
+    @property
+    def gold(self):
+        '''
+        the characters current gold
+        '''
+        return self._get_stat(self._gold, 25)
+
+    @gold.setter
+    def gold(self, value):
+        '''
+        set the characters current gold
+        '''
+        self._set_stat(self._gold, value, 25)
+
+    @property
+    def goldbank(self):
+        '''
+        the characters current gold in the stash
+        '''
+        return self._get_stat(self._goldbank, 25)
+
+    @goldbank.setter
+    def goldbank(self, value):
+        '''
+        set the characters current gold in the stash
+        '''
+        self._set_stat(self._goldbank, value, 25)

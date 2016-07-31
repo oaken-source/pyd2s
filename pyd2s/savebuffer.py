@@ -3,7 +3,6 @@
 this module provides a change-aware buffer for d2s files
 '''
 
-import time
 import glob
 import struct
 from os import rename
@@ -54,20 +53,6 @@ class SaveBuffer(bytearray):
         struct.pack_into('<L', self, 12, value)
 
     @property
-    def _timestamp(self):
-        '''
-        get the last save timestamp
-        '''
-        return struct.unpack_from('<L', self, 48)[0]
-
-    @_timestamp.setter
-    def _timestamp(self, value):
-        '''
-        set the last save timestamp
-        '''
-        struct.pack_into('<L', self, 48, value)
-
-    @property
     def path(self):
         '''
         produce the path to the save file
@@ -80,6 +65,22 @@ class SaveBuffer(bytearray):
         set the new path to the save file - move on flush
         '''
         self._newpath = value
+
+    def getbits(self, start, length):
+        '''
+        produce an integer from the given bit position and length
+        '''
+        res = 0
+        for i in range(length):
+            position = start + i
+            res |= ((self[position >> 3] & (1 << (position & 0x07))) != 0) << i
+        return res
+
+    def setbits(self, position, value, length):
+        '''
+        todo
+        '''
+        pass
 
     def flush(self):
         '''
@@ -95,15 +96,13 @@ class SaveBuffer(bytearray):
 
             self._path, self._newpath = self._newpath, None
 
-        # update size, timestamp and checksum
+        # update size and checksum
         self._size = len(self)
-        self._timestamp = int(time.time())
         self._checksum = 0
 
         checksum = 0
         for byte in self:
             checksum = (((checksum << 1) | (checksum & 0x80000000 > 0)) + byte) & 0xffffffff
-
         self._checksum = checksum
 
         # write back
