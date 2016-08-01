@@ -81,18 +81,16 @@ class SaveBuffer(bytearray):
         '''
         set the given bits to the given value
         '''
-        if value.bit_length() > length:
-            raise ValueError('value exceeds maximum range')
         for i in range(length):
             pos = start + i
             self[pos >> 3] ^= (-((value >> i) & 0x1) ^ self[pos >> 3]) & (1 << (pos & 0x07))
 
     def addbits(self, start, length, align_at):
         '''
-        add the given bits to the given position, keeping the byte-aligntment intact
+        add the given bits to the given position, keeping the byte-alignment intact
         '''
-        fill = math.ceil((length - (7 - (align_at & 0x07))) / 8.0) * [0]
         byte = math.ceil(align_at / 8.0)
+        fill = (math.ceil((align_at + length) / 8.0) - byte) * [0]
         self[byte:byte] = fill
         self.setbits(start + length, self.getbits(start, align_at - start), align_at - start)
 

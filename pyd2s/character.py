@@ -95,20 +95,6 @@ class Character(object):
         self._buffer[20:36] = value.ljust(16, '\0').encode('ascii')
 
     @property
-    def is_ladder(self):
-        '''
-        True if the character is in the ladder, False otherwise
-        '''
-        return (self._buffer[36] & (1 << 6)) != 0
-
-    @is_ladder.setter
-    def is_ladder(self, value):
-        '''
-        set wether the character is in the ladder
-        '''
-        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 6)
-
-    @property
     def is_expansion(self):
         '''
         True if an extension (LoD) character, False otherwise
@@ -216,6 +202,8 @@ class Character(object):
         set the stat by name to value
         '''
         stat = STATS[statid]
+        if value.bit_length() > stat[1]:
+            raise ValueError('value too large for stat %s' % statid.name)
         position = getattr(self, '_' + stat[0])
         if position is None:
             setattr(self, '_' + stat[0], self._stats_end)
