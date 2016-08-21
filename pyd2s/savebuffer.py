@@ -30,28 +30,28 @@ class SaveBuffer(bytearray):
         '''
         get the size of the save file in bytes
         '''
-        return struct.unpack_from('<L', self, 8)[0]
+        return struct.unpack_from('<L', self, 0x08)[0]
 
     @_size.setter
     def _size(self, value):
         '''
         set the size of the save file in bytes
         '''
-        struct.pack_into('<L', self, 8, value)
+        struct.pack_into('<L', self, 0x08, value)
 
     @property
     def _checksum(self):
         '''
         get the checksum of the save data
         '''
-        return struct.unpack_from('<L', self, 12)[0]
+        return struct.unpack_from('<L', self, 0x0c)[0]
 
     @_checksum.setter
     def _checksum(self, value):
         '''
         set the checksum of the save data
         '''
-        struct.pack_into('<L', self, 12, value)
+        struct.pack_into('<L', self, 0x0c, value)
 
     @property
     def path(self):

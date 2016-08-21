@@ -41,14 +41,14 @@ class D2SaveFile(object):
         '''
         get the version of the file - supported values are 0x60 for >=1.10
         '''
-        return struct.unpack_from('<L', self._buffer, 4)[0]
+        return struct.unpack_from('<L', self._buffer, 0x04)[0]
 
     @property
     def timestamp(self):
         '''
         get the last save timestamp
         '''
-        return struct.unpack_from('<L', self._buffer, 48)[0]
+        return struct.unpack_from('<L', self._buffer, 0x30)[0]
 
     def flush(self):
         '''
@@ -56,5 +56,5 @@ class D2SaveFile(object):
         '''
         tmp = D2SaveFile(self._buffer.path)
         if tmp.timestamp > self.timestamp:
-            raise ValueError('save has changed on disk, refusing to write')
+            raise ValueError('flush failed: refusing to overwrite newer version')
         self._buffer.flush()
