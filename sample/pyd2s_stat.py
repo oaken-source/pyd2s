@@ -1,6 +1,8 @@
 import pyd2s
 
-path = "/home/domi/.wine/drive_c/users/domi/Saved Games/Diablo II/catman.d2s"
+# informations of savefile
+
+path = "C:\\user\\Saved Games\\Diablo II\\player.d2s"
 o_d2s = pyd2s.D2SaveFile(path)
 o_d2s_buf = pyd2s.SaveBuffer(path)
 o_d2s_char = pyd2s.Character(o_d2s_buf)

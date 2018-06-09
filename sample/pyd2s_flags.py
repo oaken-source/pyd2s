@@ -1,6 +1,9 @@
 import pyd2s
 
-o_buf = pyd2s.SaveBuffer("/home/domi/.wine/drive_c/users/domi/Saved Games/Diablo II/catman.d2s")
+# forge and bonus event flags reset
+
+o_buf = pyd2s.SaveBuffer("C:\\user\\Saved Games\\Diablo II\\player.d2s")
+
 o_qdata = pyd2s.QuestData(o_buf)
 o_qdata.set_act1_resetstatus(0, 0)
 o_qdata.set_act1_resetstatus(1, 0)
