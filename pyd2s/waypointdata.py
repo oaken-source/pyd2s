@@ -30,7 +30,7 @@ class WaypointData(object):
             '''
             produce the raw value of the waypoint data
             '''
-            if self._buffer.size <= 335:
+            if len(self._buffer) <= 335:
                 return Waypoint.RogueEncampment.value
 
             low, high = struct.unpack('<LB', self._buffer[643 + self._offset:648 + self._offset])
@@ -40,7 +40,7 @@ class WaypointData(object):
             '''
             True if the given waypoint is active, False otherwise
             '''
-            return (self._value & waypoint.value) != 0
+            return (self._value & (1 << waypoint)) != 0
 
         def __iter__(self):
             '''
