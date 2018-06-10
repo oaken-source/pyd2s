@@ -7,7 +7,10 @@ import struct
 
 from pyd2s.savebuffer import SaveBuffer
 from pyd2s.character import Character
-
+from pyd2s.mercenary import Mercenary
+from pyd2s.item import Item
+from pyd2s.questdata import QuestData
+from pyd2s.waypointdata import WaypointData
 
 class D2SaveFile(object):
     '''
