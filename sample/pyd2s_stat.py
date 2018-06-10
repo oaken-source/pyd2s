@@ -15,7 +15,7 @@ print("[[ Savefile information ]]")
 print("Path     : " + o_d2s_buf.path)
 print("Magicnum : 0x{:08X}".format(o_d2s.magic))
 print("Version  : 0x{:02X}".format(o_d2s.version))
-print("Timestump: {} ms".format(o_d2s.timestamp))
+print("Timestump: {} seconds".format(o_d2s.timestamp))
 print("")
 
 print("[[ Charctor information ]]")
@@ -307,11 +307,17 @@ for i in range(3):
 	print(temp)
 print("")
 
-print("[[ Player Item information ]]")
-print("Count : " + str(o_d2s_item.pcountondata))
+print("[[ Item information ]]")
+print("Count : " + str(o_d2s_item.count))
 print("")
 
-for i in range(o_d2s_item.pcountondata):
+print("[[ Player Item information ]]")
+pitemcount = o_d2s_item.count - o_d2s_item.mcountondata
+print("Count          : " + str(pitemcount))
+print("Count(on data) : " + str(o_d2s_item.pcountondata))
+print("")
+
+for i in range(pitemcount):
     temp = ""
     data = o_d2s_item.getpdata(i)
     for j in range(len(data)):
@@ -347,12 +353,14 @@ for i in range(o_d2s_item.pcountondata):
             elif val == 7:
                 temp += "(E)LFinger"
             elif val == 8:
-                temp += "(E)West"
+                temp += "(E)Waist"
             elif val == 9:
                 temp += "(E)Feet"
             elif val == 10:
-                temp += "(E)ARHand"
+                temp += "(E)Hands"
             elif val == 11:
+                temp += "(E)ARHand"
+            elif val == 12:
                 temp += "(E)ALHand"
     if len(data) > 7:
         if (data[5] & 0x1C) >> 2 == 0:
@@ -432,12 +440,14 @@ for i in range(o_d2s_item.mcountondata):
             elif val == 7:
                 temp += "(E)LFinger"
             elif val == 8:
-                temp += "(E)West"
+                temp += "(E)Waist"
             elif val == 9:
                 temp += "(E)Feet"
             elif val == 10:
-                temp += "(E)ARHand"
+                temp += "(E)Hands"
             elif val == 11:
+                temp += "(E)ARHand"
+            elif val == 12:
                 temp += "(E)ALHand"
     if len(data) > 7:
         if (data[5] & 0x1C) >> 2 == 0:

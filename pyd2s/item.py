@@ -13,6 +13,7 @@ class Item(object):
         constructor - propagate buffer
         '''
         self._buffer = buffer
+        self._count = 0
         self._pcountondata = 0
         self._mcountondata = 0
         self._pdata = []
@@ -36,6 +37,8 @@ class Item(object):
                              self._pdata.append(onedata)
                          else:
                              self._mdata.append(onedata)
+                         if onedata[0] != 0x00 or onedata[1] != 0x00:
+                             self._count += 1
                      if player and len(onedata) > 2:
                          if onedata[0] == 0x00 and onedata[1] == 0x00:
                              first = True
@@ -50,6 +53,15 @@ class Item(object):
                  self._pdata.append(onedata)
              else:
                  self._mdata.append(onedata)
+             if onedata[0] != 0x00 or onedata[1] != 0x00:
+                 self._count += 1
+
+    @property
+    def count(self):
+        '''
+        item count
+        '''
+        return self._count
 
     @property
     def pcountondata(self):
