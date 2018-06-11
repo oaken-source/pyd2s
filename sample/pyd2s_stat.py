@@ -307,17 +307,12 @@ for i in range(3):
 	print(temp)
 print("")
 
-print("[[ Item information ]]")
-print("Count : " + str(o_d2s_item.count))
-print("")
-
 print("[[ Player Item information ]]")
-pitemcount = o_d2s_item.count - o_d2s_item.mcountondata
-print("Count          : " + str(pitemcount))
+print("Count          : " + str(o_d2s_item.pcount))
 print("Count(on data) : " + str(o_d2s_item.pcountondata))
 print("")
 
-for i in range(pitemcount):
+for i in range(o_d2s_item.pcount):
     temp = ""
     data = o_d2s_item.getpdata(i)
     for j in range(len(data)):
@@ -401,10 +396,11 @@ for i in range(pitemcount):
 print("")
 
 print("[[ Mercenary Item information ]]")
-print("Count : " + str(o_d2s_item.mcountondata))
+print("Count          : " + str(o_d2s_item.mcount))
+print("Count(on data) : " + str(o_d2s_item.mcountondata))
 print("")
 
-for i in range(o_d2s_item.mcountondata):
+for i in range(o_d2s_item.mcount):
     temp = ""
     data = o_d2s_item.getmdata(i)
     for j in range(len(data)):

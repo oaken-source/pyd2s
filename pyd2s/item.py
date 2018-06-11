@@ -13,8 +13,9 @@ class Item(object):
         constructor - propagate buffer
         '''
         self._buffer = buffer
-        self._count = 0
+        self._pcount = 0
         self._pcountondata = 0
+        self._mcount = 0
         self._mcountondata = 0
         self._pdata = []
         self._mdata = []
@@ -38,7 +39,10 @@ class Item(object):
                          else:
                              self._mdata.append(onedata)
                          if onedata[0] != 0x00 or onedata[1] != 0x00:
-                             self._count += 1
+                             if player:
+                                 self._pcount += 1
+                             else:
+                                 self._mcount += 1
                      if player and len(onedata) > 2:
                          if onedata[0] == 0x00 and onedata[1] == 0x00:
                              first = True
@@ -54,19 +58,22 @@ class Item(object):
              else:
                  self._mdata.append(onedata)
              if onedata[0] != 0x00 or onedata[1] != 0x00:
-                 self._count += 1
+                 if player:
+                     self._pcount += 1
+                 else:
+                     self._mcount += 1
 
     @property
-    def count(self):
+    def pcount(self):
         '''
-        item count
+        player item count
         '''
-        return self._count
+        return self._pcount
 
     @property
     def pcountondata(self):
         '''
-        player item count
+        player item count (on data)
         '''
         return self._pcountondata
 
@@ -80,9 +87,16 @@ class Item(object):
             return self._pdata[index]
 
     @property
-    def mcountondata(self):
+    def mcount(self):
         '''
         mercenary item count
+        '''
+        return self._mcount
+
+    @property
+    def mcountondata(self):
+        '''
+        mercenary item count (on data)
         '''
         return self._mcountondata
 
