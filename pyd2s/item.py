@@ -20,48 +20,53 @@ class Item(object):
         self._pdata = []
         self._mdata = []
 
-        loc = 848
+        loc = 840    # about
+	start = True
         first = True
         player = True
         onedata = []
         while loc < len(self._buffer):
-             if self._buffer[loc] == ord("J") and self._buffer[loc + 1] == ord("M"):
-                 if len(onedata) != 0:
-                     if first:
-                         if player:
-                             self._pcountondata = (onedata[1] << 8) + onedata[0]
-                         else:
-                             self._mcountondata = (onedata[1] << 8) + onedata[0]
-                         first = False
-                     else:
-                         if player:
-                             self._pdata.append(onedata)
-                         else:
-                             self._mdata.append(onedata)
-                         if onedata[0] != 0x00 or onedata[1] != 0x00:
-                             if player:
-                                 self._pcount += 1
-                             else:
-                                 self._mcount += 1
-                     if player and len(onedata) > 2:
-                         if onedata[0] == 0x00 and onedata[1] == 0x00:
-                             first = True
-                             player = False
-                     onedata = []
-                 loc += 2
-             else:
-                 onedata.append(self._buffer[loc])
-                 loc += 1
+            if self._buffer[loc] == ord("J") and self._buffer[loc + 1] == ord("M"):
+                if start:
+                    start = False
+                else:
+                    if len(onedata) >= 2:
+                        if first:
+                            if player:
+                                self._pcountondata = (onedata[1] << 8) + onedata[0]
+                            else:
+                                self._mcountondata = (onedata[1] << 8) + onedata[0]
+                            first = False
+                        else:
+                            if player:
+                                self._pdata.append(onedata)
+                            else:
+                                self._mdata.append(onedata)
+                            if onedata[0] != 0x00 or onedata[1] != 0x00 or onedata[2] != 0x6A:
+                                if player:
+                                    self._pcount += 1
+                                else:
+                                    self._mcount += 1
+                        if player and len(onedata) > 2:
+                            if onedata[0] == 0x00 and onedata[1] == 0x00 and onedata[2] == 0x6A:
+                                first = True
+                                player = False
+                onedata = []
+                loc += 2
+            else:
+                if not start:
+                    onedata.append(self._buffer[loc])
+                loc += 1
         if len(onedata):
-             if player:
-                 self._pdata.append(onedata)
-             else:
-                 self._mdata.append(onedata)
-             if onedata[0] != 0x00 or onedata[1] != 0x00:
-                 if player:
-                     self._pcount += 1
-                 else:
-                     self._mcount += 1
+            if player:
+                self._pdata.append(onedata)
+            else:
+                self._mdata.append(onedata)
+            if onedata[0] != 0x00 or onedata[1] != 0x00 or onedata[2] != 0x6A:
+                if player:
+                    self._pcount += 1
+                else:
+                    self._mcount += 1
 
     @property
     def pcount(self):

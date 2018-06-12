@@ -375,7 +375,7 @@ for i in range(o_d2s_item.pcount):
         temp += "{:02X} {:02X} {:02X} {:02X} ({}) ".format(temp2[0], temp2[1], temp2[2], temp2[3], chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3]))
     if len(data) > 0:
         if data[0] & 0x10 == 0:
-            temp += "*not Identified* "
+            temp += "NonIdentified "
     if len(data) > 2:
         if data[2] & 0x01:
             temp += "Ear "
@@ -392,6 +392,11 @@ for i in range(o_d2s_item.pcount):
         val = (data[11] & 0x70) >> 4
         if data[1] & 0x08 and val > 0:
             temp += "Socketed({}) ".format(val)
+    if len(data) > 2:
+        if data[2] & 0x20 == 0:    # not simple
+            if len(data) > 16:
+                val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
+                temp += "ilvl({}) ".format(val)
     print(temp)
 print("")
 
@@ -463,7 +468,7 @@ for i in range(o_d2s_item.mcount):
         temp += "{:02X} {:02X} {:02X} {:02X} ({}) ".format(temp2[0], temp2[1], temp2[2], temp2[3], chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3]))
     if len(data) > 0:
         if data[0] & 0x10 == 0:
-            temp += "*not Identified* "
+            temp += "NonIdentified "
     if len(data) > 2:
         if data[2] & 0x01:
             temp += "Ear "
@@ -480,6 +485,11 @@ for i in range(o_d2s_item.mcount):
         val = (data[11] & 0x70) >> 4
         if data[1] & 0x08 and val > 0:
             temp += "Socketed({}) ".format(val)
+    if len(data) > 2:
+        if data[2] & 0x20 == 0:    # not simple
+            if len(data) > 16:
+                val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
+                temp += "ilvl({}) ".format(val)
     print(temp)
 
 
