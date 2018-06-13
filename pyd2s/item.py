@@ -21,7 +21,7 @@ class Item(object):
         self._mdata = []
 
         loc = 840    # about
-	start = True
+        start = True
         first = True
         player = True
         onedata = []
