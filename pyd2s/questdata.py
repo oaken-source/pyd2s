@@ -104,6 +104,22 @@ class QuestData(object):
             self._buffer[self._getoffset(difficulty) + 18] = 0x00
             self._buffer[self._getoffset(difficulty) + 19] = 0x00
 
+    def get_act2_sungone(self, difficulty):
+        '''
+        Get sun gone event end flag
+        '''
+        return self._buffer[self._getoffset(difficulty) + 22] & 0x04 != 0
+
+    def set_act2_sungone(self, difficulty, value):
+        '''
+        Set sun gone event end flag (If the quest is end, not modify)
+        '''
+        if self._buffer[self._getoffset(difficulty) + 23] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 22] |=  0x04
+            else:
+                self._buffer[self._getoffset(difficulty) + 22] &= ~0x04
+
     def get_act3_goldenbird(self, difficulty):
         '''
         Get Golden bird quest end flag
