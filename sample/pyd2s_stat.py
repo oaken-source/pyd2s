@@ -2,7 +2,7 @@ import pyd2s
 
 # informations of savefile
 
-path = "C:\\user\\Saved Games\\Diablo II\\player.d2s"
+path = "/home/domi/.wine/drive_c/users/domi/Saved Games/Diablo II/catman.d2s"
 o_d2s = pyd2s.D2SaveFile(path)
 o_d2s_buf = pyd2s.SaveBuffer(path)
 o_d2s_char = pyd2s.Character(o_d2s_buf)
@@ -115,6 +115,11 @@ for i in range(3):
 	else:
 		temp = "o"
 	print("Act.3 Lam Esen quest          : " + temp)
+	if o_d2s_qdata.get_act4_isual(i):
+		temp = "x"
+	else:
+		temp = "o"
+	print("Act.4 Isual quest             : " + temp)
 	if o_d2s_qdata.get_act5_socket(i):
 		temp = "x"
 	else:

@@ -91,7 +91,7 @@ class QuestData(object):
         '''
         Get Radament quest end flag
         '''
-        return self._buffer[self._getoffset(difficulty) + 18] == 0x1D and self._buffer[self._getoffset(difficulty) + 19] == 0x10
+        return (self._buffer[self._getoffset(difficulty) + 19] & 0x10) != 0
 
     def set_act2_radament(self, difficulty, value):
         '''
@@ -108,7 +108,7 @@ class QuestData(object):
         '''
         Get sun gone event end flag
         '''
-        return self._buffer[self._getoffset(difficulty) + 22] & 0x04 != 0
+        return (self._buffer[self._getoffset(difficulty) + 22] & 0x04) != 0
 
     def set_act2_sungone(self, difficulty, value):
         '''
@@ -124,7 +124,7 @@ class QuestData(object):
         '''
         Get Golden bird quest end flag
         '''
-        return (self._buffer[self._getoffset(difficulty) + 40] == 0x01) and (self._buffer[self._getoffset(difficulty) + 41] == 0x10)
+        return (self._buffer[self._getoffset(difficulty) + 41] & 0x10) != 0
 
     def set_act3_goldenbird(self, difficulty, value):
         '''
@@ -141,7 +141,7 @@ class QuestData(object):
         '''
         Get Lam Esen quest end flag
         '''
-        return self._buffer[self._getoffset(difficulty) + 42] == 0x0D and self._buffer[self._getoffset(difficulty) + 43] == 0x10
+        return (self._buffer[self._getoffset(difficulty) + 43] & 0x10) != 0
 
     def set_act3_lamesen(self, difficulty, value):
         '''
@@ -153,6 +153,23 @@ class QuestData(object):
         else:
             self._buffer[self._getoffset(difficulty) + 42] = 0x00
             self._buffer[self._getoffset(difficulty) + 43] = 0x00
+
+    def get_act4_isual(self, difficulty):
+        '''
+        Get Isual quest end flag
+        '''
+        return (self._buffer[self._getoffset(difficulty) + 51] & 0x10) != 0
+
+    def set_act4_isual(self, difficulty, value):
+        '''
+        Set Isual quest end flag
+        '''
+        if value:
+            self._buffer[self._getoffset(difficulty) + 50] = 0x01
+            self._buffer[self._getoffset(difficulty) + 51] = 0x10
+        else:
+            self._buffer[self._getoffset(difficulty) + 50] = 0x22
+            self._buffer[self._getoffset(difficulty) + 51] = 0x00
 
     def get_act5_socket(self, difficulty):
         '''
