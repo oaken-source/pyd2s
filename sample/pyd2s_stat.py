@@ -115,11 +115,11 @@ for i in range(3):
 	else:
 		temp = "o"
 	print("Act.3 Lam Esen quest          : " + temp)
-	if o_d2s_qdata.get_act4_isual(i):
+	if o_d2s_qdata.get_act4_izual(i):
 		temp = "x"
 	else:
 		temp = "o"
-	print("Act.4 Isual quest             : " + temp)
+	print("Act.4 Izual quest             : " + temp)
 	if o_d2s_qdata.get_act5_socket(i):
 		temp = "x"
 	else:

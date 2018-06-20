@@ -154,15 +154,15 @@ class QuestData(object):
             self._buffer[self._getoffset(difficulty) + 42] = 0x00
             self._buffer[self._getoffset(difficulty) + 43] = 0x00
 
-    def get_act4_isual(self, difficulty):
+    def get_act4_izual(self, difficulty):
         '''
         Get Isual quest end flag
         '''
         return (self._buffer[self._getoffset(difficulty) + 51] & 0x10) != 0
 
-    def set_act4_isual(self, difficulty, value):
+    def set_act4_izual(self, difficulty, value):
         '''
-        Set Isual quest end flag
+        Set Izual quest end flag
         '''
         if value:
             self._buffer[self._getoffset(difficulty) + 50] = 0x01
