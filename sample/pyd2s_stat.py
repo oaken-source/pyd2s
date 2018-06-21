@@ -305,7 +305,7 @@ for i in range(3):
 				temp += "o/"
 			else:
 				temp += "x/"
-		if o_d2s_wayp.hell[28]:
+		if o_d2s_wayp.hell[38]:
 			temp += "o"
 		else:
 			temp += "x"

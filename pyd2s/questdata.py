@@ -42,6 +42,7 @@ class QuestData(object):
         '''
         Get Reset status end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 83] << 8) | self._buffer[self._getoffset(difficulty) + 82]))
         return (self._buffer[self._getoffset(difficulty) + 82] & 0x03) == 0x01
 
     def set_act1_resetstatus(self, difficulty, value):
@@ -59,6 +60,7 @@ class QuestData(object):
         '''
         Get Forge end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 7] << 8) | self._buffer[self._getoffset(difficulty) + 6]))
         return (self._buffer[self._getoffset(difficulty) + 6] & 0x03) == 0x01
 
     def set_act1_forge(self, difficulty, value):
@@ -76,6 +78,7 @@ class QuestData(object):
         '''
         Get Cow Level end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 9] << 8) | self._buffer[self._getoffset(difficulty) + 8]))
         return (self._buffer[self._getoffset(difficulty) + 9] & 0x04) != 0
 
     def set_act1_cowlevel(self, difficulty, value):
@@ -91,6 +94,7 @@ class QuestData(object):
         '''
         Get Radament quest end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 19] << 8) | self._buffer[self._getoffset(difficulty) + 18]))
         return (self._buffer[self._getoffset(difficulty) + 19] & 0x10) != 0
 
     def set_act2_radament(self, difficulty, value):
@@ -108,6 +112,7 @@ class QuestData(object):
         '''
         Get sun gone event end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 23] << 8) | self._buffer[self._getoffset(difficulty) + 22]))
         return (self._buffer[self._getoffset(difficulty) + 22] & 0x04) != 0
 
     def set_act2_sungone(self, difficulty, value):
@@ -124,6 +129,7 @@ class QuestData(object):
         '''
         Get Golden bird quest end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 41] << 8) | self._buffer[self._getoffset(difficulty) + 40]))
         return (self._buffer[self._getoffset(difficulty) + 41] & 0x10) != 0
 
     def set_act3_goldenbird(self, difficulty, value):
@@ -141,6 +147,7 @@ class QuestData(object):
         '''
         Get Lam Esen quest end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 43] << 8) | self._buffer[self._getoffset(difficulty) + 42]))
         return (self._buffer[self._getoffset(difficulty) + 43] & 0x10) != 0
 
     def set_act3_lamesen(self, difficulty, value):
@@ -158,6 +165,7 @@ class QuestData(object):
         '''
         Get Isual quest end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 51] << 8) | self._buffer[self._getoffset(difficulty) + 50]))
         return (self._buffer[self._getoffset(difficulty) + 51] & 0x10) != 0
 
     def set_act4_izual(self, difficulty, value):
@@ -168,13 +176,14 @@ class QuestData(object):
             self._buffer[self._getoffset(difficulty) + 50] = 0x01
             self._buffer[self._getoffset(difficulty) + 51] = 0x10
         else:
-            self._buffer[self._getoffset(difficulty) + 50] = 0x22
+            self._buffer[self._getoffset(difficulty) + 50] = 0x00
             self._buffer[self._getoffset(difficulty) + 51] = 0x00
 
     def get_act5_socket(self, difficulty):
         '''
         Get Socket end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 71] << 8) | self._buffer[self._getoffset(difficulty) + 70]))
         return (self._buffer[self._getoffset(difficulty) + 70] & 0x03) == 0x01
 
     def set_act5_socket(self, difficulty, value):
@@ -207,7 +216,8 @@ class QuestData(object):
         '''
         Get Giving scroll of regist end flag
         '''
-        return (self._buffer[self._getoffset(difficulty) + 74] & 0x80) != 0
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 75] << 8) | self._buffer[self._getoffset(difficulty) + 74]))
+        return (self._buffer[self._getoffset(difficulty) + 74] & 0x80) != 0 or (self._buffer[self._getoffset(difficulty) + 75] & 0x01) != 0
 
     def set_act5_scrollofregist(self, difficulty, value):
         '''
@@ -215,18 +225,21 @@ class QuestData(object):
         '''
         if value:
             self._buffer[self._getoffset(difficulty) + 74] |=  0x80
+            self._buffer[self._getoffset(difficulty) + 75] |=  0x01
         else:
             self._buffer[self._getoffset(difficulty) + 74] &= ~0x80
+            self._buffer[self._getoffset(difficulty) + 75] &= ~0x01
 
     def get_act5_personalize(self, difficulty):
         '''
-        Get Socket end flag
+        Get personalize end flag
         '''
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 77] << 8) | self._buffer[self._getoffset(difficulty) + 76]))
         return (self._buffer[self._getoffset(difficulty) + 76] & 0x03) == 0x01
 
     def set_act5_personalize(self, difficulty, value):
         '''
-        Set Socket end flag
+        Set personalize end flag
         '''
         if value:
             self._buffer[self._getoffset(difficulty) + 76] &= ~0x03
