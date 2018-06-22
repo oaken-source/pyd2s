@@ -67,12 +67,15 @@ class QuestData(object):
         '''
         Set Forge end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 6] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 6] |=  0x01
-        else:
-            self._buffer[self._getoffset(difficulty) + 6] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 6] |=  0x02
+        if self._buffer[self._getoffset(difficulty) + 7] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 6] &= ~0x03
+                self._buffer[self._getoffset(difficulty) + 6] |=  0x01
+                self._buffer[self._getoffset(difficulty) + 7] |=  0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 6] &= ~0x03
+                self._buffer[self._getoffset(difficulty) + 6] |=  0x02
+                self._buffer[self._getoffset(difficulty) + 7] &= ~0x10
 
     def get_act1_cowlevel(self, difficulty):
         '''
@@ -101,12 +104,13 @@ class QuestData(object):
         '''
         Set Radament quest end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 18] = 0x1D
-            self._buffer[self._getoffset(difficulty) + 19] = 0x10
-        else:
-            self._buffer[self._getoffset(difficulty) + 18] = 0x00
-            self._buffer[self._getoffset(difficulty) + 19] = 0x00
+        if self._buffer[self._getoffset(difficulty) + 19] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 18] |= 0x1D
+                self._buffer[self._getoffset(difficulty) + 19] |= 0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 18] = 0x00
+                self._buffer[self._getoffset(difficulty) + 19] = 0x00
 
     def get_act2_sungone(self, difficulty):
         '''
@@ -119,7 +123,7 @@ class QuestData(object):
         '''
         Set sun gone event end flag (If the quest is end, not modify)
         '''
-        if self._buffer[self._getoffset(difficulty) + 23] & 0x10:
+        if (self._buffer[self._getoffset(difficulty) + 13] & 0x10) == 0:
             if value:
                 self._buffer[self._getoffset(difficulty) + 22] |=  0x04
             else:
@@ -136,12 +140,13 @@ class QuestData(object):
         '''
         Set Golden bird quest end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 40] = 0x01
-            self._buffer[self._getoffset(difficulty) + 41] = 0x10
-        else:
-            self._buffer[self._getoffset(difficulty) + 40] = 0x00
-            self._buffer[self._getoffset(difficulty) + 41] = 0x00
+        if self._buffer[self._getoffset(difficulty) + 41] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 40] |= 0x01
+                self._buffer[self._getoffset(difficulty) + 41] |= 0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 40] = 0x00
+                self._buffer[self._getoffset(difficulty) + 41] = 0x00
 
     def get_act3_lamesen(self, difficulty):
         '''
@@ -154,12 +159,13 @@ class QuestData(object):
         '''
         Set Lam Esen quest end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 42] = 0x0D
-            self._buffer[self._getoffset(difficulty) + 43] = 0x10
-        else:
-            self._buffer[self._getoffset(difficulty) + 42] = 0x00
-            self._buffer[self._getoffset(difficulty) + 43] = 0x00
+        if self._buffer[self._getoffset(difficulty) + 43] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 42] |= 0x0D
+                self._buffer[self._getoffset(difficulty) + 43] |= 0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 42] = 0x00
+                self._buffer[self._getoffset(difficulty) + 43] = 0x00
 
     def get_act4_izual(self, difficulty):
         '''
@@ -172,12 +178,13 @@ class QuestData(object):
         '''
         Set Izual quest end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 50] = 0x01
-            self._buffer[self._getoffset(difficulty) + 51] = 0x10
-        else:
-            self._buffer[self._getoffset(difficulty) + 50] = 0x00
-            self._buffer[self._getoffset(difficulty) + 51] = 0x00
+        if self._buffer[self._getoffset(difficulty) + 51] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 50] |= 0x01
+                self._buffer[self._getoffset(difficulty) + 51] |= 0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 50] = 0x00
+                self._buffer[self._getoffset(difficulty) + 51] = 0x00
 
     def get_act5_socket(self, difficulty):
         '''
@@ -190,27 +197,33 @@ class QuestData(object):
         '''
         Set Socket end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 70] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 70] |=  0x01
-        else:
-            self._buffer[self._getoffset(difficulty) + 70] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 70] |=  0x02
+        if self._buffer[self._getoffset(difficulty) + 71] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 70] &= ~0x03
+                self._buffer[self._getoffset(difficulty) + 70] |=  0x01
+                self._buffer[self._getoffset(difficulty) + 71] |=  0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 70] &= ~0x03
+                self._buffer[self._getoffset(difficulty) + 70] |=  0x02
+                self._buffer[self._getoffset(difficulty) + 71] &= ~0x10
 
     def get_act5_runesset(self, difficulty):
         '''
         Get Giving runes set end flag
         '''
-        return (self._buffer[self._getoffset(difficulty) + 70] & 0x20) != 0
+        return (self._buffer[self._getoffset(difficulty) + 72] & 0x20) != 0
 
     def set_act5_runesset(self, difficulty, value):
         '''
         Set Giving runes set end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 70] |=  0x20
-        else:
-            self._buffer[self._getoffset(difficulty) + 70] &= ~0x20
+        if self._buffer[self._getoffset(difficulty) + 73] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 72] |=  0x20
+                self._buffer[self._getoffset(difficulty) + 73] |=  0x10
+            else:
+                self._buffer[self._getoffset(difficulty) + 72] &= ~0x20
+                self._buffer[self._getoffset(difficulty) + 73] &= ~0x10
 
     def get_act5_scrollofregist(self, difficulty):
         '''
@@ -223,12 +236,13 @@ class QuestData(object):
         '''
         Set Giving scroll of regist end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 74] |=  0x80
-            self._buffer[self._getoffset(difficulty) + 75] |=  0x01
-        else:
-            self._buffer[self._getoffset(difficulty) + 74] &= ~0x80
-            self._buffer[self._getoffset(difficulty) + 75] &= ~0x01
+        if self._buffer[self._getoffset(difficulty) + 75] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 74] |=  0x80
+                self._buffer[self._getoffset(difficulty) + 75] |=  0x11
+            else:
+                self._buffer[self._getoffset(difficulty) + 74] &= ~0x80
+                self._buffer[self._getoffset(difficulty) + 75] &= ~0x11
 
     def get_act5_personalize(self, difficulty):
         '''
@@ -241,10 +255,11 @@ class QuestData(object):
         '''
         Set personalize end flag
         '''
-        if value:
-            self._buffer[self._getoffset(difficulty) + 76] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 76] |=  0x01
-        else:
-            self._buffer[self._getoffset(difficulty) + 76] &= ~0x03
-            self._buffer[self._getoffset(difficulty) + 76] |=  0x02
+        if self._buffer[self._getoffset(difficulty) + 76] & 0x10:
+            if value:
+                self._buffer[self._getoffset(difficulty) + 76] &= ~0x13
+                self._buffer[self._getoffset(difficulty) + 76] |=  0x11
+            else:
+                self._buffer[self._getoffset(difficulty) + 76] &= ~0x13
+                self._buffer[self._getoffset(difficulty) + 76] |=  0x02
 
