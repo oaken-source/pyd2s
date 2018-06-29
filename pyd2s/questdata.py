@@ -211,7 +211,8 @@ class QuestData(object):
         '''
         Get Giving runes set end flag
         '''
-        return (self._buffer[self._getoffset(difficulty) + 72] & 0x20) != 0
+#        print("0x{:04X}".format((self._buffer[self._getoffset(difficulty) + 73] << 8) | self._buffer[self._getoffset(difficulty) + 72]))
+        return self._buffer[self._getoffset(difficulty) + 73] & 0x10
 
     def set_act5_runesset(self, difficulty, value):
         '''
@@ -219,10 +220,10 @@ class QuestData(object):
         '''
         if self._buffer[self._getoffset(difficulty) + 73] & 0x10:
             if value:
-                self._buffer[self._getoffset(difficulty) + 72] |=  0x20
+                self._buffer[self._getoffset(difficulty) + 72] =   0x01
                 self._buffer[self._getoffset(difficulty) + 73] |=  0x10
             else:
-                self._buffer[self._getoffset(difficulty) + 72] &= ~0x20
+                self._buffer[self._getoffset(difficulty) + 72] =   0x1C
                 self._buffer[self._getoffset(difficulty) + 73] &= ~0x10
 
     def get_act5_scrollofregist(self, difficulty):

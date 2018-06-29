@@ -2,7 +2,7 @@ import pyd2s
 
 # informations of savefile
 
-path = "/home/domi/.wine/drive_c/users/domi/Saved Games/Diablo II/catman.d2s"
+path = "C:\\user\\Saved Games\\Diablo II\\player.d2s"
 o_d2s = pyd2s.D2SaveFile(path)
 o_d2s_buf = pyd2s.SaveBuffer(path)
 o_d2s_char = pyd2s.Character(o_d2s_buf)
@@ -318,90 +318,84 @@ print("Count(on data) : " + str(o_d2s_item.pcountondata))
 print("")
 
 for i in range(o_d2s_item.pcount):
-    temp = ""
-    data = o_d2s_item.getpdata(i)
-    for j in range(len(data)):
-        temp += "{:02X} ".format(data[j])
-    print("item{}".format(i) + " : " + temp)
-    temp = ""
+    o_itemdata = o_d2s_item.getpdata(i)
+    temp = "item{}".format(i) + ": "
     temp += "("
-    if len(data) > 6:
-        temp += "C{} R{} ".format((data[6] & 0x1E) >> 1, (data[6] & 0xE0) >> 5)
-    if len(data) > 5:
-        val = (data[5] & 0x1C) >> 2
-        if val == 2:
-            temp += "Belt"
-        elif val == 4:
-            temp += "Cursor"
-        elif val == 6:
-            temp += "Socket"
-    if len(data) > 6:
-        if (data[5] & 0x1C) >> 2 == 1:
-            val = ((data[5] & 0xE0) >> 5) + ((data[6] & 0x1) << 3)
-            if val == 1:
-                temp += "(E)Heads"
-            elif val == 2:
-                temp += "(E)Neck"
-            elif val == 3:
-                temp += "(E)Torso"
-            elif val == 4:
-                temp += "(E)RHand"
-            elif val == 5:
-                temp += "(E)LHand"
-            elif val == 6:
-                temp += "(E)RFinger"
-            elif val == 7:
-                temp += "(E)LFinger"
-            elif val == 8:
-                temp += "(E)Waist"
-            elif val == 9:
-                temp += "(E)Feet"
-            elif val == 10:
-                temp += "(E)Hands"
-            elif val == 11:
-                temp += "(E)ARHand"
-            elif val == 12:
-                temp += "(E)ALHand"
-    if len(data) > 7:
-        if (data[5] & 0x1C) >> 2 == 0:
-            val = (data[7] & 0x0E) >> 1
-            if val == 0:
-                temp += "NotHere"
-            elif val == 1:
-                temp += "Inventory"
-            elif val == 4:
-                temp += "Cube"
-            elif val == 5:
-                temp += "Stash"
+    temp += "C{} R{}".format(o_itemdata.getcolumn, o_itemdata.getrow)
+    if o_itemdata.getlocation == 0:
+        if o_itemdata.getbox == 0:
+            temp += " (NotHere)"
+        elif o_itemdata.getbox == 1:
+            temp += " Inventory"
+        elif o_itemdata.getbox == 4:
+            temp += " Cube"
+        elif o_itemdata.getbox == 5:
+            temp += " Stash"
+    elif o_itemdata.getlocation == 1:
+        temp += " Equipped"
+        if o_itemdata.getlocofequip == 1:
+            temp += " Head"
+        elif o_itemdata.getlocofequip == 2:
+            temp += " Neck"
+        elif o_itemdata.getlocofequip == 3:
+            temp += " Torso"
+        elif o_itemdata.getlocofequip == 4:
+            temp += " RHand"
+        elif o_itemdata.getlocofequip == 5:
+            temp += " LHand"
+        elif o_itemdata.getlocofequip == 6:
+            temp += " RFinger"
+        elif o_itemdata.getlocofequip == 7:
+            temp += " LFinger"
+        elif o_itemdata.getlocofequip == 8:
+            temp += " Waist"
+        elif o_itemdata.getlocofequip == 9:
+            temp += " Feet"
+        elif o_itemdata.getlocofequip == 10:
+            temp += " Hands"
+        elif o_itemdata.getlocofequip == 11:
+            temp += " ARHand"
+        elif o_itemdata.getlocofequip == 12:
+            temp += " ALHand"
+    elif o_itemdata.getlocation == 2:
+        temp += " Belt"
+    elif o_itemdata.getlocation == 4:
+        temp += " Cursor"
+    elif o_itemdata.getlocation == 5:
+        temp += " Socketed"
     temp += ") "
-    if len(data) > 10:
-        temp2 = [((data[ 7] & 0xF0) >> 4) + ((data[ 8] & 0x0F) << 4), ((data[ 8] & 0xF0) >> 4) + ((data[ 9] & 0x0F) << 4),
-                 ((data[ 9] & 0xF0) >> 4) + ((data[10] & 0x0F) << 4), ((data[10] & 0xF0) >> 4) + ((data[11] & 0x0F) << 4)]
-        temp += "{:02X} {:02X} {:02X} {:02X} ({}) ".format(temp2[0], temp2[1], temp2[2], temp2[3], chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3]))
-    if len(data) > 0:
-        if data[0] & 0x10 == 0:
-            temp += "NonIdentified "
-    if len(data) > 2:
-        if data[2] & 0x01:
-            temp += "Ear "
-        if data[2] & 0x02:
-            temp += "Newbie "
-        if data[2] & 0x40:
-            temp += "Ethereal "
-    if len(data) > 3:
-        if data[3] & 0x01:
-            temp += "Personalized "
-        if data[3] & 0x04:
-            temp += "Runeword "
-    if len(data) > 11:
-        val = (data[11] & 0x70) >> 4
-        if data[1] & 0x08 and val > 0:
-            temp += "Socketed({}) ".format(val)
-    if len(data) > 2:
-        if data[2] & 0x20 == 0:    # not simple
-            if len(data) > 16:
-                val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
-                temp += "ilvl({}) ".format(val)
+    print(temp)
+    temp = "  "
+    if o_itemdata.getquality == 1:
+        temp += "[LQ]"
+    elif o_itemdata.getquality == 3:
+        temp += "[HQ]"
+    elif o_itemdata.getquality == 4:
+        temp += "[Magic]"
+    elif o_itemdata.getquality == 5:
+        temp += "[Set]"
+    elif o_itemdata.getquality == 6:
+        temp += "[Rare]"
+    elif o_itemdata.getquality == 7:
+        temp += "[Unique]"
+    elif o_itemdata.getquality == 8:
+        temp += "[Crafted]"
+    temp += " " + pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
+    if not o_itemdata.isidentified:
+        temp += " NotIdentified"
+    if o_itemdata.issocketed:
+        temp += " Socketed"
+    if o_itemdata.isethereal:
+        temp += " Ethereal"
+    if o_itemdata.ispersonalized:
+        temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
+    if o_itemdata.isruneword:
+        temp += " RuneWord"
+    if o_itemdata.getglued != 0:
+        temp += " Glued({})".format(o_itemdata.getglued)
+    if not o_itemdata.issimple:
+        temp += " id(0x{:08X})".format(o_itemdata.getid)
+        temp += " ilvl({})".format(o_itemdata.getilvl)
     print(temp)
 print("")
 
@@ -411,90 +405,84 @@ print("Count(on data) : " + str(o_d2s_item.mcountondata))
 print("")
 
 for i in range(o_d2s_item.mcount):
-    temp = ""
-    data = o_d2s_item.getmdata(i)
-    for j in range(len(data)):
-        temp += "{:02X} ".format(data[j])
-    print("item{}".format(i) + " : " + temp)
-    temp = ""
+    o_itemdata = o_d2s_item.getmdata(i)
+    temp = "item{}".format(i) + ": "
     temp += "("
-    if len(data) > 6:
-        temp += "C{} R{} ".format((data[6] & 0x1E) >> 1, (data[6] & 0xE0) >> 5)
-    if len(data) > 5:
-        val = (data[5] & 0x1C) >> 2
-        if val == 2:
-            temp += "Belt"
-        elif val == 4:
-            temp += "Cursor"
-        elif val == 6:
-            temp += "Socket"
-    if len(data) > 6:
-        if (data[5] & 0x1C) >> 2 == 1:
-            val = ((data[5] & 0xE0) >> 5) + ((data[6] & 0x1) << 3)
-            if val == 1:
-                temp += "(E)Heads"
-            elif val == 2:
-                temp += "(E)Neck"
-            elif val == 3:
-                temp += "(E)Torso"
-            elif val == 4:
-                temp += "(E)RHand"
-            elif val == 5:
-                temp += "(E)LHand"
-            elif val == 6:
-                temp += "(E)RFinger"
-            elif val == 7:
-                temp += "(E)LFinger"
-            elif val == 8:
-                temp += "(E)Waist"
-            elif val == 9:
-                temp += "(E)Feet"
-            elif val == 10:
-                temp += "(E)Hands"
-            elif val == 11:
-                temp += "(E)ARHand"
-            elif val == 12:
-                temp += "(E)ALHand"
-    if len(data) > 7:
-        if (data[5] & 0x1C) >> 2 == 0:
-            val = (data[7] & 0x0E) >> 1
-            if val == 1:
-                temp += "NotHere"
-            elif val == 1:
-                temp += "Inventory"
-            elif val == 4:
-                temp += "Cube"
-            elif val == 5:
-                temp += "Stash"
+    temp += "C{} R{}".format(o_itemdata.getcolumn, o_itemdata.getrow)
+    if o_itemdata.getlocation == 0:
+        if o_itemdata.getbox == 0:
+            temp += " (NotHere)"
+        elif o_itemdata.getbox == 1:
+            temp += " Inventory"
+        elif o_itemdata.getbox == 4:
+            temp += " Cube"
+        elif o_itemdata.getbox == 5:
+            temp += " Stash"
+    elif o_itemdata.getlocation == 1:
+        temp += " Equipped"
+        if o_itemdata.getlocofequip == 1:
+            temp += " Head"
+        elif o_itemdata.getlocofequip == 2:
+            temp += " Neck"
+        elif o_itemdata.getlocofequip == 3:
+            temp += " Torso"
+        elif o_itemdata.getlocofequip == 4:
+            temp += " RHand"
+        elif o_itemdata.getlocofequip == 5:
+            temp += " LHand"
+        elif o_itemdata.getlocofequip == 6:
+            temp += " RFinger"
+        elif o_itemdata.getlocofequip == 7:
+            temp += " LFinger"
+        elif o_itemdata.getlocofequip == 8:
+            temp += " Waist"
+        elif o_itemdata.getlocofequip == 9:
+            temp += " Feet"
+        elif o_itemdata.getlocofequip == 10:
+            temp += " Hands"
+        elif o_itemdata.getlocofequip == 11:
+            temp += " ARHand"
+        elif o_itemdata.getlocofequip == 12:
+            temp += " ALHand"
+    elif o_itemdata.getlocation == 2:
+        temp += " Belt"
+    elif o_itemdata.getlocation == 4:
+        temp += " Cursor"
+    elif o_itemdata.getlocation == 5:
+        temp += " Socketed"
     temp += ") "
-    if len(data) > 10:
-        temp2 = [((data[ 7] & 0xF0) >> 4) + ((data[ 8] & 0x0F) << 4), ((data[ 8] & 0xF0) >> 4) + ((data[ 9] & 0x0F) << 4),
-                 ((data[ 9] & 0xF0) >> 4) + ((data[10] & 0x0F) << 4), ((data[10] & 0xF0) >> 4) + ((data[11] & 0x0F) << 4)]
-        temp += "{:02X} {:02X} {:02X} {:02X} ({}) ".format(temp2[0], temp2[1], temp2[2], temp2[3], chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3]))
-    if len(data) > 0:
-        if data[0] & 0x10 == 0:
-            temp += "NonIdentified "
-    if len(data) > 2:
-        if data[2] & 0x01:
-            temp += "Ear "
-        if data[2] & 0x02:
-            temp += "Newbie "
-        if data[2] & 0x40:
-            temp += "Ethereal "
-    if len(data) > 3:
-        if data[3] & 0x01:
-            temp += "Personalized "
-        if data[3] & 0x04:
-            temp += "Runeword "
-    if len(data) > 11:
-        val = (data[11] & 0x70) >> 4
-        if data[1] & 0x08 and val > 0:
-            temp += "Socketed({}) ".format(val)
-    if len(data) > 2:
-        if data[2] & 0x20 == 0:    # not simple
-            if len(data) > 16:
-                val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
-                temp += "ilvl({}) ".format(val)
+    print(temp)
+    temp = "  "
+    if o_itemdata.getquality == 1:
+        temp += "[LQ]"
+    elif o_itemdata.getquality == 3:
+        temp += "[HQ]"
+    elif o_itemdata.getquality == 4:
+        temp += "[Magic]"
+    elif o_itemdata.getquality == 5:
+        temp += "[Set]"
+    elif o_itemdata.getquality == 6:
+        temp += "[Rare]"
+    elif o_itemdata.getquality == 7:
+        temp += "[Unique]"
+    elif o_itemdata.getquality == 8:
+        temp += "[Crafted]"
+    temp += " " + pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
+    if not o_itemdata.isidentified:
+        temp += " NotIdentified"
+    if o_itemdata.issocketed:
+        temp += " Socketed"
+    if o_itemdata.isethereal:
+        temp += " Ethereal"
+    if o_itemdata.ispersonalized:
+        temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
+    if o_itemdata.isruneword:
+        temp += " RuneWord"
+    if o_itemdata.getglued != 0:
+        temp += " Glued({})".format(o_itemdata.getglued)
+    if not o_itemdata.issimple:
+        temp += " id(0x{:08X})".format(o_itemdata.getid)
+        temp += " ilvl({})".format(o_itemdata.getilvl)
     print(temp)
 
 
