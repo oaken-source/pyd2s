@@ -492,7 +492,7 @@ class ItemDetail(object):
         nowbit = 4
         if getvalfromdata(self._data, nowbit, 1):
             self._identified = True
-        nowbit = 10
+        nowbit = 11
         if getvalfromdata(self._data, nowbit, 1):
             self._socketed = True
         nowbit = 13
