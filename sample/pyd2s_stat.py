@@ -367,20 +367,20 @@ for i in range(o_d2s_item.pcount):
     print(temp)
     temp = "  "
     if o_itemdata.getquality == 1:
-        temp += "[LQ]"
+        temp += "[LQ] "
     elif o_itemdata.getquality == 3:
-        temp += "[HQ]"
+        temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "[Magic]"
+        temp += "[Magic] "
     elif o_itemdata.getquality == 5:
-        temp += "[Set]"
+        temp += "[Set] "
     elif o_itemdata.getquality == 6:
-        temp += "[Rare]"
+        temp += "[Rare] "
     elif o_itemdata.getquality == 7:
-        temp += "[Unique]"
+        temp += "[Unique] "
     elif o_itemdata.getquality == 8:
-        temp += "[Crafted]"
-    temp += " " + pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
+        temp += "[Crafted] "
+    temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"
     if o_itemdata.issocketed:
@@ -454,20 +454,20 @@ for i in range(o_d2s_item.mcount):
     print(temp)
     temp = "  "
     if o_itemdata.getquality == 1:
-        temp += "[LQ]"
+        temp += "[LQ] "
     elif o_itemdata.getquality == 3:
-        temp += "[HQ]"
+        temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "[Magic]"
+        temp += "[Magic] "
     elif o_itemdata.getquality == 5:
-        temp += "[Set]"
+        temp += "[Set] "
     elif o_itemdata.getquality == 6:
-        temp += "[Rare]"
+        temp += "[Rare] "
     elif o_itemdata.getquality == 7:
-        temp += "[Unique]"
+        temp += "[Unique] "
     elif o_itemdata.getquality == 8:
-        temp += "[Crafted]"
-    temp += " " + pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
+        temp += "[Crafted] "
+    temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"
     if o_itemdata.issocketed:
