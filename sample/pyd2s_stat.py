@@ -371,15 +371,15 @@ for i in range(o_d2s_item.pcount):
     elif o_itemdata.getquality == 3:
         temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "[Magic] "
+        temp += "\x1b[1;34m[Magic]\x1b[0m "
     elif o_itemdata.getquality == 5:
-        temp += "[Set] "
+        temp += "\x1b[1;32m[Set]\x1b[0m "
     elif o_itemdata.getquality == 6:
-        temp += "[Rare] "
+        temp += "\x1b[1;33m[Rare]\x1b[0m "
     elif o_itemdata.getquality == 7:
-        temp += "[Unique] "
+        temp += "\x1b[1;33m[Unique]\x1b[0m "
     elif o_itemdata.getquality == 8:
-        temp += "[Crafted] "
+        temp += "\x1b[1;31m[Crafted]\x1b[0m "
     temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"
@@ -394,8 +394,14 @@ for i in range(o_d2s_item.pcount):
     if o_itemdata.getglued != 0:
         temp += " Glued({})".format(o_itemdata.getglued)
     if not o_itemdata.issimple:
-        temp += " id(0x{:08X})".format(o_itemdata.getid)
+        temp += " ID(0x{:08X})".format(o_itemdata.getid)
         temp += " ilvl({})".format(o_itemdata.getilvl)
+    if pyd2s.isarmors(o_itemdata.gettype):
+        temp += " Def({})".format(o_itemdata.getdefval)
+    if (pyd2s.isarmors(o_itemdata.gettype) or pyd2s.isweapons(o_itemdata.gettype)):
+        temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
+        if o_itemdata.issocketed:
+            temp += " Sockets({})".format(o_itemdata.getsocketnum)
     print(temp)
 print("")
 
@@ -458,15 +464,15 @@ for i in range(o_d2s_item.mcount):
     elif o_itemdata.getquality == 3:
         temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "[Magic] "
+        temp += "\x1b[1;34m[Magic]\x1b[0m "
     elif o_itemdata.getquality == 5:
-        temp += "[Set] "
+        temp += "\x1b[1;32m[Set]\x1b[0m "
     elif o_itemdata.getquality == 6:
-        temp += "[Rare] "
+        temp += "\x1b[1;33m[Rare]\x1b[0m "
     elif o_itemdata.getquality == 7:
-        temp += "[Unique] "
+        temp += "\x1b[1;33m[Unique]\x1b[0m "
     elif o_itemdata.getquality == 8:
-        temp += "[Crafted] "
+        temp += "\x1b[1;31m[Crafted]\x1b[0m "
     temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"
@@ -481,8 +487,14 @@ for i in range(o_d2s_item.mcount):
     if o_itemdata.getglued != 0:
         temp += " Glued({})".format(o_itemdata.getglued)
     if not o_itemdata.issimple:
-        temp += " id(0x{:08X})".format(o_itemdata.getid)
+        temp += " ID(0x{:08X})".format(o_itemdata.getid)
         temp += " ilvl({})".format(o_itemdata.getilvl)
+    if pyd2s.isarmors(o_itemdata.gettype):
+        temp += " Def({})".format(o_itemdata.getdefval)
+    if (pyd2s.isarmors(o_itemdata.gettype) or pyd2s.isweapons(o_itemdata.gettype)):
+        temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
+        if o_itemdata.issocketed:
+            temp += " Sockets({})".format(o_itemdata.getsocketnum)
     print(temp)
 
 

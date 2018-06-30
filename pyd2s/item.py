@@ -556,17 +556,22 @@ class ItemDetail(object):
             nowbit = 134
             self._quality = getvalfromdata(self._data, nowbit, 4)
             nowbit += 4
-            if getvalfromdata(self._data, nowbit, 1):
-                self._multipic = True
-            nowbit += 1
-            if self._multipic:
-                self._multipicno = getvalfromdata(self._data, nowbit, 3)
-                nowbit += 3
+            if isaccessories(self._type):
+                if getvalfromdata(self._data, nowbit, 1):
+                    self._multipic = True
+                nowbit += 1
+                if self._multipic:
+                    self._multipicno = getvalfromdata(self._data, nowbit, 3)
+                    nowbit += 3
+            else:
+                self._uk = getvalfromdata(self._data, nowbit, 1)
+                nowbit += 1
             if getvalfromdata(self._data, nowbit, 1):
                 self._expansion = True
             nowbit += 1
-            self._classspecificitem = getvalfromdata(self._data, nowbit, 11)
-            nowbit += 11
+            if self._expansion:
+                self._classspecificitem = getvalfromdata(self._data, nowbit, 11)
+                nowbit += 11
             if self._quality == 1:
                 self._lowqualitytype = getvalfromdata(self._data, nowbit, 3)
                 nowbit += 3
@@ -689,7 +694,7 @@ class ItemDetail(object):
                 nowbit += 8
                 self._curdur = getvalfromdata(self._data, nowbit, 8)
                 nowbit += 8
-                if not iscountable(self._type):
+                if self._socketed and not iscountable(self._type):
                     self._socketnum = getvalfromdata(self._data, nowbit, 4)
                     nowbit += 4
             if iscountable(self._type):
@@ -1192,33 +1197,27 @@ class Item(object):
                 if start:
                     start = False
                 else:
-                    if len(onedata) > 2:
-                        if not first:
-                            if player:
-                                if len(onedata) > 4:
-                                    self._pdata.append(ItemDetail(onedata))
-                            else:
-                                if len(onedata) > 4:
-                                    self._mdata.append(ItemDetail(onedata))
-                            if len(onedata) > 4:
-                                if player:
-                                    self._pcount += 1
-                                else:
-                                    self._mcount += 1
-                        if player and len(onedata) > 2:
-                            if len(onedata) == 4:
-                                first = True
-                                player = False
-                    else:
-                        if first:
-                            if player:
-                                self._pcountondata = (onedata[1] << 8) + onedata[0]
-                            else:
-                                self._mcountondata = (onedata[1] << 8) + onedata[0]
-                            first = False
-                        else:
-                            player = False
+                    if len(onedata) == 2:
+                        if not self._pcountondata:
+                            self._pcountondata = (onedata[1] << 8) + onedata[0]
+                        elif not self._mcountondata:
                             self._mcountondata = (onedata[1] << 8) + onedata[0]
+                    elif len(onedata) == 4:
+                        if not self._pcountondata:
+                            pass
+                        if not self._mcountondata:
+                            player = False
+                    elif len(onedata) > 4:
+                        if player:
+                            if len(onedata) > 4:
+                                self._pdata.append(ItemDetail(onedata))
+                        else:
+                            if len(onedata) > 4:
+                                self._mdata.append(ItemDetail(onedata))
+                        if player:
+                            self._pcount += 1
+                        else:
+                            self._mcount += 1
                 onedata = []
                 loc += 2
             else:
