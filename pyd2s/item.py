@@ -362,6 +362,19 @@ def iscountable(type):
             break
     return val
 
+D2_Tomes = [
+    "ibk", "tbk"
+]
+
+def istomes(type):
+    val = False
+    typea = type[0] + type[1] + type[2]
+    for i in range(len(D2_Tomes)):
+        if typea == D2_Tomes[i]:
+            val = True
+            break
+    return val
+
 D2_All_Items = [
     D2_Helms, D2_Body_Armors, D2_Shields, D2_Gloves, D2_Boots,
     D2_Belts, D2_Druid_Pelts, D2_Barbarian_Helms, D2_Necromancer_Shrunken_Heads, D2_Paladin_Shields,
@@ -689,17 +702,31 @@ class ItemDetail(object):
             if isarmors(self._type):
                 self._defval = getvalfromdata(self._data, nowbit, 10) - 10
                 nowbit += 10
+                self._uk = getvalfromdata(self._data, nowbit, 1)
+                nowbit += 1
             if isarmors(self._type) or isweapons(self._type):
                 self._maxdur = getvalfromdata(self._data, nowbit, 8)
                 nowbit += 8
                 self._curdur = getvalfromdata(self._data, nowbit, 8)
                 nowbit += 8
                 if self._socketed and not iscountable(self._type):
+                    self._uk = getvalfromdata(self._data, nowbit, 1)
+                    nowbit += 1
                     self._socketnum = getvalfromdata(self._data, nowbit, 4)
                     nowbit += 4
+            if istomes(self._type):
+                self._uk = getvalfromdata(self._data, nowbit, 5)
+                nowbit += 5
             if iscountable(self._type):
                 self._quantity = getvalfromdata(self._data, nowbit, 9)
                 nowbit += 9
+
+    @property
+    def getdata(self):
+        '''
+        item data
+        '''
+        return self._data
 
     @property
     def isidentified(self):

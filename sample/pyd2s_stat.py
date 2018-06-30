@@ -319,6 +319,12 @@ print("")
 
 for i in range(o_d2s_item.pcount):
     o_itemdata = o_d2s_item.getpdata(i)
+    if 1:
+        data = o_itemdata.getdata
+        temp = ""
+        for j in range(len(data)):
+            temp += "{:02X} ".format(data[j])
+        print(temp)
     temp = "item{}".format(i) + ": "
     temp += "("
     temp += "C{} R{}".format(o_itemdata.getcolumn, o_itemdata.getrow)
@@ -402,6 +408,8 @@ for i in range(o_d2s_item.pcount):
         temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
         if o_itemdata.issocketed:
             temp += " Sockets({})".format(o_itemdata.getsocketnum)
+    if pyd2s.iscountable(o_itemdata.gettype):
+        temp += " Quantity({})".format(o_itemdata.getquantity)
     print(temp)
 print("")
 
@@ -412,6 +420,12 @@ print("")
 
 for i in range(o_d2s_item.mcount):
     o_itemdata = o_d2s_item.getmdata(i)
+    if 1:
+        data = o_itemdata.getdata
+        temp = ""
+        for j in range(len(data)):
+            temp += "{:02X} ".format(data[j])
+        print(temp)
     temp = "item{}".format(i) + ": "
     temp += "("
     temp += "C{} R{}".format(o_itemdata.getcolumn, o_itemdata.getrow)
@@ -495,6 +509,8 @@ for i in range(o_d2s_item.mcount):
         temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
         if o_itemdata.issocketed:
             temp += " Sockets({})".format(o_itemdata.getsocketnum)
+    if pyd2s.iscountable(o_itemdata.gettype):
+        temp += " Quantity({})".format(o_itemdata.getquantity)
     print(temp)
 
 
