@@ -319,7 +319,7 @@ print("")
 
 for i in range(o_d2s_item.pcount):
     o_itemdata = o_d2s_item.getpdata(i)
-    if 1:
+    if 0:
         data = o_itemdata.getdata
         temp = ""
         for j in range(len(data)):
@@ -420,7 +420,7 @@ print("")
 
 for i in range(o_d2s_item.mcount):
     o_itemdata = o_d2s_item.getmdata(i)
-    if 1:
+    if 0:
         data = o_itemdata.getdata
         temp = ""
         for j in range(len(data)):
