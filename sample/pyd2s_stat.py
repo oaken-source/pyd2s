@@ -24,6 +24,7 @@ o_d2s_merc = pyd2s.Mercenary(o_d2s_buf)
 o_d2s_qdata = pyd2s.QuestData(o_d2s_buf)
 o_d2s_wayp = pyd2s.WaypointData(o_d2s_buf)
 o_d2s_item = pyd2s.Item(o_d2s_buf)
+o_d2s_skill = pyd2s.Skill(o_d2s_buf)
 
 print("[[ Savefile information ]]")
 print("Path     : " + o_d2s_buf.path)
@@ -59,8 +60,6 @@ print("Vitality  : " + str(o_d2s_char.vitality))
 print("Energy    : " + str(o_d2s_char.energy))
 print("StatPts   : " + str(o_d2s_char.statpts))
 print("")
-print("NewSkills : " + str(o_d2s_char.newskills))
-print("")
 print("MaxHP   : " + str(o_d2s_char.maxhp))
 print("MaxMP   : " + str(o_d2s_char.maxmana))
 print("Stamina : " + str(o_d2s_char.maxstamina))
@@ -68,6 +67,43 @@ print("")
 print("Experience : " + str(o_d2s_char.experience))
 print("Gold       : " + str(o_d2s_char.gold))
 print("GoldBank   : " + str(o_d2s_char.goldbank))
+print("")
+
+print("[[ Skill information ]]")
+if o_d2s_char.character_class == pyd2s.CharacterClass.Amazon:
+    cc = 0
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Sorceress:
+    cc = 1
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Necromancer:
+    cc = 2
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Paladin:
+    cc = 3
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Barbarian:
+    cc = 4
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Druid:
+    cc = 5
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Assassin:
+    cc = 6
+j = 0
+for i in range(30):
+    if j < len(o_d2s_skill.getskillname(i)):
+        j = len(o_d2s_skill.getskillname(i))
+for i in range(30):
+    idx = pyd2s.D2_SkillsOrder[cc][i]
+    temp = o_d2s_skill.getskillname(idx)
+    for m in range(j - len(o_d2s_skill.getskillname(idx))):
+        temp += " "
+    if colorama:
+        if o_d2s_skill.getskillpoints(idx) >= 20:
+            temp += " : " + colorama.Fore.LIGHTRED_EX + "{}".format(o_d2s_skill.getskillpoints(idx)) + colorama.Fore.RESET
+        else:
+            temp += " : {}".format(o_d2s_skill.getskillpoints(idx))
+    else:
+        temp += " : {}".format(o_d2s_skill.getskillpoints(idx))
+    print(temp)
+    if (i + 1) % 10 == 0:
+        print("")
+print("NewSkills : " + str(o_d2s_char.newskills))
 print("")
 
 print("[[ Mercenary information ]]")

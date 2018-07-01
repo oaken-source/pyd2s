@@ -11,6 +11,7 @@ from pyd2s.mercenary import Mercenary
 from pyd2s.item import *
 from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
+from pyd2s.skill import *
 
 class D2SaveFile(object):
     '''
