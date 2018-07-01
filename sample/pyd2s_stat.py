@@ -1,4 +1,13 @@
 import pyd2s
+import pkgutil
+import importlib
+
+# colorama module load, if exist
+colorama = None
+for i in pkgutil.iter_modules():
+    if i.name == "colorama":
+        colorama = importlib.import_module("colorama")
+        break
 
 # informations of savefile
 
@@ -312,14 +321,15 @@ for i in range(3):
 	print(temp)
 print("")
 
-print("[[ Player Item information ]]")
-print("Count          : " + str(o_d2s_item.pcount))
-print("Count(on data) : " + str(o_d2s_item.pcountondata))
-print("")
-
 for i in range(o_d2s_item.pcount):
+    if i == 0:
+        print("[[ Player Item information ]]")
+        print("Count          : " + str(o_d2s_item.pcount))
+        print("Count(on data) : " + str(o_d2s_item.pcountondata))
+        print("")
+
     o_itemdata = o_d2s_item.getpdata(i)
-    if 0:
+    if 1:
         data = o_itemdata.getdata
         temp = ""
         for j in range(len(data)):
@@ -373,19 +383,37 @@ for i in range(o_d2s_item.pcount):
     print(temp)
     temp = "  "
     if o_itemdata.getquality == 1:
-        temp += "[LQ] "
+        if colorama:
+            temp += colorama.Fore.WHITE + "[LQ] " + colorama.Fore.RESET
+        else:
+            temp += "[LQ] "
     elif o_itemdata.getquality == 3:
         temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "\x1b[1;34m[Magic]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTBLUE_EX + "[Magic] " + colorama.Fore.RESET
+        else:
+            temp += "[Magic] "
     elif o_itemdata.getquality == 5:
-        temp += "\x1b[1;32m[Set]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTGREEN_EX + "[Set] " + colorama.Fore.RESET
+        else:
+            temp += "[Set] "
     elif o_itemdata.getquality == 6:
-        temp += "\x1b[1;33m[Rare]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + "[Rare] " + colorama.Fore.RESET
+        else:
+            temp += "[Rare] "
     elif o_itemdata.getquality == 7:
-        temp += "\x1b[1;33m[Unique]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + "[Unique] " + colorama.Fore.RESET
+        else:
+            temp += "[Unique] "
     elif o_itemdata.getquality == 8:
-        temp += "\x1b[1;31m[Crafted]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTRED_EX + "[Crafted] " + colorama.Fore.RESET
+        else:
+            temp += "[Crafted] "
     temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"
@@ -413,12 +441,13 @@ for i in range(o_d2s_item.pcount):
     print(temp)
 print("")
 
-print("[[ Mercenary Item information ]]")
-print("Count          : " + str(o_d2s_item.mcount))
-print("Count(on data) : " + str(o_d2s_item.mcountondata))
-print("")
-
 for i in range(o_d2s_item.mcount):
+    if i == 0:
+        print("[[ Mercenary Item information ]]")
+        print("Count          : " + str(o_d2s_item.mcount))
+        print("Count(on data) : " + str(o_d2s_item.mcountondata))
+        print("")
+
     o_itemdata = o_d2s_item.getmdata(i)
     if 0:
         data = o_itemdata.getdata
@@ -474,19 +503,37 @@ for i in range(o_d2s_item.mcount):
     print(temp)
     temp = "  "
     if o_itemdata.getquality == 1:
-        temp += "[LQ] "
+        if colorama:
+            temp += colorama.Fore.WHITE + "[LQ] " + colorama.Fore.RESET
+        else:
+            temp += "[LQ] "
     elif o_itemdata.getquality == 3:
         temp += "[HQ] "
     elif o_itemdata.getquality == 4:
-        temp += "\x1b[1;34m[Magic]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTBLUE_EX + "[Magic] " + colorama.Fore.RESET
+        else:
+            temp += "[Magic] "
     elif o_itemdata.getquality == 5:
-        temp += "\x1b[1;32m[Set]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTGREEN_EX + "[Set] " + colorama.Fore.RESET
+        else:
+            temp += "[Set] "
     elif o_itemdata.getquality == 6:
-        temp += "\x1b[1;33m[Rare]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + "[Rare] " + colorama.Fore.RESET
+        else:
+            temp += "[Rare] "
     elif o_itemdata.getquality == 7:
-        temp += "\x1b[1;33m[Unique]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + "[Unique] " + colorama.Fore.RESET
+        else:
+            temp += "[Unique] "
     elif o_itemdata.getquality == 8:
-        temp += "\x1b[1;31m[Crafted]\x1b[0m "
+        if colorama:
+            temp += colorama.Fore.LIGHTRED_EX + "[Crafted] " + colorama.Fore.RESET
+        else:
+            temp += "[Crafted] "
     temp += pyd2s.getitemsname(o_itemdata.gettype) + "(" + o_itemdata.gettype + ")"
     if not o_itemdata.isidentified:
         temp += " NotIdentified"

@@ -415,12 +415,12 @@ def getvalfromdata(data, nowbit, bitsize):
     for i in range(nowbit % 8, (nowbit % 8) + bitsize):
         mask |= 1 << i
     d = 0
-    if len(data) > (nowbit + bitsize) / 8 + 1:
-        for i in range(nowbit / 8, (nowbit + bitsize) / 8 + 1):
-            d += data[i] << ((i - nowbit / 8) * 8)
+    if len(data) > int((nowbit + bitsize) / 8) + 1:
+        for i in range(int(nowbit / 8), int((nowbit + bitsize) / 8) + 1):
+            d += data[i] << ((i - int(nowbit / 8)) * 8)
     else:
-        for i in range(nowbit / 8, (nowbit + bitsize) / 8):
-            d += data[i] << ((i - nowbit / 8) * 8)
+        for i in range(int(nowbit / 8), int((nowbit + bitsize) / 8)):
+            d += data[i] << ((i - int(nowbit / 8)) * 8)
     d &= mask
     val = d >> nowbit % 8
     return val
@@ -1218,7 +1218,7 @@ class Item(object):
         self._mdata = []
 
         loc = 840    # about
-	start = True
+        start = True
         first = True
         player = True
         onedata = []
