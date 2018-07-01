@@ -36,20 +36,20 @@ print("")
 print("[[ Charctor information ]]")
 print("Name        : " + o_d2s_char.name)
 if o_d2s_char.is_expansion:
-	temp = "Yes"
+    temp = "Yes"
 else:
-	temp = "No"
+    temp = "No"
 print("IsExpantion : " + temp)
 if o_d2s_char.is_hardcore:
-	if(o_d2s_char.has_died):
-		temp = "Yes(died)"
-	else:
-		temp = "Yes(alive)"
+    if(o_d2s_char.has_died):
+        temp = "Yes(died)"
+    else:
+        temp = "Yes(alive)"
 else:
-	if(o_d2s_char.has_died):
-		temp = "No(died)"
-	else:
-		temp = "No(alive)"
+    if(o_d2s_char.has_died):
+        temp = "No(died)"
+    else:
+        temp = "No(alive)"
 print("IsHardCore  : " + temp)
 if o_d2s_char.character_class == pyd2s.CharacterClass.Amazon:
     c = "Amazon"
@@ -122,258 +122,258 @@ print("")
 
 print("[[ Mercenary information ]]")
 if o_d2s_merc.is_dead:
-	temp = "Dead"
+    temp = "Dead"
 else:
-	temp = "Alive"
+    temp = "Alive"
 print("IsDead      : " + temp)
 print("ControlSeed : 0x{:X}".format(o_d2s_merc.control_seed))
 print("NameId      : 0x{:X}".format(o_d2s_merc.name_id))
 if o_d2s_merc.type == 1:
-	temp = "Act.1"
+    temp = "Act.1"
 elif o_d2s_merc.type == 2:
-	temp = "Act.2"
+    temp = "Act.2"
 elif o_d2s_merc.type == 3:
-	temp = "Act.3"
+    temp = "Act.3"
 elif o_d2s_merc.type == 4:
-	temp = "Act.5"
+    temp = "Act.5"
 else:
-	temp = "(illegal)"
+    temp = "(illegal)"
 print("Type        : " + temp)
 print("")
 
 print("[[ Quest information ]]")
 for i in range(3):
-	if i == 0:
-		print("* Normal *")
-	if i == 1:
-		print("* Nightmare *")
-	if i == 2:
-		print("* Hell *")
-	if o_d2s_qdata.get_act1_resetstatus(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.1 Reset status And skills : " + temp)
-	if o_d2s_qdata.get_act1_forge(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.1 Forge                   : " + temp)
-	if o_d2s_qdata.get_act1_cowlevel(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.1 Cow Level               : " + temp)
-	if o_d2s_qdata.get_act2_radament(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.2 Radament quest          : " + temp)
-	if o_d2s_qdata.get_act3_goldenbird(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.3 Golden Bird quest       : " + temp)
-	if o_d2s_qdata.get_act3_lamesen(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.3 Lam Esen quest          : " + temp)
-	if o_d2s_qdata.get_act4_izual(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.4 Izual quest             : " + temp)
-	if o_d2s_qdata.get_act5_socket(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.5 Socket                  : " + temp)
-	if o_d2s_qdata.get_act5_runesset(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.5 Runes set               : " + temp)
-	if o_d2s_qdata.get_act5_scrollofregist(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.5 Scroll of regist        : " + temp)
-	if o_d2s_qdata.get_act5_personalize(i):
-		temp = "x"
-	else:
-		temp = "o"
-	print("Act.5 Personalize             : " + temp)
+    if i == 0:
+        print("* Normal *")
+    if i == 1:
+        print("* Nightmare *")
+    if i == 2:
+        print("* Hell *")
+    if o_d2s_qdata.get_act1_resetstatus(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.1 Reset status And skills : " + temp)
+    if o_d2s_qdata.get_act1_forge(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.1 Forge                   : " + temp)
+    if o_d2s_qdata.get_act1_cowlevel(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.1 Cow Level               : " + temp)
+    if o_d2s_qdata.get_act2_radament(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.2 Radament quest          : " + temp)
+    if o_d2s_qdata.get_act3_goldenbird(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.3 Golden Bird quest       : " + temp)
+    if o_d2s_qdata.get_act3_lamesen(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.3 Lam Esen quest          : " + temp)
+    if o_d2s_qdata.get_act4_izual(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.4 Izual quest             : " + temp)
+    if o_d2s_qdata.get_act5_socket(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.5 Socket                  : " + temp)
+    if o_d2s_qdata.get_act5_runesset(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.5 Runes set               : " + temp)
+    if o_d2s_qdata.get_act5_scrollofregist(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.5 Scroll of regist        : " + temp)
+    if o_d2s_qdata.get_act5_personalize(i):
+        temp = "x"
+    else:
+        temp = "o"
+    print("Act.5 Personalize             : " + temp)
 print("")
 
 print("[[ Waypoint information ]]")
 for i in range(3):
-	if i == 0:
-		print("* Normal *")
-	if i == 1:
-		print("* Nightmare *")
-	if i == 2:
-		print("* Hell *")
-	temp = "Act.1 : "
-	if i == 0:
-		for j in range(8):
-			if o_d2s_wayp.normal[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.normal[8]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 1:
-		for j in range(8):
-			if o_d2s_wayp.nightmare[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.nightmare[8]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 2:
-		for j in range(8):
-			if o_d2s_wayp.hell[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.hell[8]:
-			temp += "o"
-		else:
-			temp += "x"
-	print(temp)
-	temp = "Act.2 : "
-	if i == 0:
-		for j in range(9, 17):
-			if o_d2s_wayp.normal[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.normal[17]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 1:
-		for j in range(9, 17):
-			if o_d2s_wayp.nightmare[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.nightmare[17]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 2:
-		for j in range(9, 17):
-			if o_d2s_wayp.hell[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.hell[17]:
-			temp += "o"
-		else:
-			temp += "x"
-	print(temp)
-	temp = "Act.3 : "
-	if i == 0:
-		for j in range(18, 26):
-			if o_d2s_wayp.normal[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.normal[26]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 1:
-		for j in range(18, 26):
-			if o_d2s_wayp.nightmare[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.nightmare[26]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 2:
-		for j in range(18, 26):
-			if o_d2s_wayp.hell[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.hell[26]:
-			temp += "o"
-		else:
-			temp += "x"
-	print(temp)
-	temp = "Act.4 : "
-	if i == 0:
-		for j in range(27, 29):
-			if o_d2s_wayp.normal[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.normal[29]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 1:
-		for j in range(27, 29):
-			if o_d2s_wayp.nightmare[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.nightmare[29]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 2:
-		for j in range(27, 29):
-			if o_d2s_wayp.hell[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.hell[29]:
-			temp += "o"
-		else:
-			temp += "x"
-	print(temp)
-	temp = "Act.5 : "
-	if i == 0:
-		for j in range(30, 38):
-			if o_d2s_wayp.normal[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.normal[38]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 1:
-		for j in range(30, 38):
-			if o_d2s_wayp.nightmare[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.nightmare[38]:
-			temp += "o"
-		else:
-			temp += "x"
-	if i == 2:
-		for j in range(30, 38):
-			if o_d2s_wayp.hell[j]:
-				temp += "o/"
-			else:
-				temp += "x/"
-		if o_d2s_wayp.hell[38]:
-			temp += "o"
-		else:
-			temp += "x"
-	print(temp)
+    if i == 0:
+        print("* Normal *")
+    if i == 1:
+        print("* Nightmare *")
+    if i == 2:
+        print("* Hell *")
+    temp = "Act.1 : "
+    if i == 0:
+        for j in range(8):
+            if o_d2s_wayp.normal[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.normal[8]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 1:
+        for j in range(8):
+            if o_d2s_wayp.nightmare[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.nightmare[8]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 2:
+        for j in range(8):
+            if o_d2s_wayp.hell[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.hell[8]:
+            temp += "o"
+        else:
+            temp += "x"
+    print(temp)
+    temp = "Act.2 : "
+    if i == 0:
+        for j in range(9, 17):
+            if o_d2s_wayp.normal[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.normal[17]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 1:
+        for j in range(9, 17):
+            if o_d2s_wayp.nightmare[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.nightmare[17]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 2:
+        for j in range(9, 17):
+            if o_d2s_wayp.hell[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.hell[17]:
+            temp += "o"
+        else:
+            temp += "x"
+    print(temp)
+    temp = "Act.3 : "
+    if i == 0:
+        for j in range(18, 26):
+            if o_d2s_wayp.normal[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.normal[26]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 1:
+        for j in range(18, 26):
+            if o_d2s_wayp.nightmare[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.nightmare[26]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 2:
+        for j in range(18, 26):
+            if o_d2s_wayp.hell[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.hell[26]:
+            temp += "o"
+        else:
+            temp += "x"
+    print(temp)
+    temp = "Act.4 : "
+    if i == 0:
+        for j in range(27, 29):
+            if o_d2s_wayp.normal[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.normal[29]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 1:
+        for j in range(27, 29):
+            if o_d2s_wayp.nightmare[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.nightmare[29]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 2:
+        for j in range(27, 29):
+            if o_d2s_wayp.hell[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.hell[29]:
+            temp += "o"
+        else:
+            temp += "x"
+    print(temp)
+    temp = "Act.5 : "
+    if i == 0:
+        for j in range(30, 38):
+            if o_d2s_wayp.normal[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.normal[38]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 1:
+        for j in range(30, 38):
+            if o_d2s_wayp.nightmare[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.nightmare[38]:
+            temp += "o"
+        else:
+            temp += "x"
+    if i == 2:
+        for j in range(30, 38):
+            if o_d2s_wayp.hell[j]:
+                temp += "o/"
+            else:
+                temp += "x/"
+        if o_d2s_wayp.hell[38]:
+            temp += "o"
+        else:
+            temp += "x"
+    print(temp)
 print("")
 
 for i in range(o_d2s_item.pcount):
