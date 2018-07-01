@@ -420,11 +420,20 @@ for i in range(o_d2s_item.pcount):
     if o_itemdata.issocketed:
         temp += " Socketed"
     if o_itemdata.isethereal:
-        temp += " Ethereal"
+        if colorama:
+            temp += colorama.Fore.WHITE + " Ethereal" + colorama.Fore.RESET
+        else:
+            temp += " Ethereal"
     if o_itemdata.ispersonalized:
-        temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
+        if colorama:
+            temp += colorama.Fore.LIGHTRED_EX + " Personalized(" + o_itemdata.getpersonalizename + ")" + colorama.Fore.RESET
+        else:
+            temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
     if o_itemdata.isruneword:
-        temp += " RuneWord"
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + " RuneWord" + colorama.Fore.RESET
+        else:
+            temp += " RuneWord"
     if o_itemdata.getglued != 0:
         temp += " Glued({})".format(o_itemdata.getglued)
     if not o_itemdata.issimple:
@@ -435,7 +444,10 @@ for i in range(o_d2s_item.pcount):
     if (pyd2s.isarmors(o_itemdata.gettype) or pyd2s.isweapons(o_itemdata.gettype)):
         temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
         if o_itemdata.issocketed:
-            temp += " Sockets({})".format(o_itemdata.getsocketnum)
+            if colorama:
+                temp += colorama.Fore.WHITE + " Sockets({})".format(o_itemdata.getsocketnum) + colorama.Fore.RESET
+            else:
+                temp += " Sockets({})".format(o_itemdata.getsocketnum)
     if pyd2s.iscountable(o_itemdata.gettype):
         temp += " Quantity({})".format(o_itemdata.getquantity)
     print(temp)
@@ -540,11 +552,20 @@ for i in range(o_d2s_item.mcount):
     if o_itemdata.issocketed:
         temp += " Socketed"
     if o_itemdata.isethereal:
-        temp += " Ethereal"
+        if colorama:
+            temp += colorama.Fore.WHITE + " Ethereal" + colorama.Fore.RESET
+        else:
+            temp += " Ethereal"
     if o_itemdata.ispersonalized:
-        temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
+        if colorama:
+            temp += colorama.Fore.LIGHTRED_EX + " Personalized(" + o_itemdata.getpersonalizename + ")" + colorama.Fore.RESET
+        else:
+            temp += " Personalized(" + o_itemdata.getpersonalizename + ")"
     if o_itemdata.isruneword:
-        temp += " RuneWord"
+        if colorama:
+            temp += colorama.Fore.LIGHTYELLOW_EX + " RuneWord" + colorama.Fore.RESET
+        else:
+            temp += " RuneWord"
     if o_itemdata.getglued != 0:
         temp += " Glued({})".format(o_itemdata.getglued)
     if not o_itemdata.issimple:
@@ -555,7 +576,10 @@ for i in range(o_d2s_item.mcount):
     if (pyd2s.isarmors(o_itemdata.gettype) or pyd2s.isweapons(o_itemdata.gettype)):
         temp += " Durability({}/{})".format(o_itemdata.getcurdur, o_itemdata.getmaxdur)
         if o_itemdata.issocketed:
-            temp += " Sockets({})".format(o_itemdata.getsocketnum)
+            if colorama:
+                temp += colorama.Fore.WHITE + " Sockets({})".format(o_itemdata.getsocketnum) + colorama.Fore.RESET
+            else:
+                temp += " Sockets({})".format(o_itemdata.getsocketnum)
     if pyd2s.iscountable(o_itemdata.gettype):
         temp += " Quantity({})".format(o_itemdata.getquantity)
     print(temp)
