@@ -1,17 +1,23 @@
 import pyd2s
+import platform
 import pkgutil
 import importlib
 
 # colorama module load, if exist
 colorama = None
 for i in pkgutil.iter_modules():
-    if i.name == "colorama":
-        colorama = importlib.import_module("colorama")
-        break
+    if platform.python_version_tuple()[0] == "2":
+        if i[1] == "colorama":
+            colorama = importlib.import_module("colorama")
+            break
+    elif platform.python_version_tuple()[0] == "3":
+        if i.name == "colorama":
+            colorama = importlib.import_module("colorama")
+            break
 
 # informations of savefile
 
-path = "C:\\user\\Saved Games\\Diablo II\\player.d2s"
+path = "/home/domi/.wine/drive_c/users/domi/Saved Games/Diablo II/catman.d2s"
 o_d2s = pyd2s.D2SaveFile(path)
 o_d2s_buf = pyd2s.SaveBuffer(path)
 o_d2s_char = pyd2s.Character(o_d2s_buf)
