@@ -12,6 +12,7 @@ from pyd2s.item import *
 from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
 from pyd2s.skill import *
+from pyd2s.basictypes import CharacterClass
 
 class D2SaveFile(object):
     '''

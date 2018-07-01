@@ -51,7 +51,21 @@ else:
 	else:
 		temp = "No(alive)"
 print("IsHardCore  : " + temp)
-print("Class       : " + str(o_d2s_char.character_class))
+if o_d2s_char.character_class == pyd2s.CharacterClass.Amazon:
+    c = "Amazon"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Sorceress:
+    c = "Sorceress"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Necromancer:
+    c = "Necromancer"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Paladin:
+    c = "Paladin"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Barbarian:
+    c = "Barbarian"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Druid:
+    c = "Druid"
+elif o_d2s_char.character_class == pyd2s.CharacterClass.Assassin:
+    c = "Assassin"
+print("Class       : " + c)
 print("Level       : " + str(o_d2s_char.level))
 print("")
 print("Strength  : " + str(o_d2s_char.strength))
