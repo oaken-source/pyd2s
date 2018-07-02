@@ -299,7 +299,7 @@ class Skill(object):
         self._class = self._character.character_class
         self._newskills = self._character.newskills
 
-        ifstart = 816
+        ifstart = 810	# about
 
         if self._class == CharacterClass.Amazon:
             self._idstart = 6
@@ -318,6 +318,9 @@ class Skill(object):
 
         self._skillpoints = []
 
+        while self._buffer[ifstart] != ord("i") or self._buffer[ifstart + 1] != ord("f"):
+            ifstart += 1
+        ifstart += 2
         for i in range(30):
             j = self._buffer[ifstart + i]
             self._skillpoints.append(j)
