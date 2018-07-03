@@ -1200,6 +1200,73 @@ class ItemDetail(object):
         '''
         return self._quantity
 
+class ItemList(object):
+    '''
+    item list
+    '''
+    def __init__(self, buffer, loc):
+        self._countondata = 0
+        self._size = 0
+        self._items = []
+
+        while loc < len(buffer):
+            if buffer[loc] == ord("J") and buffer[loc + 1] == ord("M"):
+                break
+            loc += 1
+        loc += 2
+        self._size += 2
+
+        self._countondata = count = buffer[loc] + (buffer[loc + 1] << 8)
+
+        data = []
+        loc += 4
+        self._size += 4
+
+        c = 0
+        while c < count:
+            while loc < len(buffer):
+                if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
+                    break
+                data.append(buffer[loc])
+                loc += 1
+            item = ItemDetail(data)
+            count += item.getglued
+            self._items.append(item)
+            self._size += len(data) + 2
+            data = []
+            loc += 2
+            c += 1
+
+    @property
+    def count(self):
+        '''
+        item count
+        '''
+        return len(self._items)
+
+    @property
+    def countondata(self):
+        '''
+        item count (on data)
+        '''
+        return self._countondata
+
+    @property
+    def size(self):
+        '''
+        item list data size
+        '''
+        return self._size
+
+    def getitem(self, index):
+        '''
+        Get player item data
+        '''
+        if(index >= len(self._items)):
+            return None
+        else:
+            return self._items[index]
+
 class Item(object):
     '''
     save data related to item
@@ -1210,106 +1277,102 @@ class Item(object):
         constructor - propagate buffer
         '''
         self._buffer = buffer
-        self._pcount = 0
-        self._pcountondata = 0
-        self._mcount = 0
-        self._mcountondata = 0
-        self._pdata = []
-        self._mdata = []
+        self._pitemlist = None
+        self._ccount = 0
+        self._cids = []
+        self._citemlists = []
+        self._mitemlist = None
+        self._hasgolem = False
+        self._golemitem = None
 
-        loc = 840    # about
-        start = True
-        first = True
-        player = True
-        onedata = []
+        loc = 810    # about
+
         while loc < len(self._buffer):
-            if self._buffer[loc] == ord("J") and self._buffer[loc + 1] == ord("M"):
-                if start:
-                    start = False
-                else:
-                    if len(onedata) == 2:
-                        if not self._pcountondata:
-                            self._pcountondata = (onedata[1] << 8) + onedata[0]
-                        elif not self._mcountondata:
-                            self._mcountondata = (onedata[1] << 8) + onedata[0]
-                    elif len(onedata) == 4:
-                        if not self._pcountondata:
-                            pass
-                        if not self._mcountondata:
-                            player = False
-                    elif len(onedata) > 4:
-                        if player:
-                            if len(onedata) > 4:
-                                self._pdata.append(ItemDetail(onedata))
-                        else:
-                            if len(onedata) > 4:
-                                self._mdata.append(ItemDetail(onedata))
-                        if player:
-                            self._pcount += 1
-                        else:
-                            self._mcount += 1
-                onedata = []
-                loc += 2
-            else:
-                if not start:
-                    onedata.append(self._buffer[loc])
+            if self._buffer[loc] == ord("i") and self._buffer[loc + 1] == ord("f"):
+                break
+            loc += 1
+        loc += 32
+
+        self._pitemlist = ItemList(self._buffer, loc)
+        loc += self._pitemlist.size
+
+        self._ccount = self._buffer[loc] + (self._buffer[loc + 1] << 8)
+
+        for i in range(self._ccount):
+            cid = []
+            for j in range(12):
+                cid.append(self._buffer[loc] + j)
                 loc += 1
-        if len(onedata):
-            if player:
-                if len(onedata) > 4:
-                    self._pdata.append(ItemDetail(onedata))
-            else:
-                if len(onedata) > 4:
-                    self._mdata.append(ItemDetail(onedata))
-            if onedata[0] != 0x00 or onedata[1] != 0x00 or onedata[2] != 0x6A:
-                if player:
-                    self._pcount += 1
-                else:
-                    self._mcount += 1
+            self._cids.append(id)
+            itemlist = ItemList(self._buffer, loc)
+            self._citemlists.append(itemlist)
+            loc += itemlist.size
+
+        while loc < len(self._buffer):
+            if self._buffer[loc] == ord("j") and self._buffer[loc + 1] == ord("f"):
+                break
+            loc += 1
+        loc += 2
+        self._mitemlist = ItemList(self._buffer, loc)
+        loc += self._mitemlist.size
+
+        if self._buffer[loc]:
+            self._hasgolem = True
+            data = []
+            loc += 1
+            while loc < len(self._buffer):
+                data.append(self._buffer[loc])
+                loc += 1
+            self._golemitem = ItemDetail(data)
 
     @property
-    def pcount(self):
+    def pitemlist(self):
         '''
-        player item count
+        player item list
         '''
-        return self._pcount
+        return self._pitemlist
 
     @property
-    def pcountondata(self):
+    def ccount(self):
         '''
-        player item count (on data)
+        corpse count
         '''
-        return self._pcountondata
+        return self._ccount
 
-    def getpdata(self, index):
+    def getcid(self, index):
         '''
-        Get player item data
+        Get corpse id
         '''
-        if(index >= len(self._pdata)):
+        if self._ccount >= index:
             return []
-        else:
-            return self._pdata[index]
+        return self._cids[index]
 
-    @property
-    def mcount(self):
+    def getcitemlist(self, index):
         '''
-        mercenary item count
+        Get corpse item list
         '''
-        return self._mcount
-
-    @property
-    def mcountondata(self):
-        '''
-        mercenary item count (on data)
-        '''
-        return self._mcountondata
-
-    def getmdata(self, index):
-        '''
-        Get mercenary item data
-        '''
-        if(index >= len(self._mdata)):
+        if self._ccount >= index:
             return []
-        else:
-            return self._mdata[index]
+        return self._citemlists[index]
+
+    @property
+    def mitemlist(self):
+        '''
+        mercenary item list
+        '''
+        return self._mitemlist
+
+    @property
+    def hasgolem(self):
+        '''
+        golem having
+        '''
+        return self._hasgolem
+
+    @property
+    def golemitem(self):
+        '''
+        Get golem item
+        '''
+        return self._golemitem
 
