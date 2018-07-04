@@ -546,5 +546,5 @@ if o_d2s_item.mitemlist:
 
 if o_d2s_item.hasgolem:
     print("[[ Golem Item information ]]")
-    printitem(o_d2s_item.golemitem)
+    printitem(0, o_d2s_item.golemitem)
 

@@ -1209,33 +1209,45 @@ class ItemList(object):
         self._size = 0
         self._items = []
 
-        while loc < len(buffer):
-            if buffer[loc] == ord("J") and buffer[loc + 1] == ord("M"):
-                break
-            loc += 1
+        if not (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")):
+            return None
         loc += 2
         self._size += 2
 
         self._countondata = count = buffer[loc] + (buffer[loc + 1] << 8)
-
-        data = []
-        loc += 4
-        self._size += 4
+        loc += 2
+        self._size += 2
 
         c = 0
         while c < count:
+            data = []
+            if not (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")):
+                break
+            loc += 2
             while loc < len(buffer):
-                if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
-                    break
                 data.append(buffer[loc])
                 loc += 1
+                if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
+                    break
             item = ItemDetail(data)
             count += item.getglued
             self._items.append(item)
             self._size += len(data) + 2
-            data = []
-            loc += 2
             c += 1
+
+        if buffer[loc] == ord("J") and buffer[loc + 1] == ord("M"):
+            loc += 2
+            c = 1
+            while c:
+                data = []
+                while loc < len(buffer):
+                    data.append(buffer[loc])
+                    loc += 1
+                    if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
+                        break
+                if (len(data) == 2 or len(data) == 4) and data[0] == 0 and data[1] == 0:
+                    self._size += 4
+                    c = 0
 
     @property
     def count(self):
@@ -1296,34 +1308,35 @@ class Item(object):
         self._pitemlist = ItemList(self._buffer, loc)
         loc += self._pitemlist.size
 
-        self._ccount = self._buffer[loc] + (self._buffer[loc + 1] << 8)
+        if not ((self._buffer[loc] == ord("j") and self._buffer[loc + 1] == ord("f")) or (self._buffer[loc] == ord("k") and self._buffer[loc + 1] == ord("f"))):
+            self._ccount = self._buffer[loc] + (self._buffer[loc + 1] << 8)
+            loc += 2
 
-        for i in range(self._ccount):
-            cid = []
-            for j in range(12):
-                cid.append(self._buffer[loc] + j)
-                loc += 1
-            self._cids.append(id)
-            itemlist = ItemList(self._buffer, loc)
-            self._citemlists.append(itemlist)
-            loc += itemlist.size
+            for i in range(self._ccount):
+                cid = []
+                for j in range(12):
+                    cid.append(self._buffer[loc] + j)
+                    loc += 1
+                self._cids.append(id)
+                itemlist = ItemList(self._buffer, loc)
+                self._citemlists.append(itemlist)
+                loc += itemlist.size
+        else:
+            loc += 2
 
-        while loc < len(self._buffer):
-            if self._buffer[loc] == ord("j") and self._buffer[loc + 1] == ord("f"):
-                break
-            loc += 1
-        loc += 2
         self._mitemlist = ItemList(self._buffer, loc)
         loc += self._mitemlist.size
 
-        if self._buffer[loc]:
-            self._hasgolem = True
-            data = []
-            loc += 1
-            while loc < len(self._buffer):
-                data.append(self._buffer[loc])
+        if self._buffer[loc] == ord("k") and self._buffer[loc + 1] == ord("f"):
+            loc += 2
+            if self._buffer[loc]:
+                self._hasgolem = True
+                data = []
                 loc += 1
-            self._golemitem = ItemDetail(data)
+                while loc < len(self._buffer):
+                    data.append(self._buffer[loc])
+                    loc += 1
+                self._golemitem = ItemDetail(data)
 
     @property
     def pitemlist(self):
