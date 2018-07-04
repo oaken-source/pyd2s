@@ -524,21 +524,17 @@ printitemlist(o_d2s_item.pitemlist)
 if o_d2s_item.ccount > 0:
     if o_d2s_item.ccount == 1:
         print("[[ Corpse Item information ]]")
-        id = o_d2s_item.getcid(0)
         temp = "Corpse ID: "
-        for i in range(12):
-            temp += "{:02X} ".format(id[i])
+        data = o_d2s_item.getcid(0)
+        for i in range(len(data)):
+            temp += "{:02X} ".format(data[i])
         print(temp)
-        printitemlist(o_d2s_item.getcitemlist(0))
+        itemlist = o_d2s_item.getcitemlist(0)
+        printitemlist(itemlist)
     else:
-        for j in range(o_d2s_item.ccount):
-            print("[[ Corpse Item information {} ]]".format(j))
-            id = o_d2s_item.getcid(j)
-            temp = "Corpse ID: "
-            for i in range(12):
-                temp += "{:02X} ".format(id[i])
-            print(temp)
-            printitemlist(o_d2s_item.getcitemlist(j))
+        for i in range(o_d2s_item.ccount):
+            print("[[ Corpse Item information {} ]]".format(i))
+            printitemlist(o_d2s_item.getcitemlist(i))
 
 if o_d2s_item.mitemlist:
     print("[[ Mercenary Item information ]]")

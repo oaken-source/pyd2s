@@ -1235,20 +1235,6 @@ class ItemList(object):
             self._size += len(data) + 2
             c += 1
 
-        if buffer[loc] == ord("J") and buffer[loc + 1] == ord("M"):
-            loc += 2
-            c = 1
-            while c:
-                data = []
-                while loc < len(buffer):
-                    data.append(buffer[loc])
-                    loc += 1
-                    if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
-                        break
-                if (len(data) == 2 or len(data) == 4) and data[0] == 0 and data[1] == 0:
-                    self._size += 4
-                    c = 0
-
     @property
     def count(self):
         '''
@@ -1290,7 +1276,6 @@ class Item(object):
         '''
         self._buffer = buffer
         self._pitemlist = None
-        self._ccount = 0
         self._cids = []
         self._citemlists = []
         self._mitemlist = None
@@ -1308,24 +1293,27 @@ class Item(object):
         self._pitemlist = ItemList(self._buffer, loc)
         loc += self._pitemlist.size
 
-        if not ((self._buffer[loc] == ord("j") and self._buffer[loc + 1] == ord("f")) or (self._buffer[loc] == ord("k") and self._buffer[loc + 1] == ord("f"))):
-            self._ccount = self._buffer[loc] + (self._buffer[loc + 1] << 8)
+        while self._buffer[loc] == ord("J") and self._buffer[loc + 1] == ord("M"):
+            data = []
             loc += 2
+            while loc < len(buffer):
+                data.append(buffer[loc])
+                loc += 1
+                if (buffer[loc] == ord("J") and buffer[loc + 1] == ord("M")) or (buffer[loc] == ord("j") and buffer[loc + 1] == ord("f")) or (buffer[loc] == ord("k") and buffer[loc + 1] == ord("f")):
+                    break
 
-            for i in range(self._ccount):
-                cid = []
-                for j in range(12):
-                    cid.append(self._buffer[loc] + j)
-                    loc += 1
-                self._cids.append(id)
+            if len(data) == 2 and data[0] == 0 and data[1] == 0:
+                break
+            else:
+                self._cids.append(data)
                 itemlist = ItemList(self._buffer, loc)
                 self._citemlists.append(itemlist)
                 loc += itemlist.size
-        else:
-            loc += 2
 
-        self._mitemlist = ItemList(self._buffer, loc)
-        loc += self._mitemlist.size
+        if self._buffer[loc] == ord("j") and self._buffer[loc + 1] == ord("f"):
+            loc += 2
+            self._mitemlist = ItemList(self._buffer, loc)
+            loc += self._mitemlist.size
 
         if self._buffer[loc] == ord("k") and self._buffer[loc + 1] == ord("f"):
             loc += 2
@@ -1350,22 +1338,22 @@ class Item(object):
         '''
         corpse count
         '''
-        return self._ccount
+        return len(self._citemlists)
 
     def getcid(self, index):
         '''
-        Get corpse id
+        Get corpse ID
         '''
-        if self._ccount >= index:
-            return []
+        if index >= len(self._citemlists):
+            return None
         return self._cids[index]
 
     def getcitemlist(self, index):
         '''
         Get corpse item list
         '''
-        if self._ccount >= index:
-            return []
+        if index >= len(self._citemlists):
+            return None
         return self._citemlists[index]
 
     @property
