@@ -8,11 +8,11 @@ import struct
 from pyd2s.savebuffer import SaveBuffer
 from pyd2s.character import Character
 from pyd2s.mercenary import Mercenary
-from pyd2s.item import *
 from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
 from pyd2s.skill import *
 from pyd2s.basictypes import CharacterClass
+from pyd2s.item import Item
 
 class D2SaveFile(object):
     '''

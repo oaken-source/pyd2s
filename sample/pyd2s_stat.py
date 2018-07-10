@@ -116,7 +116,7 @@ def printitem(index, item):
             temp += colorama.Fore.LIGHTRED_EX + "[Crafted] " + colorama.Fore.RESET
         else:
             temp += "[Crafted] "
-    temp += pyd2s.getitemsname(item.gettype) + "(" + item.gettype + ")"
+    temp += item.getname + "(" + item.gettype + ")"
     if not item.isidentified:
         temp += " NotIdentified"
     if item.issocketed:
@@ -141,16 +141,16 @@ def printitem(index, item):
     if not item.issimple:
         temp += " ID(0x{:08X})".format(item.getid)
         temp += " ilvl({})".format(item.getilvl)
-    if pyd2s.isarmors(item.gettype):
+    if item.isarmors:
         temp += " Def({})".format(item.getdefval)
-    if (pyd2s.isarmors(item.gettype) or pyd2s.isweapons(item.gettype)):
+    if (item.isarmors or item.isweapons):
         temp += " Durability({}/{})".format(item.getcurdur, item.getmaxdur)
         if item.issocketed:
             if colorama:
                 temp += colorama.Fore.WHITE + " Sockets({})".format(item.getsocketnum) + colorama.Fore.RESET
             else:
                 temp += " Sockets({})".format(item.getsocketnum)
-    if pyd2s.iscountable(item.gettype):
+    if item.iscountable:
         temp += " Quantity({})".format(item.getquantity)
     print(temp)
 

@@ -1200,6 +1200,34 @@ class ItemDetail(object):
         '''
         return self._quantity
 
+    @property
+    def getname(self):
+        '''
+        item name
+        '''
+        return getitemsname(self._type)
+
+    @property
+    def isarmors(self):
+        '''
+        Is item armors
+        '''
+        return isarmors(self._type)
+
+    @property
+    def isweapons(self):
+        '''
+        Is item weapons
+        '''
+        return isweapons(self._type)
+
+    @property
+    def iscountable(self):
+        '''
+        Is item countable
+        '''
+        return iscountable(self._type)
+
 class ItemList(object):
     '''
     item list
