@@ -295,11 +295,13 @@ for i in range(3):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act1_quest1(i))
     print("Act.1 Reset status And skills : " + temp)
     if o_d2s_qdata.get_act1_forge(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act1_quest5(i))
     print("Act.1 Forge                   : " + temp)
     if o_d2s_qdata.get_act1_cowlevel(i):
         temp = "x"
@@ -310,41 +312,49 @@ for i in range(3):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act2_quest1(i))
     print("Act.2 Radament quest          : " + temp)
     if o_d2s_qdata.get_act3_goldenbird(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act3_quest1(i))
     print("Act.3 Golden Bird quest       : " + temp)
     if o_d2s_qdata.get_act3_lamesen(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act3_quest4(i))
     print("Act.3 Lam Esen quest          : " + temp)
     if o_d2s_qdata.get_act4_izual(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act4_quest1(i))
     print("Act.4 Izual quest             : " + temp)
     if o_d2s_qdata.get_act5_socket(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act5_quest1(i))
     print("Act.5 Socket                  : " + temp)
     if o_d2s_qdata.get_act5_runesset(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act5_quest2(i))
     print("Act.5 Runes set               : " + temp)
     if o_d2s_qdata.get_act5_scrollofregist(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act5_quest3(i))
     print("Act.5 Scroll of regist        : " + temp)
     if o_d2s_qdata.get_act5_personalize(i):
         temp = "x"
     else:
         temp = "o"
+    temp += "(0x{:04X})".format(o_d2s_qdata.get_act5_quest4(i))
     print("Act.5 Personalize             : " + temp)
 print("")
 
