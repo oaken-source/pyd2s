@@ -203,17 +203,18 @@ class QuestData(object):
         '''
         Get Socket end flag
         '''
-        return (self._buffer[self._getoffset(difficulty) + 70] & 0x20) == 0x01
+        return (self._buffer[self._getoffset(difficulty) + 70] & 0x20) == 0x20
 
     def set_act5_socket(self, difficulty, value):
         '''
         Set Socket end flag
         '''
-        if self._buffer[self._getoffset(difficulty) + 71] & 0x10:
+        if value:
             self._buffer[self._getoffset(difficulty) + 70] |=  0x20
         else:
-            self._buffer[self._getoffset(difficulty) + 70] &= ~0x20
-            self._buffer[self._getoffset(difficulty) + 71] &= ~0x10
+            if self.get_act5_socket(difficulty):
+                self._buffer[self._getoffset(difficulty) + 70] = 0x22
+                self._buffer[self._getoffset(difficulty) + 71] = 0x80
 
     def get_act5_quest1(self, difficulty):
         return (self._buffer[self._getoffset(difficulty) + 71] << 8) | self._buffer[self._getoffset(difficulty) + 70]
