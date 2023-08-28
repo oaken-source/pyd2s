@@ -8,7 +8,7 @@ import struct
 from pyd2s.basictypes import MercenaryTypes
 
 
-class Mercenary(object):
+class Mercenary:
     '''
     save data referring to the characters mercenary
     '''

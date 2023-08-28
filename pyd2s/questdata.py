@@ -8,12 +8,13 @@ import struct
 from pyd2s.basictypes import Quest
 
 
-class QuestData(object):
+# pylint: disable=R0903
+class QuestData:
     '''
     save data related to quest completion
     '''
 
-    class QuestData(object):
+    class QuestData:
         '''
         quest data for a single difficulty
         '''
@@ -35,7 +36,7 @@ class QuestData(object):
                 + struct.unpack('<HHH', self._buffer[395 + self._offset:401 + self._offset])
                 + struct.unpack('<HHHHHH', self._buffer[415 + self._offset:427 + self._offset]))
 
-            return data[quest] 
+            return data[quest]
 
         def __iter__(self):
             '''

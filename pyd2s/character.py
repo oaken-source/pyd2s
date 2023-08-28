@@ -9,12 +9,13 @@ from os.path import dirname, join, isfile
 from pyd2s.basictypes import CharacterClass, CharacterStat
 
 
-class Character(object):
+# pylint: disable=R0904
+class Character:
     '''
     save data referring to the character itself
     '''
 
-    class StatData(object):
+    class StatData:
         '''
         this class provides access to a characters stat data
         '''
@@ -52,7 +53,7 @@ class Character(object):
             set the stat by id to value
             '''
             if value.bit_length() > statid.bits:
-                raise ValueError('value too large for stat %s' % statid.name)
+                raise ValueError(f'value too large for stat {statid}')
             position = self._positions[statid]
             if position is None:
                 self._positions[statid] = self._end
@@ -90,7 +91,7 @@ class Character(object):
         if not re.fullmatch('(?=.{2,15})[a-zA-Z]+[-_]?[a-zA-Z]+', value):
             raise ValueError('character name is invalid')
 
-        newpath = join(dirname(self._buffer.path), "%s.d2s" % value)
+        newpath = join(dirname(self._buffer.path), f"{value}.d2s")
         if isfile(newpath):
             raise ValueError('a character with this name already exists')
 
@@ -171,7 +172,7 @@ class Character(object):
         '''
         set the current level of the character
         '''
-        if not (0 < value < 100):
+        if not 0 < value < 100:
             raise ValueError('character level is invalid')
         self._buffer[43] = value
         self._stats.set(CharacterStat.level, value)

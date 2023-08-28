@@ -44,7 +44,7 @@ MagicNumber : {d2s.magic:#08x}
 Version     : {d2s.version:#02x}
 Timestamp   : {d2s.timestamp} ({datetime.datetime.fromtimestamp(d2s.timestamp)})''')
 
-    d2s_char = pyd2s.Character(d2s._buffer)
+    d2s_char = d2s.character
 
     if args.a or args.c:
         if needs_newline:
@@ -75,7 +75,7 @@ Experience  : {d2s_char.experience}
 Gold        : {d2s_char.gold}
 GoldBank    : {d2s_char.goldbank}''')
 
-    d2s_merc = pyd2s.Mercenary(d2s._buffer)
+    d2s_merc = d2s.mercenary
 
     if args.a or args.m:
         if needs_newline:
@@ -90,7 +90,7 @@ NameId      : {d2s_merc.name_id:#04x}
 Type        : {d2s_merc.type} ({d2s_merc.type_id:#04x})
 Experience  : {d2s_merc.experience}''')
 
-    d2s_qdata = pyd2s.QuestData(d2s._buffer)
+    d2s_qdata = d2s.questdata
 
     def print_quest_information(act, d2s_qdata):
 
@@ -108,14 +108,14 @@ Act V       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(21, 27)) 
             print('')
         needs_newline = True
 
-        print(f'''\
+        print('''\
 [[ Quest Information ]]''')
 
         print_quest_information('Normal', d2s_qdata.normal)
         print_quest_information('Nightmare', d2s_qdata.nightmare)
         print_quest_information('Hell', d2s_qdata.hell)
 
-    d2s_wayp = pyd2s.WaypointData(d2s._buffer)
+    d2s_wayp = d2s.waypointdata
 
     def print_waypoint_data(act, d2s_wayp):
         print(f'''\
@@ -131,20 +131,20 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
             print('')
         needs_newline = True
 
-        print(f'''\
+        print('''\
 [[ Waypoint Information ]]''')
 
         print_waypoint_data('Normal', d2s_wayp.normal)
         print_waypoint_data('Nightmare', d2s_wayp.nightmare)
         print_waypoint_data('Hell', d2s_wayp.hell)
 
-    d2s_item = pyd2s.ItemData(d2s._buffer)
+    d2s_item = d2s.itemdata
 
     def print_item(data):
         temp = ""
         temp += "("
         if len(data) > 6:
-            temp += "C{} R{} ".format((data[6] & 0x1E) >> 1, (data[6] & 0xE0) >> 5)
+            temp += f"C{(data[6] & 0x1E) >> 1} R{(data[6] & 0xE0) >> 5} "
         if len(data) > 5:
             val = (data[5] & 0x1C) >> 2
             if val == 2:
@@ -195,7 +195,7 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
         if len(data) > 10:
             temp2 = [((data[ 7] & 0xF0) >> 4) + ((data[ 8] & 0x0F) << 4), ((data[ 8] & 0xF0) >> 4) + ((data[ 9] & 0x0F) << 4),
                      ((data[ 9] & 0xF0) >> 4) + ((data[10] & 0x0F) << 4), ((data[10] & 0xF0) >> 4) + ((data[11] & 0x0F) << 4)]
-            temp += "{:02X} {:02X} {:02X} {:02X} ({}) ".format(temp2[0], temp2[1], temp2[2], temp2[3], chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3]))
+            temp += f"{temp2[0]:02X} {temp2[1]:02X} {temp2[2]:02X} {temp2[3]:02X} ({chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3])}) "
         if len(data) > 0:
             if data[0] & 0x10 == 0:
                 temp += "NonIdentified "
@@ -214,17 +214,14 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
         if len(data) > 11:
             val = (data[11] & 0x70) >> 4
             if data[1] & 0x08 and val > 0:
-                temp += "Socketed({}) ".format(val)
+                temp += f"Socketed({val}) "
         if len(data) > 2:
             if data[2] & 0x20 == 0:    # not simple
                 if len(data) > 16:
                     val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
-                    temp += "ilvl({}) ".format(val)
-        print("item {}".format(i) + " : " + temp)
-        temp = ""
-        for j in range(len(data)):
-            temp += "{:02X} ".format(data[j])
-        print("item {}".format(i) + " : " + temp)
+                    temp += f"ilvl({val}) "
+        print(f"item {i} : {temp}")
+        print(f"item {i} : {data}")
 
     if args.a or args.i:
         if needs_newline:

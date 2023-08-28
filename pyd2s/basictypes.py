@@ -79,6 +79,13 @@ class CharacterStat(Enum):
             CharacterStat.goldbank: 25,
         }[self]
 
+    def __str__(self):
+        '''
+        a string representation of the stat
+        '''
+        return self.name
+
+
 
 class Difficulty(Enum):
     '''

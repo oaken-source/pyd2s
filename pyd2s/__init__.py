@@ -13,7 +13,7 @@ from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
 
 
-class D2SaveFile(object):
+class D2SaveFile:
     '''
     a .d2s file containing diablo 2 save game data
     '''
@@ -32,6 +32,10 @@ class D2SaveFile(object):
             raise ValueError('invalid save: truncated data?')
 
         self.character = Character(self._buffer)
+        self.mercenary = Mercenary(self._buffer)
+        self.questdata = QuestData(self._buffer)
+        self.waypointdata = WaypointData(self._buffer)
+        self.itemdata = ItemData(self._buffer)
 
     @property
     def magic(self):

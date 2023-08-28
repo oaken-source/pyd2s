@@ -3,7 +3,7 @@
 this module provides classes to manage item of a d2s save
 '''
 
-class ItemData(object):
+class ItemData:
     '''
     save data related to item
     '''
@@ -57,7 +57,7 @@ class ItemData(object):
                 if not start:
                     onedata.append(self._buffer[loc])
                 loc += 1
-        if len(onedata):
+        if onedata:
             if player:
                 self._pdata.append(onedata)
             else:
@@ -86,10 +86,7 @@ class ItemData(object):
         '''
         Get player item data
         '''
-        if(index >= len(self._pdata)):
-            return []
-        else:
-            return self._pdata[index]
+        return self._pdata[index]
 
     @property
     def mcount(self):
@@ -109,8 +106,4 @@ class ItemData(object):
         '''
         Get mercenary item data
         '''
-        if(index >= len(self._mdata)):
-            return []
-        else:
-            return self._mdata[index]
-
+        return self._mdata[index]

@@ -8,12 +8,13 @@ import struct
 from pyd2s.basictypes import Waypoint
 
 
-class WaypointData(object):
+# pylint: disable=R0903
+class WaypointData:
     '''
     save data related to waypoints
     '''
 
-    class WaypointData(object):
+    class WaypointData:
         '''
         waypoint data for a single difficulty
         '''

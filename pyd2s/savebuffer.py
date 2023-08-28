@@ -23,7 +23,7 @@ class SaveBuffer(bytearray):
         self._newpath = None
 
         with open(path, 'rb') as save:
-            super(SaveBuffer, self).__init__(save.read())
+            super().__init__(save.read())
 
     @property
     def _size(self):
