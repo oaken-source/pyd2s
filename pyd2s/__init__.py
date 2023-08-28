@@ -12,6 +12,7 @@ from pyd2s.itemdata import ItemData
 from pyd2s.questdata import QuestData
 from pyd2s.waypointdata import WaypointData
 
+
 class D2SaveFile(object):
     '''
     a .d2s file containing diablo 2 save game data

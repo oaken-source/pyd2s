@@ -34,6 +34,52 @@ class Gender(Enum):
     Female = 1
 
 
+class CharacterStat(Enum):
+    '''
+    the character stat ids and bit widths
+    '''
+    strength = 0x00
+    energy = 0x01
+    dexterity = 0x02
+    vitality = 0x03
+    statpts = 0x04
+    newskills = 0x05
+    hitpoints = 0x06
+    maxhp = 0x07
+    mana = 0x08
+    maxmana = 0x09
+    stamina = 0x0a
+    maxstamina = 0x0b
+    level = 0x0c
+    experience = 0x0d
+    gold = 0x0e
+    goldbank = 0x0f
+
+    @property
+    def bits(self):
+        '''
+        the bit width of the stat value
+        '''
+        return {
+            CharacterStat.strength: 10,
+            CharacterStat.energy: 10,
+            CharacterStat.dexterity: 10,
+            CharacterStat.vitality: 10,
+            CharacterStat.statpts: 10,
+            CharacterStat.newskills: 8,
+            CharacterStat.hitpoints: 21,
+            CharacterStat.maxhp: 21,
+            CharacterStat.mana: 21,
+            CharacterStat.maxmana: 21,
+            CharacterStat.stamina: 21,
+            CharacterStat.maxstamina: 21,
+            CharacterStat.level: 7,
+            CharacterStat.experience: 32,
+            CharacterStat.gold: 25,
+            CharacterStat.goldbank: 25,
+        }[self]
+
+
 class Difficulty(Enum):
     '''
     the difficulty levels available in the game
