@@ -8,39 +8,6 @@ import datetime
 
 import pyd2s
 
-MERCENARY_CODES = {
-    0: "Rogue Scout - Fire Arrow (Normal)",
-    1: "Rogue Scout - Cold Arrow (Normal)",
-    2: "Rogue Scout - Fire Arrow (Nightmare)",
-    3: "Rogue Scout - Cold Arrow (Nightmare)",
-    4: "Rogue Scout - Fire Arrow (Hell)",
-    5: "Rogue Scout - Cold Arrow (Hell)",
-    6: "Desert Mercenary - Combat (Normal)",
-    7: "Desert Mercenary - Defensive (Normal)",
-    8: "Desert Mercenary - Offensive (Normal)",
-    9: "Desert Mercenary - Combat (Nightmare)",
-    10: "Desert Mercenary - Defensive (Nightmare)",
-    11: "Desert Mercenary - Offensive (Nightmare)",
-    12: "Desert Mercenary - Combat (Hell)",
-    13: "Desert Mercenary - Defensive (Hell)",
-    14: "Desert Mercenary - Offensive (Hell)",
-    15: "Eastern Sorceror - Fire Spells (Normal)",
-    16: "Eastern Sorceror - Cold Spells (Normal)",
-    17: "Eastern Sorceror - Lightning Spells (Normal)",
-    18: "Eastern Sorceror - Fire Spells (Nightmare)",
-    19: "Eastern Sorceror - Cold Spells (Nightmare)",
-    20: "Eastern Sorceror - Lightning Spells (Nightmare)",
-    21: "Eastern Sorceror - Fire Spells (Hell)",
-    22: "Eastern Sorceror - Cold Spells (Hell)",
-    23: "Eastern Sorceror - Lightning Spells (Hell)",
-    24: "Barbarian (Normal)",
-    25: "Barbarian (Normal)",
-    26: "Barbarian (Nightmare)",
-    27: "Barbarian (Nightmare)",
-    28: "Barbarian (Hell)",
-    29: "Barbarian (Hell)",
-}
-
 parser = argparse.ArgumentParser(prog='pyd2s_stat',
     description='display diablo 2 save file information')
 parser.add_argument('filename')
@@ -54,8 +21,8 @@ def pyd2s_stat(argv=None):
     print(f'''\
 [[ Savefile Information ]]
 Path        : {path}
-MagicNumber : 0x{d2s.magic:08x}
-Version     : 0x{d2s.version:02x}
+MagicNumber : {d2s.magic:#08x}
+Version     : {d2s.version:#02x}
 Timestamp   : {d2s.timestamp} ({datetime.datetime.fromtimestamp(d2s.timestamp)})''')
 
     d2s_char = pyd2s.Character(d2s._buffer)
@@ -87,9 +54,9 @@ GoldBank    : {d2s_char.goldbank}''')
     print(f'''
 [[ Mercenary Information ]]
 IsDead      : {d2s_merc.is_dead}
-ControlSeed : 0x{d2s_merc.control_seed:x}
-NameId      : 0x{d2s_merc.name_id:x}
-Type        : {d2s_merc.type} ({MERCENARY_CODES.get(d2s_merc.type, "invalid")})
+ControlSeed : {d2s_merc.control_seed:#x}
+NameId      : {d2s_merc.name_id:#04x}
+Type        : {d2s_merc.type} ({d2s_merc.type_id:#04x})
 Experience  : {d2s_merc.experience}''')
 
     d2s_qdata = pyd2s.QuestData(d2s._buffer)
@@ -97,69 +64,20 @@ Experience  : {d2s_merc.experience}''')
     print(f'''
 [[ Quest Information ]]''')
 
-    def print_quest_information(d2s_qdata):
-        for i in range(3):
-            if i == 0:
-                print("* Normal *")
-            if i == 1:
-                print("* Nightmare *")
-            if i == 2:
-                print("* Hell *")
-            if d2s_qdata.get_act1_resetstatus(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.1 Reset status And skills : " + temp)
-            if d2s_qdata.get_act1_forge(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.1 Forge                   : " + temp)
-            if d2s_qdata.get_act1_cowlevel(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.1 Cow Level               : " + temp)
-            if d2s_qdata.get_act2_radament(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.2 Radament quest          : " + temp)
-            if d2s_qdata.get_act3_goldenbird(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.3 Golden Bird quest       : " + temp)
-            if d2s_qdata.get_act3_lamesen(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.3 Lam Esen quest          : " + temp)
-            if d2s_qdata.get_act5_socket(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.5 Socket                  : " + temp)
-            if d2s_qdata.get_act5_runesset(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.5 Runes set               : " + temp)
-            if d2s_qdata.get_act5_scrollofregist(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.5 Scroll of regist        : " + temp)
-            if d2s_qdata.get_act5_personalize(i):
-                temp = "x"
-            else:
-                temp = "o"
-            print("Act.5 Personalize             : " + temp)
-        print("")
+    def print_quest_information(act, d2s_qdata):
 
-        pass
+        glue = '\n              '
+        print(f'''\
+* { act } *
+Act I       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(0, 6)) }
+Act II      : { glue.join(format(d2s_qdata[j], '#018b') for j in range(6, 12)) }
+Act III     : { glue.join(format(d2s_qdata[j], '#018b') for j in range(12, 18)) }
+Act IV      : { glue.join(format(d2s_qdata[j], '#018b') for j in range(18, 21)) }
+Act V       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(21, 27)) }''')
 
-    print_quest_information(d2s_qdata)
+    print_quest_information('Normal', d2s_qdata.normal)
+    print_quest_information('Nightmare', d2s_qdata.nightmare)
+    print_quest_information('Hell', d2s_qdata.hell)
 
     d2s_wayp = pyd2s.WaypointData(d2s._buffer)
     print(f'''

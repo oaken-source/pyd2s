@@ -5,6 +5,8 @@ this module provides a class to manage mercenary data
 
 import struct
 
+from pyd2s.basictypes import MercenaryTypes
+
 
 class Mercenary(object):
     '''
@@ -39,11 +41,18 @@ class Mercenary(object):
         return struct.unpack('<H', self._buffer[183:185])[0]
 
     @property
-    def type(self):
+    def type_id(self):
         '''
-        the type of the active mercenary - encodes act and capabilities
+        the type_id of the active mercenary - encodes act and capabilities
         '''
         return struct.unpack('<H', self._buffer[185:187])[0]
+
+    @property
+    def type(self):
+        '''
+        the type of the mercenary
+        '''
+        return MercenaryTypes(self.type_id)
 
     @property
     def experience(self):

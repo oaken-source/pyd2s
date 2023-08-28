@@ -97,3 +97,105 @@ class Waypoint(Enum):
     FrozenTundra = 0x1000000000
     TheAncientsWay = 0x2000000000
     WorldstoneKeepLevel2 = 0x4000000000
+
+class Quest(Enum):
+    '''
+    the quests available in the game
+    '''
+    DenOfEvil = 0
+    SistersBurialGrounds = 1
+    ToolsOfTheTrade = 2
+    TheSearchForCain = 3
+    TheForgottenTower = 4
+    SistersToTheSlaughter = 5
+    RadamentsLair = 6
+    TheHoradricStaff = 7
+    TaintedSun = 8
+    ArcaneSanctuary = 9
+    TheSummoner = 10
+    TheSevenTombs = 11
+    LamEsensTome = 12
+    KhalimsWill = 13
+    BladeOfTheOldReligion = 14
+    TheGoldenBird = 15
+    TheBlackenedTemple = 16
+    TheGuardian = 17
+    TheFallenAngel = 18
+    TerrorsEnd = 19
+    HellsForge = 20
+    SiegeOfHarrogath = 21
+    RescueOnMountArreat = 22
+    PrisonOfIce = 23
+    BetrayalOfHarrogath = 24
+    RiteOfPassage = 25
+    EveOfDestruction = 26
+
+class MercenaryTypes(Enum):
+    '''
+    the mercenary types available in the game
+    '''
+    RogueFireNormal = 0
+    RogueColdNormal = 1
+    RogueFireNightmare = 2
+    RogueColdNightmare = 3
+    RogueFireHell = 4
+    RogueColdHell = 5
+    DesertCombatNormal = 6
+    DesertDefensiveNormal = 7
+    DesertOffensiveNormal = 8
+    DesertCombatNightmare = 9
+    DesertDefensiveNightmare = 10
+    DesertOffensiveNightmare = 11
+    DesertCombatHell = 12
+    DesertDefensiveHell = 13
+    DesertOffensiveHell = 14
+    SorcerorFireNormal = 15
+    SorcerorColdNormal = 16
+    SorcerorLightningNormal = 17
+    SorcerorFireNightmare = 18
+    SorcerorColdNightmare = 19
+    SorcerorLightningNightmare = 20
+    SorcerorFireHell = 21
+    SorcerorColdHell = 22
+    SorcerorLightningHell = 23
+    BarbarianNormalA = 24
+    BarbarianNormalB = 25
+    BarbarianNightmareA = 26
+    BarbarianNightmareB = 27
+    BarbarianHellA = 28
+    BarbarianHellB = 29
+
+    def __str__(self):
+        values = {
+            0: "Rogue Scout - Fire Arrow (Normal)",
+            1: "Rogue Scout - Cold Arrow (Normal)",
+            2: "Rogue Scout - Fire Arrow (Nightmare)",
+            3: "Rogue Scout - Cold Arrow (Nightmare)",
+            4: "Rogue Scout - Fire Arrow (Hell)",
+            5: "Rogue Scout - Cold Arrow (Hell)",
+            6: "Desert Mercenary - Combat (Normal)",
+            7: "Desert Mercenary - Defensive (Normal)",
+            8: "Desert Mercenary - Offensive (Normal)",
+            9: "Desert Mercenary - Combat (Nightmare)",
+            10: "Desert Mercenary - Defensive (Nightmare)",
+            11: "Desert Mercenary - Offensive (Nightmare)",
+            12: "Desert Mercenary - Combat (Hell)",
+            13: "Desert Mercenary - Defensive (Hell)",
+            14: "Desert Mercenary - Offensive (Hell)",
+            15: "Eastern Sorceror - Fire Spells (Normal)",
+            16: "Eastern Sorceror - Cold Spells (Normal)",
+            17: "Eastern Sorceror - Lightning Spells (Normal)",
+            18: "Eastern Sorceror - Fire Spells (Nightmare)",
+            19: "Eastern Sorceror - Cold Spells (Nightmare)",
+            20: "Eastern Sorceror - Lightning Spells (Nightmare)",
+            21: "Eastern Sorceror - Fire Spells (Hell)",
+            22: "Eastern Sorceror - Cold Spells (Hell)",
+            23: "Eastern Sorceror - Lightning Spells (Hell)",
+            24: "Barbarian (Normal)",
+            25: "Barbarian (Normal)",
+            26: "Barbarian (Nightmare)",
+            27: "Barbarian (Nightmare)",
+            28: "Barbarian (Hell)",
+            29: "Barbarian (Hell)",
+        }
+        return values[self.value]
