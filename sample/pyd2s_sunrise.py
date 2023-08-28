@@ -1,13 +1,20 @@
+'''
+sample usage of pyd2s that clears the darkness in act 2
+'''
+
+import sys
+
 import pyd2s
+from pyd2s.basictypes import Quest
 
-# sun gone event flags reset
-# This is used when the quest(Act.2 Tainted Sun) is incomplete, dark and inconvenient.
 
-o_buf = pyd2s.SaveBuffer("C:\\user\\Saved Games\\Diablo II\\player.d2s")
+# open a d2s file
+d2s = pyd2s.D2SaveFile(sys.argv[1])
+d2s_qdata = d2s.questdata.normal
 
-o_qdata = pyd2s.QuestData(o_buf)
-o_qdata.set_act2_sungone(0, 0)
-o_qdata.set_act2_sungone(1, 0)
-o_qdata.set_act2_sungone(2, 0)
-o_buf.flush()
+# regress the quest to clear the darkness
+if not d2s_qdata[Quest.TaintedSun] & (1<<10):
+    d2s_qdata[Quest.TaintedSun] = d2s_qdata[Quest.TaintedSun] & ~(1<<2)
 
+# save data back to disk
+d2s.flush()

@@ -1,24 +1,30 @@
+'''
+sample usage of pyd2s that resets quest rewards
+'''
+
+import sys
+
 import pyd2s
+from pyd2s.basictypes import Quest
 
-# forge and bonus event flags reset
 
-o_buf = pyd2s.SaveBuffer("C:\\user\\Saved Games\\Diablo II\\player.d2s")
+# open a d2s file
+d2s = pyd2s.D2SaveFile(sys.argv[1])
+d2s_qdata = d2s.questdata.normal
 
-o_qdata = pyd2s.QuestData(o_buf)
-o_qdata.set_act1_resetstatus(0, 0)
-o_qdata.set_act1_resetstatus(1, 0)
-o_qdata.set_act1_resetstatus(2, 0)
-o_qdata.set_act1_forge(0, 0)
-o_qdata.set_act1_forge(1, 0)
-o_qdata.set_act1_forge(2, 0)
-o_qdata.set_act1_cowlevel(0, 0)
-o_qdata.set_act1_cowlevel(1, 0)
-o_qdata.set_act1_cowlevel(2, 0)
-o_qdata.set_act5_socket(0, 0)
-o_qdata.set_act5_socket(1, 0)
-o_qdata.set_act5_socket(2, 0)
-o_qdata.set_act5_personalize(0, 0)
-o_qdata.set_act5_personalize(1, 0)
-o_qdata.set_act5_personalize(2, 0)
-o_buf.flush()
+# reset completion on Charsi's imbue reward
+if d2s_qdata[Quest.ToolsOfTheTrade] & 0x1:
+    d2s_qdata[Quest.ToolsOfTheTrade] = d2s_qdata[Quest.ToolsOfTheTrade] & ~0x3 | 0x2
 
+# reset completion on Cowlevel
+d2s_qdata[Quest.TheSearchForCain] = d2s_qdata[Quest.TheSearchForCain] & ~(0x1<<10)
+
+# reset completion on Larzuk's socket reward
+d2s_qdata[Quest.SiegeOfHarrogath] = d2s_qdata[Quest.SiegeOfHarrogath] & ~(0x1<<5)
+
+# reset completion on Anya's personalization reward
+if d2s_qdata[Quest.BetrayalOfHarrogath] & 0x1:
+    d2s_qdata[Quest.BetrayalOfHarrogath] = d2s_qdata[Quest.BetrayalOfHarrogath] & ~0x3 | 0x2
+
+# save data back to disk
+d2s.flush()
