@@ -178,7 +178,7 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
     print_waypoint_data('Nightmare', d2s_wayp.nightmare)
     print_waypoint_data('Hell', d2s_wayp.hell)
 
-    d2s_item = pyd2s.Item(d2s._buffer)
+    d2s_item = pyd2s.ItemData(d2s._buffer)
     print(f'''
 [[ Player Item Information ]]
 Count       : { d2s_item.pcount } (on data: {d2s_item.pcountondata})

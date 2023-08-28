@@ -3,7 +3,7 @@
 this module provides classes to manage item of a d2s save
 '''
 
-class Item(object):
+class ItemData(object):
     '''
     save data related to item
     '''
