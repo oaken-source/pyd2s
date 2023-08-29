@@ -31,23 +31,38 @@ class WaypointData:
             '''
             produce the raw value of the waypoint data
             '''
-            if len(self._buffer) <= 335:
-                return Waypoint.RogueEncampment.value
-
             low, high = struct.unpack('<LB', self._buffer[643 + self._offset:648 + self._offset])
             return (high << 32) | low
 
-        def __getitem__(self, waypoint):
+        @_value.setter
+        def _value(self, value):
+            '''
+            set the new raw value of the waypoint data
+            '''
+            high = value >> 32
+            low = value & 0xffffffff
+            struct.pack_into('<LB', self._buffer, 643 + self._offset, low, high)
+
+        def get(self, waypoint):
             '''
             True if the given waypoint is active, False otherwise
             '''
-            return (self._value & (1 << waypoint)) != 0
+            if not isinstance(waypoint, Waypoint):
+                waypoint = Waypoint(waypoint)
 
-        def __iter__(self):
+            return (self._value & (1 << waypoint.value)) != 0
+
+        def set(self, waypoint, value):
             '''
-            produce a dict of all waypoints and their current status
+            set the state of a given waypoint
             '''
-            return {waypoint: self[waypoint] for waypoint in Waypoint}.__iter__()
+            if not isinstance(waypoint, Waypoint):
+                waypoint = Waypoint(waypoint)
+
+            if value:
+                self._value = self._value | (1 << waypoint.value)
+            else:
+                self._value = self._value & ~(1 << waypoint.value)
 
 
     def __init__(self, buffer):

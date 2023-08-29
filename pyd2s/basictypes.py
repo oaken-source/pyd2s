@@ -10,50 +10,41 @@ class CharacterClass(Enum):
     '''
     the character classes available in the game
     '''
-    Amazon = 0x00
-    Sorceress = 0x01
-    Necromancer = 0x02
-    Paladin = 0x03
-    Barbarian = 0x04
-    Druid = 0x05
-    Assassin = 0x06
+    AMAZON = 0x00
+    SORCERESS = 0x01
+    NECROMANCER = 0x02
+    PALADIN = 0x03
+    BARBARIAN = 0x04
+    DRUID = 0x05
+    ASSASSIN = 0x06
 
-    @property
-    def gender(self):
+    def __str__(self):
         '''
-        produce the gender of characters of this class
+        produce a string representation of this class
         '''
-        return Gender(self.value in [0x00, 0x01, 0x06])
-
-
-class Gender(Enum):
-    '''
-    the gender of a character
-    '''
-    Male = 0
-    Female = 1
+        return self.name.capitalize()
 
 
 class CharacterStat(Enum):
     '''
     the character stat ids and bit widths
     '''
-    strength = 0x00
-    energy = 0x01
-    dexterity = 0x02
-    vitality = 0x03
-    statpts = 0x04
-    newskills = 0x05
-    hitpoints = 0x06
-    maxhp = 0x07
-    mana = 0x08
-    maxmana = 0x09
-    stamina = 0x0a
-    maxstamina = 0x0b
-    level = 0x0c
-    experience = 0x0d
-    gold = 0x0e
-    goldbank = 0x0f
+    STRENGTH = 0x00
+    ENERGY = 0x01
+    DEXTERITY = 0x02
+    VITALITY = 0x03
+    STATPTS = 0x04
+    NEWSKILLS = 0x05
+    HITPOINTS = 0x06
+    MAXHP = 0x07
+    MANA = 0x08
+    MAXMANA = 0x09
+    STAMINA = 0x0a
+    MAXSTAMINA = 0x0b
+    LEVEL = 0x0c
+    EXPERIENCE = 0x0d
+    GOLD = 0x0e
+    GOLDBANK = 0x0f
 
     @property
     def bits(self):
@@ -61,127 +52,188 @@ class CharacterStat(Enum):
         the bit width of the stat value
         '''
         return {
-            CharacterStat.strength: 10,
-            CharacterStat.energy: 10,
-            CharacterStat.dexterity: 10,
-            CharacterStat.vitality: 10,
-            CharacterStat.statpts: 10,
-            CharacterStat.newskills: 8,
-            CharacterStat.hitpoints: 21,
-            CharacterStat.maxhp: 21,
-            CharacterStat.mana: 21,
-            CharacterStat.maxmana: 21,
-            CharacterStat.stamina: 21,
-            CharacterStat.maxstamina: 21,
-            CharacterStat.level: 7,
-            CharacterStat.experience: 32,
-            CharacterStat.gold: 25,
-            CharacterStat.goldbank: 25,
+            self.STRENGTH: 10,
+            self.ENERGY: 10,
+            self.DEXTERITY: 10,
+            self.VITALITY: 10,
+            self.STATPTS: 10,
+            self.NEWSKILLS: 8,
+            self.HITPOINTS: 21,
+            self.MAXHP: 21,
+            self.MANA: 21,
+            self.MAXMANA: 21,
+            self.STAMINA: 21,
+            self.MAXSTAMINA: 21,
+            self.LEVEL: 7,
+            self.EXPERIENCE: 32,
+            self.GOLD: 25,
+            self.GOLDBANK: 25,
         }[self]
 
     def __str__(self):
         '''
         a string representation of the stat
         '''
-        return self.name
-
+        return self.name.capitalize()
 
 
 class Difficulty(Enum):
     '''
     the difficulty levels available in the game
     '''
-    Normal = 0x00
-    Nightmare = 0x01
-    Hell = 0x02
+    NORMAL = 0x00
+    NIGHTMARE = 0x01
+    HELL = 0x02
+
+    def __str__(self):
+        '''
+        a string representation of the difficulty
+        '''
+        return self.name.capitalize()
 
 
 class Act(Enum):
     '''
     the acts available in the game
     '''
-    Act1 = 0x00
-    Act2 = 0x01
-    Act3 = 0x02
-    Act4 = 0x03
-    Act5 = 0x04
+    ACT_1 = 0x00
+    ACT_2 = 0x01
+    ACT_3 = 0x02
+    ACT_4 = 0x03
+    ACT_5 = 0x04
+
+    def __str__(self):
+        '''
+        a string representation of the difficulty
+        '''
+        return self.name.replace('_', ' ').capitalize()
 
 
 class Waypoint(Enum):
     '''
     the waypoints available in the game
     '''
-    RogueEncampment = 0x0000000001
-    ColdPlains = 0x0000000002
-    StonyField = 0x0000000004
-    DarkWood = 0x0000000008
-    BlackMarsh = 0x0000000010
-    OuterCloister = 0x0000000020
-    JailLlevel1 = 0x0000000040
-    InnerCloister = 0x0000000080
-    CatacombsLevel2 = 0x0000000100
-    LutGholein = 0x0000000200
-    SewersLevel2 = 0x0000000400
-    DryHills = 0x0000000800
-    HallsOfTheDeadLevel2 = 0x0000001000
-    FarOasis = 0x0000002000
-    LostCity = 0x0000004000
-    PalaceCellarLevel1 = 0x0000008000
-    ArcaneSanctuary = 0x0000010000
-    CanyonOfTheMagi = 0x0000020000
-    KurastDocks = 0x0000040000
-    SpiderForest = 0x0000080000
-    GreatMarsh = 0x0000100000
-    FlayerJungle = 0x0000200000
-    LowerKurast = 0x0000400000
-    KurastBazaar = 0x0000800000
-    UpperKurast = 0x0001000000
-    Travincal = 0x0002000000
-    DuranceOfHateLevel2 = 0x0004000000
-    PandemoniumFortress = 0x0008000000
-    CityOfTheDamned = 0x0010000000
-    RiverOfFlames = 0x0020000000
-    Harrogath = 0x0040000000
-    FrigidHighlands = 0x0080000000
-    ArreatPlateau = 0x0100000000
-    CrystallinePassage = 0x0200000000
-    HallsOfPain = 0x0400000000
-    GlacialTrail = 0x0800000000
-    FrozenTundra = 0x1000000000
-    TheAncientsWay = 0x2000000000
-    WorldstoneKeepLevel2 = 0x4000000000
+    ROGUE_ENCAMPMENT = 0
+    COLD_PLAINS = 1
+    STONY_FIELD = 2
+    DARK_WOOD = 3
+    BLACK_MARSH = 4
+    OUTER_CLOISTER = 5
+    JAIL_LEVEL_1 = 6
+    INNER_CLOISTER = 7
+    CATACOMBS_LEVEL_2 = 8
+    LUT_GHOLEIN = 9
+    SEWERS_LEVEL_2 = 10
+    DRY_HILLS = 11
+    HALLS_OF_THE_DEAD_LEVEL_2 = 12
+    FAR_OASIS = 13
+    LOST_CITY = 14
+    PALACE_CELLAR_LEVEL_1 = 15
+    ARCANE_SANCTUARY = 16
+    CANYON_OF_THE_MAGI = 17
+    KURAST_DOCKS = 18
+    SPIDER_FOREST = 19
+    GREAT_MARSH = 20
+    FLAYER_JUNGLE = 21
+    LOWER_KURAST = 22
+    KURAST_BAZAAR = 23
+    UPPER_KURAST = 24
+    TRAVINCAL = 25
+    DURANCE_OF_HATE_LEVEL_2 = 26
+    PANDEMONIUM_FORTRESS = 27
+    CITY_OF_THE_DAMNED = 28
+    RIVER_OF_FLAMES = 29
+    HARROGATH = 30
+    FRIGID_HIGHLANDS = 31
+    ARREAT_PLATEAU = 32
+    CRYSTALLINE_PASSAGE = 33
+    HALLS_OF_PAIN = 34
+    GLACIAL_TRAIL = 35
+    FROZEN_TUNDRA = 36
+    THE_ANCIENTS_WAY = 37
+    WORLDSTONE_KEEP_LEVEL_2 = 38
+
+    def __str__(self):
+        '''
+        a string representation of the difficulty
+        '''
+        return self.name.replace('_', ' ').title()
+
 
 class Quest(Enum):
     '''
     the quests available in the game
     '''
-    DenOfEvil = 0
-    SistersBurialGrounds = 1
-    ToolsOfTheTrade = 2
-    TheSearchForCain = 3
-    TheForgottenTower = 4
-    SistersToTheSlaughter = 5
-    RadamentsLair = 6
-    TheHoradricStaff = 7
-    TaintedSun = 8
-    ArcaneSanctuary = 9
-    TheSummoner = 10
-    TheSevenTombs = 11
-    LamEsensTome = 12
-    KhalimsWill = 13
-    BladeOfTheOldReligion = 14
-    TheGoldenBird = 15
-    TheBlackenedTemple = 16
-    TheGuardian = 17
-    TheFallenAngel = 18
-    TerrorsEnd = 19
-    HellsForge = 20
-    SiegeOfHarrogath = 21
-    RescueOnMountArreat = 22
-    PrisonOfIce = 23
-    BetrayalOfHarrogath = 24
-    RiteOfPassage = 25
-    EveOfDestruction = 26
+    DEN_OF_EVIL = 0
+    SISTERS_BURIAL_GROUNDS = 1
+    TOOLS_OF_THE_TRADE = 2
+    THE_SEARCH_FOR_CAIN = 3
+    THE_FORGOTTEN_TOWER = 4
+    SISTERS_TO_THE_SLAUGHTER = 5
+    RADAMENTS_LAIR = 6
+    THE_HORADRIC_STAFF = 7
+    TAINTED_SUN = 8
+    ARCANE_SANCTUARY = 9
+    THE_SUMMONER = 10
+    THE_SEVEN_TOMBS = 11
+    LAM_ESENS_TOME = 12
+    KHALIMS_WILL = 13
+    BLADE_OF_THE_OLD_RELIGION = 14
+    THE_GOLDEN_BIRD = 15
+    THE_BLACKENED_TEMPLE = 16
+    THE_GUARDIAN = 17
+    THE_FALLEN_ANGEL = 18
+    TERRORS_END = 19
+    HELLS_FORGE = 20
+    SIEGE_OF_HARROGATH = 21
+    RESCUE_ON_MOUNT_ARREAT = 22
+    PRISON_OF_ICE = 23
+    BETRAYAL_OF_HARROGATH = 24
+    RITE_OF_PASSAGE = 25
+    EVE_OF_DESTRUCTION = 26
+
+    @property
+    def offset(self):
+        '''
+        the offset of this quest into the quest data structure
+        '''
+        return {
+            self.DEN_OF_EVIL : 2,
+            self.SISTERS_BURIAL_GROUNDS : 4,
+            self.TOOLS_OF_THE_TRADE : 6,
+            self.THE_SEARCH_FOR_CAIN : 8,
+            self.THE_FORGOTTEN_TOWER : 10,
+            self.SISTERS_TO_THE_SLAUGHTER : 12,
+            self.RADAMENTS_LAIR : 18,
+            self.THE_HORADRIC_STAFF : 20,
+            self.TAINTED_SUN : 22,
+            self.ARCANE_SANCTUARY : 24,
+            self.THE_SUMMONER : 26,
+            self.THE_SEVEN_TOMBS : 28,
+            self.LAM_ESENS_TOME : 34,
+            self.KHALIMS_WILL : 36,
+            self.BLADE_OF_THE_OLD_RELIGION : 38,
+            self.THE_GOLDEN_BIRD : 40,
+            self.THE_BLACKENED_TEMPLE : 42,
+            self.THE_GUARDIAN : 44,
+            self.THE_FALLEN_ANGEL : 50,
+            self.TERRORS_END : 52,
+            self.HELLS_FORGE : 54,
+            self.SIEGE_OF_HARROGATH : 70,
+            self.RESCUE_ON_MOUNT_ARREAT : 72,
+            self.PRISON_OF_ICE : 74,
+            self.BETRAYAL_OF_HARROGATH : 76,
+            self.RITE_OF_PASSAGE : 78,
+            self.EVE_OF_DESTRUCTION : 80,
+        }[self]
+
+
+    def __str__(self):
+        '''
+        a string representation of the quest type
+        '''
+        return self.name.replace('_', ' ').title()
+
 
 class MercenaryTypes(Enum):
     '''

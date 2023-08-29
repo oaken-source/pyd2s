@@ -7,6 +7,7 @@ import argparse
 import datetime
 
 import pyd2s
+from pyd2s.basictypes import CharacterStat, Waypoint
 
 parser = argparse.ArgumentParser(prog='pyd2s_stat',
     description='validate and display diablo 2 save file information')
@@ -58,22 +59,22 @@ IsExpansion : {d2s_char.is_expansion}
 IsHardcore  : {d2s_char.is_hardcore}
 HasDied     : {d2s_char.has_died}
 Class       : {d2s_char.character_class.name}
-Level       : {d2s_char.level}
+Level       : {d2s_char.stats.get(CharacterStat.LEVEL)}
 
-Strength    : {d2s_char.strength}
-Dexterity   : {d2s_char.dexterity}
-Vitality    : {d2s_char.vitality}
-Energy      : {d2s_char.energy}
-StatPts     : {d2s_char.statpts}
-NewSkills   : {d2s_char.newskills}
+Strength    : {d2s_char.stats.get(CharacterStat.STRENGTH)}
+Dexterity   : {d2s_char.stats.get(CharacterStat.DEXTERITY)}
+Vitality    : {d2s_char.stats.get(CharacterStat.VITALITY)}
+Energy      : {d2s_char.stats.get(CharacterStat.ENERGY)}
+StatPts     : {d2s_char.stats.get(CharacterStat.STATPTS)}
+NewSkills   : {d2s_char.stats.get(CharacterStat.NEWSKILLS)}
 
-MaxHP       : {d2s_char.maxhp}
-MaxMana     : {d2s_char.maxmana}
-MaxStamina  : {d2s_char.maxstamina}
+MaxHP       : {d2s_char.stats.get(CharacterStat.MAXHP)}
+MaxMana     : {d2s_char.stats.get(CharacterStat.MAXMANA)}
+MaxStamina  : {d2s_char.stats.get(CharacterStat.MAXSTAMINA)}
 
-Experience  : {d2s_char.experience}
-Gold        : {d2s_char.gold}
-GoldBank    : {d2s_char.goldbank}''')
+Experience  : {d2s_char.stats.get(CharacterStat.EXPERIENCE)}
+Gold        : {d2s_char.stats.get(CharacterStat.GOLD)}
+GoldBank    : {d2s_char.stats.get(CharacterStat.GOLDBANK)}''')
 
     d2s_merc = d2s.mercenary
 
@@ -120,11 +121,11 @@ Act V       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(21, 27)) 
     def print_waypoint_data(act, d2s_wayp):
         print(f'''\
 * { act } *
-Act I       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(0, 9)) }
-Act II      : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(9, 18)) }
-Act III     : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(18, 27)) }
-Act IV      : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(27, 30)) }
-Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''')
+Act I       : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(0, 9)) }
+Act II      : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(9, 18)) }
+Act III     : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(18, 27)) }
+Act IV      : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(27, 30)) }
+Act V       : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(30, 39)) }''')
 
     if args.a or args.w:
         if needs_newline:
