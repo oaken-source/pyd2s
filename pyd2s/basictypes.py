@@ -239,68 +239,79 @@ class MercenaryTypes(Enum):
     '''
     the mercenary types available in the game
     '''
-    RogueFireNormal = 0
-    RogueColdNormal = 1
-    RogueFireNightmare = 2
-    RogueColdNightmare = 3
-    RogueFireHell = 4
-    RogueColdHell = 5
-    DesertCombatNormal = 6
-    DesertDefensiveNormal = 7
-    DesertOffensiveNormal = 8
-    DesertCombatNightmare = 9
-    DesertDefensiveNightmare = 10
-    DesertOffensiveNightmare = 11
-    DesertCombatHell = 12
-    DesertDefensiveHell = 13
-    DesertOffensiveHell = 14
-    SorcerorFireNormal = 15
-    SorcerorColdNormal = 16
-    SorcerorLightningNormal = 17
-    SorcerorFireNightmare = 18
-    SorcerorColdNightmare = 19
-    SorcerorLightningNightmare = 20
-    SorcerorFireHell = 21
-    SorcerorColdHell = 22
-    SorcerorLightningHell = 23
-    BarbarianNormalA = 24
-    BarbarianNormalB = 25
-    BarbarianNightmareA = 26
-    BarbarianNightmareB = 27
-    BarbarianHellA = 28
-    BarbarianHellB = 29
+    ROGUE_FIRE_NORMAL = 0
+    ROGUE_COLD_NORMAL = 1
+    ROGUE_FIRE_NIGHTMARE = 2
+    ROGUE_COLD_NIGHTMARE = 3
+    ROGUE_FIRE_HELL = 4
+    ROGUE_COLD_HELL = 5
+    DESERT_COMBAT_NORMAL = 6
+    DESERT_DEFENSIVE_NORMAL = 7
+    DESERT_OFFENSIVE_NORMAL = 8
+    DESERT_COMBAT_NIGHTMARE = 9
+    DESERT_DEFENSIVE_NIGHTMARE = 10
+    DESERT_OFFENSIVE_NIGHTMARE = 11
+    DESERT_COMBAT_HELL = 12
+    DESERT_DEFENSIVE_HELL = 13
+    DESERT_OFFENSIVE_HELL = 14
+    SORCEROR_FIRE_NORMAL = 15
+    SORCEROR_COLD_NORMAL = 16
+    SORCEROR_LIGHTNING_NORMAL = 17
+    SORCEROR_FIRE_NIGHTMARE = 18
+    SORCEROR_COLD_NIGHTMARE = 19
+    SORCEROR_LIGHTNING_NIGHTMARE = 20
+    SORCEROR_FIRE_HELL = 21
+    SORCEROR_COLD_HELL = 22
+    SORCEROR_LIGHTNING_HELL = 23
+    BARBARIAN_NORMAL_A = 24
+    BARBARIAN_NORMAL_B = 25
+    BARBARIAN_NIGHTMARE_A = 26
+    BARBARIAN_NIGHTMARE_B = 27
+    BARBARIAN_HELL_A = 28
+    BARBARIAN_HELL_B = 29
+
+    @property
+    def act(self):
+        '''
+        produce the act the mercenary was hired in
+        '''
+        if self.value < 6:
+            return Act.ACT_1
+        if self.value < 15:
+            return Act.ACT_2
+        if self.value < 24:
+            return Act.ACT_3
+        return Act.ACT_5
+
+    @property
+    def difficulty(self):
+        '''
+        produce the difficulty the mercenary was hired in
+        '''
+        if self.value in [0, 1, 6, 7, 8, 15, 16, 17, 24, 25]:
+            return Difficulty.NORMAL
+        if self.value in [2, 3, 9, 10, 11, 18, 19, 20, 26, 27]:
+            return Difficulty.NIGHTMARE
+        return Difficulty.HELL
 
     def __str__(self):
-        values = {
-            0: "Rogue Scout - Fire Arrow (Normal)",
-            1: "Rogue Scout - Cold Arrow (Normal)",
-            2: "Rogue Scout - Fire Arrow (Nightmare)",
-            3: "Rogue Scout - Cold Arrow (Nightmare)",
-            4: "Rogue Scout - Fire Arrow (Hell)",
-            5: "Rogue Scout - Cold Arrow (Hell)",
-            6: "Desert Mercenary - Combat (Normal)",
-            7: "Desert Mercenary - Defensive (Normal)",
-            8: "Desert Mercenary - Offensive (Normal)",
-            9: "Desert Mercenary - Combat (Nightmare)",
-            10: "Desert Mercenary - Defensive (Nightmare)",
-            11: "Desert Mercenary - Offensive (Nightmare)",
-            12: "Desert Mercenary - Combat (Hell)",
-            13: "Desert Mercenary - Defensive (Hell)",
-            14: "Desert Mercenary - Offensive (Hell)",
-            15: "Eastern Sorceror - Fire Spells (Normal)",
-            16: "Eastern Sorceror - Cold Spells (Normal)",
-            17: "Eastern Sorceror - Lightning Spells (Normal)",
-            18: "Eastern Sorceror - Fire Spells (Nightmare)",
-            19: "Eastern Sorceror - Cold Spells (Nightmare)",
-            20: "Eastern Sorceror - Lightning Spells (Nightmare)",
-            21: "Eastern Sorceror - Fire Spells (Hell)",
-            22: "Eastern Sorceror - Cold Spells (Hell)",
-            23: "Eastern Sorceror - Lightning Spells (Hell)",
-            24: "Barbarian (Normal)",
-            25: "Barbarian (Normal)",
-            26: "Barbarian (Nightmare)",
-            27: "Barbarian (Nightmare)",
-            28: "Barbarian (Hell)",
-            29: "Barbarian (Hell)",
+        '''
+        produce a string representation of the Mercenary
+        '''
+        names = {
+            Act.ACT_1: 'Rogue Scout',
+            Act.ACT_2: 'Desert Mercenary',
+            Act.ACT_3: 'Eastern Sorceror',
+            Act.ACT_5: 'Barbarian',
         }
-        return values[self.value]
+        types = {
+            Act.ACT_1: ['Fire Arrow', 'Cold Arrow'],
+            Act.ACT_2: ['Combat', 'Defensive', 'Offensive'],
+            Act.ACT_3: ['Fire Spells', 'Cold Spells', 'Lightning Spells'],
+        }
+
+        res = f'{names[self.act]}'
+        if self.act in types:
+            res += f' - {types[self.act][self.value % len(types[self.act])]}'
+        res += f' ({self.difficulty})'
+        return res
