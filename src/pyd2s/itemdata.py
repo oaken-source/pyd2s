@@ -13,6 +13,7 @@ class ItemData:
         constructor - propagate buffer
         '''
         self._buffer = buffer
+
         self._pcount = 0
         self._pcountondata = 0
         self._mcount = 0
@@ -20,11 +21,16 @@ class ItemData:
         self._pdata = []
         self._mdata = []
 
+        # we can stop looking for item data on a sparse input file
+        if self._buffer.sparse:
+            return
+
         loc = 840    # about
         start = True
         first = True
         player = True
         onedata = []
+
         while loc < len(self._buffer):
             if self._buffer[loc] == ord("J") and self._buffer[loc + 1] == ord("M"):
                 if start:

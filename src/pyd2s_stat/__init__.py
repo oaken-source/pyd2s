@@ -52,6 +52,8 @@ Timestamp   : {d2s.timestamp} ({datetime.datetime.fromtimestamp(d2s.timestamp)})
             print('')
         needs_newline = True
 
+        glue = '\n              '
+
         print(f'''\
 [[ Character Information ]]
 Name        : {d2s_char.name}
@@ -59,22 +61,24 @@ IsExpansion : {d2s_char.is_expansion}
 IsHardcore  : {d2s_char.is_hardcore}
 HasDied     : {d2s_char.has_died}
 Class       : {d2s_char.character_class.name}
-Level       : {d2s_char.stats.get(CharacterStat.LEVEL)}
+Level       : {d2s_char.stats[CharacterStat.LEVEL]}
 
-Strength    : {d2s_char.stats.get(CharacterStat.STRENGTH)}
-Dexterity   : {d2s_char.stats.get(CharacterStat.DEXTERITY)}
-Vitality    : {d2s_char.stats.get(CharacterStat.VITALITY)}
-Energy      : {d2s_char.stats.get(CharacterStat.ENERGY)}
-StatPts     : {d2s_char.stats.get(CharacterStat.STATPTS)}
-NewSkills   : {d2s_char.stats.get(CharacterStat.NEWSKILLS)}
+Strength    : {d2s_char.stats[CharacterStat.STRENGTH]}
+Dexterity   : {d2s_char.stats[CharacterStat.DEXTERITY]}
+Vitality    : {d2s_char.stats[CharacterStat.VITALITY]}
+Energy      : {d2s_char.stats[CharacterStat.ENERGY]}
+StatPts     : {d2s_char.stats[CharacterStat.STATPTS]}
+NewSkills   : {d2s_char.stats[CharacterStat.NEWSKILLS]}
 
-MaxHP       : {d2s_char.stats.get(CharacterStat.MAXHP)}
-MaxMana     : {d2s_char.stats.get(CharacterStat.MAXMANA)}
-MaxStamina  : {d2s_char.stats.get(CharacterStat.MAXSTAMINA)}
+MaxHP       : {d2s_char.stats[CharacterStat.MAXHP]}
+MaxMana     : {d2s_char.stats[CharacterStat.MAXMANA]}
+MaxStamina  : {d2s_char.stats[CharacterStat.MAXSTAMINA]}
 
-Experience  : {d2s_char.stats.get(CharacterStat.EXPERIENCE)}
-Gold        : {d2s_char.stats.get(CharacterStat.GOLD)}
-GoldBank    : {d2s_char.stats.get(CharacterStat.GOLDBANK)}''')
+Experience  : {d2s_char.stats[CharacterStat.EXPERIENCE]}
+Gold        : {d2s_char.stats[CharacterStat.GOLD]:7} / {d2s_char.stats[CharacterStat.LEVEL] * 10000:7}
+GoldBank    : {d2s_char.stats[CharacterStat.GOLDBANK]:7} / 2500000
+
+Skill Tree  : {glue.join(f"{d2s_char.skills[s]:<2} - {s}" for s in d2s_char.character_class.skilltree if d2s_char.skills[s])}''')
 
     d2s_merc = d2s.mercenary
 
@@ -88,14 +92,12 @@ GoldBank    : {d2s_char.stats.get(CharacterStat.GOLDBANK)}''')
 IsDead      : {d2s_merc.is_dead}
 ControlSeed : {d2s_merc.control_seed:#x}
 NameId      : {d2s_merc.name_id:#04x}
-Type        : {d2s_merc.type} ({d2s_merc.type_id:#04x})
+Type        : {d2s_merc.type} ({d2s_merc.type.value:#04x})
 Experience  : {d2s_merc.experience}''')
 
     d2s_qdata = d2s.questdata
 
     def print_quest_information(act, d2s_qdata):
-
-        glue = '\n              '
         print(f'''\
 * { act } *
 Act I       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(0, 6)) }
@@ -121,11 +123,11 @@ Act V       : { glue.join(format(d2s_qdata[j], '#018b') for j in range(21, 27)) 
     def print_waypoint_data(act, d2s_wayp):
         print(f'''\
 * { act } *
-Act I       : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(0, 9)) }
-Act II      : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(9, 18)) }
-Act III     : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(18, 27)) }
-Act IV      : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(27, 30)) }
-Act V       : { '/'.join('o' if d2s_wayp.get(j) else 'x' for j in range(30, 39)) }''')
+Act I       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(0, 9)) }
+Act II      : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(9, 18)) }
+Act III     : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(18, 27)) }
+Act IV      : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(27, 30)) }
+Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''')
 
     if args.a or args.w:
         if needs_newline:

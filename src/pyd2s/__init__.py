@@ -4,6 +4,7 @@ This module provides classes to manage D2 save games.
 '''
 
 import struct
+import logging
 
 from pyd2s.savebuffer import SaveBuffer
 from pyd2s.character import Character
@@ -28,8 +29,11 @@ class D2SaveFile:
             raise ValueError('invalid save: mismatched magic number')
         if self.version != 0x60:
             raise ValueError('invalid save: pre 1.10 saves are not supported')
-        if len(self._buffer) <= 335:
-            raise ValueError('invalid save: truncated data?')
+        if len(self._buffer) < 335:
+            raise ValueError('invalid save: truncated data')
+
+        if self._buffer.sparse:
+            logging.warning('sparse save: has never been saved in-game.')
 
         self.character = Character(self._buffer)
         self.mercenary = Mercenary(self._buffer)

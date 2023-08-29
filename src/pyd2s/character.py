@@ -4,9 +4,10 @@ this module provides a class that manages character data
 '''
 
 import re
+import math
 from os.path import dirname, join, isfile
 
-from pyd2s.basictypes import CharacterClass, CharacterStat
+from pyd2s.basictypes import CharacterClass, CharacterStat, SkillTree
 
 
 class Character:
@@ -25,8 +26,16 @@ class Character:
             '''
             self._buffer = buffer
 
+            if self._header != 'gf':
+                raise ValueError('invalid save: mismatched stat data section header')
+
             self._positions = {stat: None for stat in CharacterStat}
             self._end = 0
+            self._stats_end = 0
+
+            # if this is a sparse save file, we can stop looking for stat data
+            if self._buffer.sparse:
+                return
 
             position = 767 * 8
             while True:
@@ -36,9 +45,25 @@ class Character:
                 stat = CharacterStat(statid)
                 self._positions[stat] = position + 9
                 position += 9 + stat.bits
-            self._stats_end = position
+            self._end = position
 
-        def get(self, statid):
+        @property
+        def _header(self):
+            '''
+            produce the header of the section - should be 'gf'
+            '''
+            if self._buffer.sparse:
+                return 'gf'
+            return self._buffer[765:767].decode('ascii')
+
+        @property
+        def length(self):
+            '''
+            the length of the stat section in bytes
+            '''
+            return math.ceil((self._end + 9) / 8) - 765
+
+        def __getitem__(self, statid):
             '''
             get the stat by id
             '''
@@ -47,10 +72,13 @@ class Character:
                 return 0
             return self._buffer.getbits(position, statid.bits)
 
-        def set(self, statid, value):
+        def __setitem__(self, statid, value):
             '''
             set the stat by id to value
             '''
+            if self._buffer.sparse:
+                raise ValueError('unable to set stat data on sparse save.')
+
             if value.bit_length() > statid.bits:
                 raise ValueError(f'value too large for stat {statid}')
 
@@ -69,6 +97,55 @@ class Character:
                 self._buffer[43] = value
 
 
+    class SkillData:
+        '''
+        this class provides access to a characters stat data
+        '''
+
+        def __init__(self, buffer, offset):
+            '''
+            constructor - propagate buffer and parse stats section
+            '''
+            self._buffer = buffer
+            self._offset = offset
+
+            if self._header != 'if':
+                raise ValueError('invalid save: mismatched stat data section header')
+
+        @property
+        def _header(self):
+            '''
+            produce the header of the section - should be 'if'
+            '''
+            if self._buffer.sparse:
+                return 'if'
+            return self._buffer[self._offset:self._offset + 2].decode('ascii')
+
+        def __getitem__(self, skillid):
+            '''
+            get the skill by id
+            '''
+            if isinstance(skillid, SkillTree):
+                skillid = skillid.value
+
+            if self._buffer.sparse:
+                return 0
+
+            return self._buffer[self._offset + 2 + skillid]
+
+        def __setitem__(self, skillid, value):
+            '''
+            set the skill by id to value
+            '''
+            if self._buffer.sparse:
+                raise ValueError('unable to set skill data on sparse save.')
+
+            if isinstance(skillid, SkillTree):
+                skillid = skillid.value
+
+            self._buffer[self._offset + 2 + skillid] = value
+
+
     def __init__(self, buffer):
         '''
         constructor - propagate buffer
@@ -76,6 +153,7 @@ class Character:
         self._buffer = buffer
 
         self.stats = self.StatData(self._buffer)
+        self.skills = self.SkillData(self._buffer, 765 + self.stats.length)
 
     @property
     def name(self):

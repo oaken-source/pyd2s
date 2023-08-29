@@ -33,21 +33,19 @@ class QuestData:
             if not isinstance(quest, Quest):
                 quest = Quest(quest)
 
-            start = 345 + self._offset + quest.offset
-            return struct.unpack('<H', self._buffer[start:start + 2])[0]
+            if self._buffer.sparse:
+                return 0
+
+            return struct.unpack_from('<H', self._buffer, 345 + self._offset + quest.offset)[0]
 
         def __setitem__(self, quest, value):
+            if self._buffer.sparse:
+                raise ValueError('unable to set quest data on sparse save.')
+
             if not isinstance(quest, Quest):
                 quest = Quest(quest)
 
-            start = 345 + self._offset + quest.offset
-            struct.pack_into('<H', self._buffer, start, value)
-
-        def __iter__(self):
-            '''
-            produce a dict of all waypoints and their current status
-            '''
-            return {quest: self[quest.value] for quest in Quest}.__iter__()
+            struct.pack_into('<H', self._buffer, 345 + self._offset + quest.offset, value)
 
 
     def __init__(self, buffer):
@@ -68,4 +66,6 @@ class QuestData:
         '''
         produce the header of the section - should be 'Woo!'
         '''
+        if self._buffer.sparse:
+            return 'Woo!'
         return self._buffer[335:339].decode('ascii')

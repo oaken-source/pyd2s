@@ -31,7 +31,7 @@ class WaypointData:
             '''
             produce the raw value of the waypoint data
             '''
-            low, high = struct.unpack('<LB', self._buffer[643 + self._offset:648 + self._offset])
+            low, high = struct.unpack_from('<LB', self._buffer, 643 + self._offset)
             return (high << 32) | low
 
         @_value.setter
@@ -43,19 +43,25 @@ class WaypointData:
             low = value & 0xffffffff
             struct.pack_into('<LB', self._buffer, 643 + self._offset, low, high)
 
-        def get(self, waypoint):
+        def __getitem__(self, waypoint):
             '''
             True if the given waypoint is active, False otherwise
             '''
             if not isinstance(waypoint, Waypoint):
                 waypoint = Waypoint(waypoint)
 
+            if self._buffer.sparse:
+                return waypoint == Waypoint.ROGUE_ENCAMPMENT
+
             return (self._value & (1 << waypoint.value)) != 0
 
-        def set(self, waypoint, value):
+        def __setitem__(self, waypoint, value):
             '''
             set the state of a given waypoint
             '''
+            if self._buffer.sparse:
+                raise ValueError('unable to set waypoint data on sparse save.')
+
             if not isinstance(waypoint, Waypoint):
                 waypoint = Waypoint(waypoint)
 
@@ -83,4 +89,6 @@ class WaypointData:
         '''
         produce the header of the section - should be 'WS'
         '''
+        if self._buffer.sparse:
+            return 'WS'
         return self._buffer[633:635].decode('ascii')

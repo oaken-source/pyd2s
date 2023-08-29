@@ -40,6 +40,13 @@ class SaveBuffer(bytearray):
         struct.pack_into('<L', self, 0x08, value)
 
     @property
+    def sparse(self):
+        '''
+        indicate whether the save file in sparse (has never been saved in-game)
+        '''
+        return len(self) <= 335
+
+    @property
     def _checksum(self):
         '''
         get the checksum of the save data
