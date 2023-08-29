@@ -11,8 +11,5 @@ license = { text = "MIT" }
 
 dependencies = []
 
-[tool.setuptools]
-py-modules = []
-
 [project.scripts]
-pyd2s_stat = "pyd2s.stat:pyd2s_stat"
+pyd2s_stat = "pyd2s_stat:pyd2s_stat"
