@@ -9,7 +9,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-dependencies = []
+dependencies = ['colorama']
 
 [project.scripts]
 pyd2s_stat = "pyd2s_stat:pyd2s_stat"

@@ -143,89 +143,6 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
 
     d2s_item = d2s.itemdata
 
-    def print_item(data):
-        temp = ""
-        temp += "("
-        if len(data) > 6:
-            temp += f"C{(data[6] & 0x1E) >> 1} R{(data[6] & 0xE0) >> 5} "
-        if len(data) > 5:
-            val = (data[5] & 0x1C) >> 2
-            if val == 2:
-                temp += "Belt"
-            elif val == 4:
-                temp += "Cursor"
-            elif val == 6:
-                temp += "Socket"
-        if len(data) > 6:
-            if (data[5] & 0x1C) >> 2 == 1:
-                val = ((data[5] & 0xE0) >> 5) + ((data[6] & 0x1) << 3)
-                if val == 1:
-                    temp += "(E)Heads"
-                elif val == 2:
-                    temp += "(E)Neck"
-                elif val == 3:
-                    temp += "(E)Torso"
-                elif val == 4:
-                    temp += "(E)RHand"
-                elif val == 5:
-                    temp += "(E)LHand"
-                elif val == 6:
-                    temp += "(E)RFinger"
-                elif val == 7:
-                    temp += "(E)LFinger"
-                elif val == 8:
-                    temp += "(E)Waist"
-                elif val == 9:
-                    temp += "(E)Feet"
-                elif val == 10:
-                    temp += "(E)Hands"
-                elif val == 11:
-                    temp += "(E)ARHand"
-                elif val == 12:
-                    temp += "(E)ALHand"
-        if len(data) > 7:
-            if (data[5] & 0x1C) >> 2 == 0:
-                val = (data[7] & 0x0E) >> 1
-                if val == 0:
-                    temp += "NotHere"
-                elif val == 1:
-                    temp += "Inventory"
-                elif val == 4:
-                    temp += "Cube"
-                elif val == 5:
-                    temp += "Stash"
-        temp += ") "
-        if len(data) > 10:
-            temp2 = [((data[ 7] & 0xF0) >> 4) + ((data[ 8] & 0x0F) << 4), ((data[ 8] & 0xF0) >> 4) + ((data[ 9] & 0x0F) << 4),
-                     ((data[ 9] & 0xF0) >> 4) + ((data[10] & 0x0F) << 4), ((data[10] & 0xF0) >> 4) + ((data[11] & 0x0F) << 4)]
-            temp += f"{temp2[0]:02X} {temp2[1]:02X} {temp2[2]:02X} {temp2[3]:02X} ({chr(temp2[0]) + chr(temp2[1]) + chr(temp2[2]) + chr(temp2[3])}) "
-        if len(data) > 0:
-            if data[0] & 0x10 == 0:
-                temp += "NonIdentified "
-        if len(data) > 2:
-            if data[2] & 0x01:
-                temp += "Ear "
-            if data[2] & 0x02:
-                temp += "Newbie "
-            if data[2] & 0x40:
-                temp += "Ethereal "
-        if len(data) > 3:
-            if data[3] & 0x01:
-                temp += "Personalized "
-            if data[3] & 0x04:
-                temp += "Runeword "
-        if len(data) > 11:
-            val = (data[11] & 0x70) >> 4
-            if data[1] & 0x08 and val > 0:
-                temp += f"Socketed({val}) "
-        if len(data) > 2:
-            if data[2] & 0x20 == 0:    # not simple
-                if len(data) > 16:
-                    val = ((data[15] & 0x80) >> 7) + ((data[16] & 0x3F) << 1)
-                    temp += f"ilvl({val}) "
-        print(f"item {i} : {temp}")
-        print(f"item {i} : {data}")
-
     if args.a or args.i:
         if needs_newline:
             print('')
@@ -233,16 +150,28 @@ Act V       : { '/'.join('o' if d2s_wayp[j] else 'x' for j in range(30, 39)) }''
 
         print(f'''\
 [[ Player Item Information ]]
-Count       : { d2s_item.pcount } (on data: {d2s_item.pcountondata})
-''')
+Count       : { d2s_item.pcount }''')
 
         for i in range(d2s_item.pcount):
-            print_item(d2s_item.getpdata(i))
+            print(' - ' + '\n   '.join(str(d2s_item.getpdata(i)).splitlines()))
+
+        print(f'''
+[[ Corpse Item Information ]]
+Count       : { d2s_item.ccount }''')
+
+        for i in range(d2s_item.ccount):
+            print(' - ' + '\n   '.join(str(d2s_item.getcdata(i)).splitlines()))
 
         print(f'''
 [[ Mercenary Item Information ]]
-Count       : { d2s_item.mcount } (on data: {d2s_item.mcountondata})
-''')
+Count       : { d2s_item.mcount }''')
 
         for i in range(d2s_item.mcount):
-            print_item(d2s_item.getmdata(i))
+            print(' - ' + '\n   '.join(str(d2s_item.getmdata(i)).splitlines()))
+
+        print(f'''
+[[ Iron Golem Item Information ]]
+Count       : { d2s_item.gcount }''')
+
+        for i in range(d2s_item.gcount):
+            print(' - ' + '\n   '.join(str(d2s_item.getgdata(i)).splitlines()))

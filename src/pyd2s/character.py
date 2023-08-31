@@ -8,6 +8,7 @@ import math
 from os.path import dirname, join, isfile
 
 from pyd2s.basictypes import CharacterClass, CharacterStat, SkillTree
+from pyd2s.gamedata import GameData
 
 
 class Character:
@@ -152,6 +153,8 @@ class Character:
         '''
         self._buffer = buffer
 
+        GameData.set_expansion(self.is_expansion)
+
         self.stats = self.StatData(self._buffer)
         self.skills = self.SkillData(self._buffer, 765 + self.stats.length)
 
@@ -187,14 +190,15 @@ class Character:
         '''
         return (self._buffer[36] & (1 << 5)) != 0
 
-    @is_expansion.setter
-    def is_expansion(self, value):
-        '''
-        set wether the character is in the expansion
-        '''
-        if not value and self.character_class in (CharacterClass.ASSASSIN, CharacterClass.DRUID):
-            raise ValueError('assassins and druids need expansion flag set')
-        self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 5)
+    # FIXME: Expansion bit triggers changes in the item list, review, fix and uncomment
+    #@is_expansion.setter
+    #def is_expansion(self, value):
+    #    '''
+    #    set wether the character is in the expansion
+    #    '''
+    #    if not value and self.character_class in (CharacterClass.ASSASSIN, CharacterClass.DRUID):
+    #        raise ValueError('assassins and druids need expansion flag set')
+    #    self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 5)
 
     @property
     def has_died(self):

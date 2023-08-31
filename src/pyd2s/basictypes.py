@@ -582,3 +582,17 @@ class MercenaryType(Enum):
             res += f' - {types[self.act][self.value % len(types[self.act])]}'
         res += f' ({self.difficulty})'
         return res
+
+
+class ItemQuality(TitledEnum):
+    '''
+    an enum for possible item qualities
+    '''
+    LOW_QUALITY = 1
+    NORMAL = 2
+    HIGH_QUALITY = 3
+    MAGICAL = 4
+    SET = 5
+    RARE = 6
+    UNIQUE = 7
+    CRAFTED = 8

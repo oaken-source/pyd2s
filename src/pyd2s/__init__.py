@@ -39,7 +39,7 @@ class D2SaveFile:
         self.mercenary = Mercenary(self._buffer)
         self.questdata = QuestData(self._buffer)
         self.waypointdata = WaypointData(self._buffer)
-        self.itemdata = ItemData(self._buffer)
+        self.itemdata = ItemData(self._buffer, 765 + self.character.stats.length + 32)
 
     @property
     def magic(self):
