@@ -4,6 +4,7 @@ this module contains some basic enumerated types
 '''
 
 from enum import Enum
+from functools import total_ordering
 
 
 class TitledEnum(Enum):
@@ -472,33 +473,33 @@ class Quest(TitledEnum):
         the offset of this quest into the quest data structure
         '''
         return {
-            self.DEN_OF_EVIL : 2,
-            self.SISTERS_BURIAL_GROUNDS : 4,
-            self.TOOLS_OF_THE_TRADE : 6,
-            self.THE_SEARCH_FOR_CAIN : 8,
-            self.THE_FORGOTTEN_TOWER : 10,
-            self.SISTERS_TO_THE_SLAUGHTER : 12,
-            self.RADAMENTS_LAIR : 18,
-            self.THE_HORADRIC_STAFF : 20,
-            self.TAINTED_SUN : 22,
-            self.ARCANE_SANCTUARY : 24,
-            self.THE_SUMMONER : 26,
-            self.THE_SEVEN_TOMBS : 28,
-            self.LAM_ESENS_TOME : 34,
-            self.KHALIMS_WILL : 36,
-            self.BLADE_OF_THE_OLD_RELIGION : 38,
-            self.THE_GOLDEN_BIRD : 40,
-            self.THE_BLACKENED_TEMPLE : 42,
-            self.THE_GUARDIAN : 44,
-            self.THE_FALLEN_ANGEL : 50,
-            self.TERRORS_END : 52,
-            self.HELLS_FORGE : 54,
-            self.SIEGE_OF_HARROGATH : 70,
-            self.RESCUE_ON_MOUNT_ARREAT : 72,
-            self.PRISON_OF_ICE : 74,
-            self.BETRAYAL_OF_HARROGATH : 76,
-            self.RITE_OF_PASSAGE : 78,
-            self.EVE_OF_DESTRUCTION : 80,
+            self.DEN_OF_EVIL: 2,
+            self.SISTERS_BURIAL_GROUNDS: 4,
+            self.TOOLS_OF_THE_TRADE: 6,
+            self.THE_SEARCH_FOR_CAIN: 8,
+            self.THE_FORGOTTEN_TOWER: 10,
+            self.SISTERS_TO_THE_SLAUGHTER: 12,
+            self.RADAMENTS_LAIR: 18,
+            self.THE_HORADRIC_STAFF: 20,
+            self.TAINTED_SUN: 22,
+            self.ARCANE_SANCTUARY: 24,
+            self.THE_SUMMONER: 26,
+            self.THE_SEVEN_TOMBS: 28,
+            self.LAM_ESENS_TOME: 34,
+            self.KHALIMS_WILL: 36,
+            self.BLADE_OF_THE_OLD_RELIGION: 38,
+            self.THE_GOLDEN_BIRD: 40,
+            self.THE_BLACKENED_TEMPLE: 42,
+            self.THE_GUARDIAN: 44,
+            self.THE_FALLEN_ANGEL: 50,
+            self.TERRORS_END: 52,
+            self.HELLS_FORGE: 54,
+            self.SIEGE_OF_HARROGATH: 70,
+            self.RESCUE_ON_MOUNT_ARREAT: 72,
+            self.PRISON_OF_ICE: 74,
+            self.BETRAYAL_OF_HARROGATH: 76,
+            self.RITE_OF_PASSAGE: 78,
+            self.EVE_OF_DESTRUCTION: 80,
         }[self]
 
 
@@ -584,6 +585,7 @@ class MercenaryType(Enum):
         return res
 
 
+@total_ordering
 class ItemQuality(TitledEnum):
     '''
     an enum for possible item qualities
@@ -596,3 +598,11 @@ class ItemQuality(TitledEnum):
     RARE = 6
     UNIQUE = 7
     CRAFTED = 8
+
+    def __lt__(self, other):
+        '''
+        comparison for item qualities
+        '''
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented

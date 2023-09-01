@@ -70,7 +70,6 @@ class WaypointData:
             else:
                 self._value = self._value & ~(1 << waypoint.value)
 
-
     def __init__(self, buffer):
         '''
         constructor - propagate buffer

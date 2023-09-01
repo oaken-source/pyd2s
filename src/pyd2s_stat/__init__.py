@@ -9,23 +9,39 @@ import datetime
 import pyd2s
 from pyd2s.basictypes import CharacterStat, Waypoint
 
-parser = argparse.ArgumentParser(prog='pyd2s_stat',
-    description='validate and display diablo 2 save file information')
-parser.add_argument('filename')
-parser.add_argument('-a', action='store_true',
-    help='display all information, equivalent to -scmqwi')
-parser.add_argument('-s', action='store_true',
-    help='display save file information')
-parser.add_argument('-c', action='store_true',
-    help='display character information')
-parser.add_argument('-m', action='store_true',
-    help='display mercenary information')
-parser.add_argument('-q', action='store_true',
-    help='display quest information')
-parser.add_argument('-w', action='store_true',
-    help='display waypoint information')
-parser.add_argument('-i', action='store_true',
-    help='display item information')
+parser_config = [
+    (['filename'], {
+        'help': 'the path to the d2s file'}),
+    (['-a'], {
+        'action': 'store_true',
+        'help': 'display all information, equivalent to -scmqwi'}),
+    (['-s'], {
+        'action': 'store_true',
+        'help': 'display save file information'}),
+    (['-c'], {
+        'action': 'store_true',
+        'help': 'display character information'}),
+    (['-m'], {
+        'action': 'store_true',
+        'help': 'display mercenary information'}),
+    (['-q'], {
+        'action': 'store_true',
+        'help': 'display quest information'}),
+    (['-w'], {
+        'action': 'store_true',
+        'help': 'display waypoint information'}),
+    (['-i'], {
+        'action': 'store_true',
+        'help': 'display inventory information'}),
+]
+
+parser = argparse.ArgumentParser(
+    prog='pyd2s_stat',
+    description='validate and display diablo 2 save file information'
+)
+for parser_arg in parser_config:
+    parser.add_argument(*parser_arg[0], **parser_arg[1])
+
 
 def pyd2s_stat(argv=None):
     ''' entry point '''

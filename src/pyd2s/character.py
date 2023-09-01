@@ -97,7 +97,6 @@ class Character:
             if statid == CharacterStat.LEVEL:
                 self._buffer[43] = value
 
-
     class SkillData:
         '''
         this class provides access to a characters stat data
@@ -146,7 +145,6 @@ class Character:
 
             self._buffer[self._offset + 2 + skillid] = value
 
-
     def __init__(self, buffer):
         '''
         constructor - propagate buffer
@@ -189,16 +187,6 @@ class Character:
         True if an extension (LoD) character, False otherwise
         '''
         return (self._buffer[36] & (1 << 5)) != 0
-
-    # FIXME: Expansion bit triggers changes in the item list, review, fix and uncomment
-    #@is_expansion.setter
-    #def is_expansion(self, value):
-    #    '''
-    #    set wether the character is in the expansion
-    #    '''
-    #    if not value and self.character_class in (CharacterClass.ASSASSIN, CharacterClass.DRUID):
-    #        raise ValueError('assassins and druids need expansion flag set')
-    #    self._buffer[36] ^= (-bool(value) ^ self._buffer[36]) & (1 << 5)
 
     @property
     def has_died(self):

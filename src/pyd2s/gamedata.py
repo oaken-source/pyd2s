@@ -8,219 +8,196 @@ import csv
 import struct
 
 
-class GameData:
+class _GameData:
     '''
     provide access to the games data files
     '''
 
-    _is_expansion = True
-    _itemdata = {}
+    _TABLE_ALIAS = {
+        'itemdata': ['armor', 'weapons', 'misc'],
+        'rareaffix': ['raresuffix', 'rareprefix']
+    }
+    _TABLE_TRANSLATE = {
+        'itemstatcost': 'ItemStatCost',
+        'itemtypes': 'ItemTypes',
+        'magicsuffix': 'MagicSuffix',
+        'magicprefix': 'MagicPrefix',
+        'raresuffix': 'RareSuffix',
+        'rareprefix': 'RarePrefix',
+    }
+    _TABLE_PRIMARY_KEYS = {
+        'itemdata': 'code',
+        'armor': 'code',
+        'weapons': 'code',
+        'misc': 'code',
+        'itemtypes': 'Code',
+    }
+    _TABLE_INDEX_OFFSETS = {
+        'magicprefix': 1,
+        'magicsuffix': 1,
+        'rareaffix': 1,
+    }
 
-    _lq_name_prefix = {}
-    _hq_name_prefix = {}
-    _magic_prefix = {}
-    _magic_suffix = {}
-    _rare_affix = {}
+    def __init__(self):
+        '''
+        constructor
+        '''
+        self._tables = {}
+        self._expansion = True
 
-    _item_stat_cost = {}
-    _item_class = {}
-
-    _skills = {}
-
-    _strings = {}
-
-    @classmethod
-    def set_expansion(cls, value):
+    def set_expansion(self, value):
         '''
         set whether we are looking at expansion or classic data files
         '''
-        cls.is_expansion = value
+        self._expansion = value
 
-    @classmethod
-    def get_itemdata(cls, code):
+    def __getattr__(self, table):
         '''
-        produce the item data for a given item code
+        produce a data table for the given key
         '''
-        if cls._is_expansion not in cls._itemdata:
-            cls._itemdata[cls._is_expansion] = cls._read_itemdata()
+        if self._expansion not in self._tables:
+            self._tables[self._expansion] = {}
 
-        return cls._itemdata[cls._is_expansion][code.strip()]
+        if table not in self._tables[self._expansion]:
+            if table == 'strings':
+                self._tables[self._expansion][table] = self._load_strings()
+            else:
+                self._tables[self._expansion][table] = self._load_table(table)
 
-    @classmethod
-    def _read_itemdata(cls):
-        '''
-        read the item data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = {}
-        for file in ['misc', 'armor', 'weapons']:
-            with open(os.path.join(base_path, f'{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = { row['code']: row | {'kind': file} for row in reader }
-            res.update(items)
-        return res
+        return self._tables[self._expansion][table]
 
-    @classmethod
-    def get_lq_name_prefix(cls, key):
+    def _load_table(self, table):
         '''
-        produce the low quality prefix data for a given prefix id
+        load a data table into memory on first access
         '''
-        if cls._is_expansion not in cls._lq_name_prefix:
-            cls._lq_name_prefix[cls._is_expansion] = cls._read_lq_name_prefix_data()
+        if table in self._TABLE_PRIMARY_KEYS:
+            return self._load_table_as_dict(table, self._TABLE_PRIMARY_KEYS[table])
+        return self._load_table_as_list(table, self._TABLE_INDEX_OFFSETS.get(table, 0))
 
-        return cls._lq_name_prefix[cls._is_expansion][key]
+    def _load_table_as_dict(self, table, primary_key):
+        '''
+        load a data table into memory as a key-indexed dictionary
+        '''
+        entries = {}
 
-    @classmethod
-    def _read_lq_name_prefix_data(cls):
-        '''
-        read the prefix data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = []
-        for file in ['lowqualityitems']:
-            with open(os.path.join(base_path, f'{file}.txt'), 'r', encoding='ascii') as file:
-                items = list(map(str.strip, file.readlines()[1:]))
-            res.extend(items)
-        return res
+        if table in self._TABLE_ALIAS:
+            for subtable in self._TABLE_ALIAS[table]:
+                subtable_entries = self._load_table_as_dict(subtable, primary_key)
+                for entry in subtable_entries:
+                    subtable_entries[entry]['kind'] = subtable
+                entries.update(subtable_entries)
+            return entries
 
-    @classmethod
-    def get_magic_prefix(cls, key):
-        '''
-        produce the magic prefix data for a given prefix id
-        '''
-        if cls._is_expansion not in cls._magic_prefix:
-            cls._magic_prefix[cls._is_expansion] = cls._read_magic_prefix_data()
+        base = f'gamedata/d2{"exp-1.14d" if self._expansion else "data"}/data/global/excel/'
 
-        return cls._magic_prefix[cls._is_expansion][key]
+        filename = self._TABLE_TRANSLATE.get(table, table)
+        with open(os.path.join(base, f'{filename}.txt'), 'r', encoding='ascii') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter='\t')
+            entries = {row[primary_key]: row for row in reader}
 
-    @classmethod
-    def _read_magic_prefix_data(cls):
-        '''
-        read the prefix data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = ['']
-        for file in ['Prefix']:
-            with open(os.path.join(base_path, f'Magic{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = [ row | {'kind': file} for row in reader if row ['Name'] != 'Expansion' ]
-            res.extend(items)
-        return res
+        return entries
 
-    @classmethod
-    def get_magic_suffix(cls, key):
+    def _load_table_as_list(self, table, index_offset):
         '''
-        produce the magic suffix data for a given suffix id
+        load a data table into memory as 0 or 1 indexed a list
         '''
-        if cls._is_expansion not in cls._magic_suffix:
-            cls._magic_suffix[cls._is_expansion] = cls._read_magic_suffix_data()
+        entries = [None] * index_offset
 
-        return cls._magic_suffix[cls._is_expansion][key]
+        if table in self._TABLE_ALIAS:
+            for subtable in self._TABLE_ALIAS[table]:
+                entries.extend(self._load_table_as_list(subtable, 0))
+            return entries
 
-    @classmethod
-    def _read_magic_suffix_data(cls):
+        base = f'gamedata/d2{"exp-1.14d" if self._expansion else "data"}/data/global/excel/'
+
+        filename = self._TABLE_TRANSLATE.get(table, table)
+        with open(os.path.join(base, f'{filename}.txt'), 'r', encoding='ascii') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter='\t')
+            entries = list(reader)
+
+        # fix incorrect usage of ModStre9t
+        if table == 'itemstatcost':
+            for entry in entries:
+                if entry['descstrpos'] == 'ModStre9t':
+                    entry['descstrpos'] = 'ModStre9u'
+                if entry['descstrneg'] == 'ModStre9t':
+                    entry['descstrneg'] = 'ModStre9u'
+
+        return entries
+
+    def _load_strings(self):
         '''
-        read the suffix data from the game files
+        load the string table into memory on first access
         '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = ['']
-        for file in ['Suffix']:
-            with open(os.path.join(base_path, f'Magic{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = [ row | {'kind': file} for row in reader if row['Name'] != 'Expansion' ]
-            res.extend(items)
-        return res
+        string_tbl_classic = [
+            'gamedata/d2data/data/local/lng/eng/string.tbl']
+        string_tbl_expansion = [
+            'gamedata/d2exp-1.14d/data/local/LNG/ENG/expansionstring.tbl',
+            'gamedata/d2exp-1.14d/data/local/LNG/ENG/patchstring.tbl']
 
-    @classmethod
-    def get_rare_affix(cls, key):
+        entries = {}
+        for tbl in string_tbl_classic:
+            entries.update(self._load_string_tbl(tbl))
+        if self._expansion:
+            for tbl in string_tbl_expansion:
+                entries.update(self._load_string_tbl(tbl))
+
+        return entries
+
+    def _load_string_tbl(self, filename):
         '''
-        produce the rare affix data for a given affix id
+        load one string table file into memory
         '''
-        if cls._is_expansion not in cls._rare_affix:
-            cls._rare_affix[cls._is_expansion] = cls._read_rare_affix_data()
+        def read_null_terminated_string(file):
+            '''
+            read a null-terminated string from a given file-like object
+            '''
+            res = bytearray()
+            while True:
+                next_byte = file.read(1)[0]
+                if next_byte == 0:
+                    break
+                res.append(next_byte)
+            return res.decode('utf-8')
 
-        return cls._rare_affix[cls._is_expansion][key]
+        with open(filename, 'rb') as tbl:
+            header = tbl.read(21)
+            num_entries = struct.unpack_from('<H', header, 2)[0]
 
-    @classmethod
-    def _read_rare_affix_data(cls):
+            entries = []
+            for _ in range(num_entries):
+                entries.append(struct.unpack('<H', tbl.read(2))[0])
+
+            node_start = 21 + num_entries * 2
+
+            entry_dict = {}
+            for entry in entries:
+                tbl.seek(node_start + entry * 17)
+                hash_entry = tbl.read(17)
+                key_offset = struct.unpack_from('<L', hash_entry, 7)[0]
+                val_offset = struct.unpack_from('<L', hash_entry, 11)[0]
+
+                tbl.seek(key_offset)
+                key = read_null_terminated_string(tbl).lower()
+                tbl.seek(val_offset)
+                val = read_null_terminated_string(tbl)
+
+                entry_dict[key] = val
+
+        return entry_dict
+
+    def get_string(self, key):
         '''
-        read the affix data from the game files
+        produce a string from the string.tbl files
         '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = ['']
-        for file in ['Suffix', 'Prefix']:
-            with open(os.path.join(base_path, f'Rare{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = [ row | {'kind': file} for row in reader ]
-            res.extend(items)
-        return res
+        return self.strings.get(key.lower(), f'{{{key}}}')
 
-    @classmethod
-    def get_skill(cls, key):
-        '''
-        produce the skill data for a given skill id
-        '''
-        if cls._is_expansion not in cls._skills:
-            cls._skills[cls._is_expansion] = cls._read_skill_data()
-
-        return cls._skills[cls._is_expansion][key]
-
-    @classmethod
-    def _read_skill_data(cls):
-        '''
-        read the skill data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = []
-        for file in ['skills']:
-            with open(os.path.join(base_path, f'{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = list(reader)
-            res.extend(items)
-        return res
-
-    @classmethod
-    def get_item_stat_cost(cls, key):
-        '''
-        produce the item stat cost block for a given key
-        '''
-        if cls._is_expansion not in cls._item_stat_cost:
-            cls._item_stat_cost[cls._is_expansion] = cls._read_item_stat_cost_data()
-
-        if key >= len(cls._item_stat_cost[cls._is_expansion]):
-            return None
-
-        res = cls._item_stat_cost[cls._is_expansion][key]
-
-        # Hack: the game seems to use the String key ModStre9u instead of ModStre9t
-        if res['descstrpos'] == 'ModStre9t':
-            res['descstrpos'] = 'ModStre9u'
-        if res['descstrneg'] == 'ModStre9t':
-            res['descstrneg'] = 'ModStre9u'
-
-
-        return res
-
-    @classmethod
-    def _read_item_stat_cost_data(cls):
-        '''
-        read the item stat cost data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = []
-        for file in ['ItemStatCost']:
-            with open(os.path.join(base_path, f'{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = list(reader)
-            res.extend(items)
-        return res
-
-    @classmethod
-    def get_consecutive_item_stat_blocks(cls, eid):
+    def get_consecutive_item_stat_blocks(self, eid):
         '''
         indicate how many stat blocks follow implicitly from the given first one
         '''
-        item_stat_cost = cls.get_item_stat_cost(eid)
+        # FIXME: how can I get this info out of the game files?
+        item_stat_cost = self.itemstatcost[eid]
         if item_stat_cost['Stat'] in [
                 'item_maxdamage_percent',
                 'firemindam',
@@ -233,95 +210,5 @@ class GameData:
             return 3
         return 1
 
-    @classmethod
-    def get_item_class(cls, key):
-        '''
-        produce the item class block for a given key
-        '''
-        if cls._is_expansion not in cls._item_class:
-            cls._item_class[cls._is_expansion] = cls._read_item_class_data()
 
-        res = cls._item_class[cls._is_expansion][key]
-
-        return res
-
-    @classmethod
-    def _read_item_class_data(cls):
-        '''
-        read the item stat cost data from the game files
-        '''
-        base_path = f'gamedata/d2{"exp-1.14d" if cls._is_expansion else "data"}/data/global/excel/'
-        res = {}
-        for file in ['ItemTypes']:
-            with open(os.path.join(base_path, f'{file}.txt'), 'r', encoding='ascii') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter='\t')
-                items = { row['Code']: row for row in reader }
-            res.update(items)
-        return res
-
-    @classmethod
-    def get_string(cls, key):
-        '''
-        produce a string from the string.tbl files
-        '''
-        if cls._is_expansion not in cls._strings:
-            cls._strings[cls._is_expansion] = cls._read_strings()
-
-        if key not in cls._strings[cls._is_expansion]:
-            return key # this is also the default behavior in the game
-        return cls._strings[cls._is_expansion][key]
-
-    @classmethod
-    def _read_strings(cls):
-        '''
-        read the game string.tbl files in order
-        '''
-        res = cls._read_strings_tbl('gamedata/d2data/data/local/lng/eng/string.tbl')
-        if cls._is_expansion:
-            res.update(cls._read_strings_tbl('gamedata/d2exp-1.14d/data/local/LNG/ENG/expansionstring.tbl'))
-            res.update(cls._read_strings_tbl('gamedata/d2exp-1.14d/data/local/LNG/ENG/patchstring.tbl'))
-        return res
-
-    @classmethod
-    def _read_strings_tbl(cls, filename):
-        '''
-        read a strings.tbl file into a dictionary
-        '''
-        with open(filename, 'rb') as tbl:
-            header = tbl.read(21)
-            num_entries = struct.unpack_from('<H', header, 2)[0]
-
-            entries = []
-            for _ in range(num_entries):
-                entries.append(struct.unpack('<H', tbl.read(2))[0])
-
-            node_start = 21 + num_entries * 2
-
-            entry_dict = {}
-            for e in entries:
-                tbl.seek(node_start + e * 17)
-                hash_entry = tbl.read(17)
-                key_offset = struct.unpack_from('<L', hash_entry, 7)[0]
-                val_offset = struct.unpack_from('<L', hash_entry, 11)[0]
-
-                tbl.seek(key_offset)
-                key = bytearray()
-                while True:
-                    c = tbl.read(1)[0]
-                    if c == 0:
-                        break
-                    key.append(c)
-                key = key.decode('ascii')
-
-                tbl.seek(val_offset)
-                val = bytearray()
-                while True:
-                    c = tbl.read(1)[0]
-                    if c == 0:
-                        break
-                    val.append(c)
-                val = val.decode('utf-8')
-
-                entry_dict[key] = val
-
-        return entry_dict
+GameData = _GameData()

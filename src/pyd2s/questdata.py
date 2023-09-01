@@ -47,7 +47,6 @@ class QuestData:
 
             struct.pack_into('<H', self._buffer, 345 + self._offset + quest.offset, value)
 
-
     def __init__(self, buffer):
         '''
         constructor - propagate buffer

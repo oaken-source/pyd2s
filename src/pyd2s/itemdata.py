@@ -3,6 +3,7 @@
 this module provides classes to manage item of a d2s save
 '''
 
+import os
 import math
 import struct
 
@@ -126,7 +127,6 @@ class ItemData:
             '''
             return self._buffer[self._offset:self._offset + self.length]
 
-
     class SimpleItem(Item):
         '''
         save data related to a simple item that is not an ear
@@ -136,7 +136,7 @@ class ItemData:
             constructor
             '''
             super().__init__(buffer, offset)
-            self._itemdata = GameData.get_itemdata(self.type)
+            self._itemdata = GameData.itemdata[self.type]
 
         @property
         def type(self):
@@ -144,7 +144,21 @@ class ItemData:
             the type of the item
             '''
             num = self._buffer.getbits(self._offset * 8 + 76, 32)
-            return struct.pack('<L', num).decode('ascii')
+            return struct.pack('<L', num).decode('ascii').strip()
+
+        @property
+        def name(self):
+            '''
+            the name of the item
+            '''
+            return GameData.get_string(self._itemdata['namestr'])
+
+        @property
+        def display_name(self):
+            '''
+            this item is always displayed with its base name
+            '''
+            return self.name
 
         @property
         def num_socketed(self):
@@ -164,12 +178,7 @@ class ItemData:
             '''
             a string representation of the item
             '''
-            name = GameData.get_string(self._itemdata['namestr'])
-
-            block = [name]
-
-            return '\n'.join(block)
-
+            return self.name
 
     class EarItem(Item):
         '''
@@ -181,6 +190,20 @@ class ItemData:
             '''
             super().__init__(buffer, offset)
             self._length = math.ceil((86 + (len(self.character_name) + 1) * 7) / 8)
+
+        @property
+        def name(self):
+            '''
+            a base name of the item
+            '''
+            return f"{self.character_name}'s Ear"
+
+        @property
+        def display_name(self):
+            '''
+            this item is always displayed with its base name
+            '''
+            return self.name
 
         @property
         def character_class(self):
@@ -223,10 +246,9 @@ class ItemData:
             a string representation of the item
             '''
             return f'''\
-{self.character_name}'s Ear
+{self.name}
 {self.character_class}
 Level {self.character_level}'''
-
 
     class ExtendedItem(SimpleItem):
         '''
@@ -338,7 +360,6 @@ Level {self.character_level}'''
             # tomes
             if self.type.strip() in ['ibk', 'tbk']:
                 # unknown bits
-                #self._attributes['tome_unknown_bits'] = self._buffer.getbits(self._offset * 8 + pos, 5)
                 pos += 5
 
             # skip one unknown bit
@@ -355,7 +376,8 @@ Level {self.character_level}'''
                 pos += 8
                 if self._attributes['max_durability'] > 0:
                     self._attributes['durability'] = self._buffer.getbits(self._offset * 8 + pos, 8)
-                    pos += 9 # last bit is unknown
+                    pos += 8
+                    pos += 1
                 else:
                     self._attributes['durability'] = 0
 
@@ -383,7 +405,7 @@ Level {self.character_level}'''
                     break
                 consecutive = GameData.get_consecutive_item_stat_blocks(eid)
                 for _eid in range(eid, eid + consecutive):
-                    item_stat_cost = GameData.get_item_stat_cost(_eid)
+                    item_stat_cost = GameData.itemstatcost[_eid]
                     val = {}
                     if item_stat_cost['Save Param Bits'] and int(item_stat_cost['Save Param Bits']):
                         field_width = int(item_stat_cost['Save Param Bits'])
@@ -392,6 +414,8 @@ Level {self.character_level}'''
                     if item_stat_cost['Save Bits'] and int(item_stat_cost['Save Bits']):
                         field_width = int(item_stat_cost['Save Bits'])
                         val['v'] = self._buffer.getbits(self._offset * 8 + pos, field_width)
+                        if item_stat_cost['Save Add'] and int(item_stat_cost['Save Add']):
+                            val['v'] -= int(item_stat_cost['Save Add'])
                         pos += field_width
                     enhancements.append((_eid, val))
             self._attributes['enhancements'] = enhancements
@@ -399,10 +423,70 @@ Level {self.character_level}'''
             # mark the length of the item in bits
             self._length = pos
 
-            #pad = 0
-            #while self._buffer[self._offset + self.length] != ord('J'):
-            #    pad += 1
-            #    self._length += 8
+        @property
+        def extended_name(self):
+            '''
+            a full name of the item with affixes always shown
+            '''
+            name = self.name
+
+            if self.quality == ItemQuality.LOW_QUALITY:
+                prefix = GameData.lowqualityitems[self._attributes['lq_name_prefix']]['Name']
+                name = f'{prefix} {name}'
+            if self.quality == ItemQuality.HIGH_QUALITY:
+                name = f'Superior {name}'
+            if self.quality == ItemQuality.MAGICAL:
+                if self._attributes['magic_prefix']:
+                    affix = GameData.magicprefix[self._attributes["magic_prefix"]]
+                    name = f'{GameData.get_string(affix["Name"])} {name}'
+                if self._attributes['magic_suffix']:
+                    affix = GameData.magicsuffix[self._attributes["magic_suffix"]]
+                    name = f'{name} {GameData.get_string(affix["Name"])}'
+            if self.quality == ItemQuality.SET:
+                raise NotImplementedError()
+            if self.quality == ItemQuality.RARE:
+                name_1 = GameData.get_string(
+                    GameData.rareaffix[self._attributes['rare_name_1']]['name'])
+                name_2 = GameData.get_string(
+                    GameData.rareaffix[self._attributes['rare_name_2']]['name'])
+                name = f'{name_1} {name_2}'
+            if self.quality == ItemQuality.UNIQUE:
+                raise NotImplementedError()
+            if self.quality == ItemQuality.CRAFTED:
+                raise NotImplementedError()
+
+            return name
+
+        @property
+        def display_name(self):
+            '''
+            the name of the item, with affixes hidden if unidentified
+            '''
+            if self.quality >= ItemQuality.MAGICAL and not self.is_identified:
+                return self.name
+            return self.extended_name
+
+        @property
+        def name_color(self):
+            '''
+            the color of the item name
+            '''
+            if self.quality == ItemQuality.RARE:
+                return colorama.Fore.YELLOW
+            if self.quality == ItemQuality.MAGICAL:
+                return colorama.Fore.BLUE
+            if self.quality == ItemQuality.SET:
+                return colorama.Fore.GREEN
+            if self.quality == ItemQuality.CRAFTED:
+                raise NotImplementedError()
+            if self.quality == ItemQuality.UNIQUE:
+                raise NotImplementedError()
+
+            # only normal / hq / lq items are left, check for sockets / ethereal
+            if self.is_socketed or self.is_ethereal:
+                return colorama.Fore.LIGHTBLACK_EX
+
+            return colorama.Fore.WHITE
 
         @property
         def uid(self):
@@ -437,43 +521,11 @@ Level {self.character_level}'''
             a string representation of the item
             '''
             levelreq = 1
-            name = GameData.get_string(self._itemdata['namestr'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                name = f'{GameData.get_lq_name_prefix(self._attributes["lq_name_prefix"])} {name}'
-            if self.quality == ItemQuality.HIGH_QUALITY:
-                name = f'Superior {name}'
-            if self.quality.value < ItemQuality.MAGICAL.value and (self.is_socketed or self.is_ethereal):
-                name = f'{colorama.Fore.LIGHTBLACK_EX}{name}{colorama.Fore.RESET}'
-            if self.quality == ItemQuality.MAGICAL:
-                line = f'{colorama.Fore.BLUE}'
-                if self.is_identified:
-                    if self._attributes['magic_prefix']:
-                        affix = GameData.get_magic_prefix(self._attributes["magic_prefix"])
-                        if affix['levelreq']:
-                            levelreq = max(levelreq, int(affix['levelreq']))
-                        line += f'{GameData.get_string(affix["Name"])} '
-                    line += name
-                    if self._attributes['magic_suffix']:
-                        affix = GameData.get_magic_suffix(self._attributes["magic_suffix"])
-                        if affix['levelreq']:
-                            levelreq = max(levelreq, int(affix['levelreq']))
-                        line += f' {GameData.get_string(affix["Name"])}'
-                else:
-                    line += name
-                line += f'{colorama.Fore.RESET}'
-                name = line
-            if self.quality == ItemQuality.SET:
-                raise NotImplementedError()
-            if self.quality == ItemQuality.RARE:
-                line = f'{colorama.Fore.YELLOW}'
-                if self.is_identified:
-                    line += f'{GameData.get_string(GameData.get_rare_affix(self._attributes["rare_name_1"])["name"])} {GameData.get_string(GameData.get_rare_affix(self._attributes["rare_name_2"])["name"])}\n'
-                line += f'{colorama.Fore.YELLOW}{name}{colorama.Fore.RESET}'
-                name = line
-            if self.quality == ItemQuality.UNIQUE:
-                raise NotImplementedError()
-            if self.quality == ItemQuality.CRAFTED:
-                raise NotImplementedError()
+
+            name = self.display_name
+            if self.quality > ItemQuality.MAGICAL and self.is_identified:
+                name += f'\n{self.name}'
+            name = f'{self.name_color}{name}{colorama.Fore.RESET}'
 
             block = [name]
             block.append(f'Item Level: {self.ilvl}')
@@ -487,7 +539,7 @@ Level {self.character_level}'''
             if 'durability' in self._attributes:
                 block.append(f'Durability: {self._attributes["durability"]} of {self._attributes["max_durability"]}')
             if 'type' in self._itemdata and self._itemdata['type']:
-                item_class = GameData.get_item_class(self._itemdata['type'])
+                item_class = GameData.itemtypes[self._itemdata['type']]
                 if item_class['Class']:
                     block.append(f'{colorama.Fore.RED}({GameData.get_string("partychar" + item_class["Class"])} Only){colorama.Fore.RESET}')
             if 'reqdex' in self._itemdata and self._itemdata['reqdex'] and int(self._itemdata['reqdex']):
@@ -501,9 +553,7 @@ Level {self.character_level}'''
                 block.append(f'{colorama.Fore.RED}Unidentified{colorama.Fore.RESET}')
             elif 'enhancements' in self._attributes:
                 for (key, value) in self._attributes['enhancements']:
-                    item_stat_cost = GameData.get_item_stat_cost(key)
-                    if item_stat_cost['Save Add'] and int(item_stat_cost['Save Add']):
-                        value['v'] -= int(item_stat_cost['Save Add'])
+                    item_stat_cost = GameData.itemstatcost[key]
                     if item_stat_cost['descfunc'] and int(item_stat_cost['descfunc']):
                         desc_func = int(item_stat_cost['descfunc'])
                         if desc_func == 1:
@@ -543,13 +593,13 @@ Level {self.character_level}'''
                             line = GameData.get_string(item_stat_cost[str1_key]) % (1, 100 // value['v'])
                         elif desc_func == 15:
                             str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
-                            skill_data = GameData.get_skill(value['p'] >> 6)
-                            line = GameData.get_string(item_stat_cost[str1_key]) % (value['v'], value['p'] & 0b111111, GameData.get_string(skill_data['skill']))
+                            skill_data = GameData.skills[value['p'] >> 6]
+                            line = GameData.get_string(item_stat_cost[str1_key]) % (value['v'], value['p'] & 0b111111, GameData.get_string(f'skillname{skill_data["Id"]}'))
                         elif desc_func == 27:
                             str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
-                            skill_data = GameData.get_skill(value['p'])
-                            line = f'+{value["v"]} to {GameData.get_string(skill_data["skill"])} ({GameData.get_string("partychar" + skill_data["charclass"])} Only)'
-
+                            skill_data = GameData.skills[value['p']]
+                            skill_name = GameData.get_string(f'skillname{skill_data["Id"]}')
+                            line = f'+{value["v"]} to {skill_name} ({GameData.get_string("partychar" + skill_data["charclass"])} Only)'
 
                             # 5   '{value*100/128}% {string1}'
                             # 6   '+{value} {string1} {string2}'
@@ -574,7 +624,7 @@ Level {self.character_level}'''
                             # 26   "not used by vanilla, present in the code but I didn't test it yet"
                             # 28   '+{value} to {skill}'
                         else:
-                            line = f'[{desc_func}]{(key, value)}: {GameData.get_item_stat_cost(key)["Stat"]}'
+                            line = f'[{desc_func}]{(key, value)}: {GameData.itemstatcost[key]["Stat"]}'
                             raise NotImplementedError(line)
                         block.append(f'{colorama.Fore.BLUE}{line}{colorama.Fore.RESET}')
 
@@ -660,6 +710,29 @@ Level {self.character_level}'''
                 item = self.Item.from_data(self._buffer, ptr)
                 ptr += item.length
                 self._gdata.append(item)
+
+        if ptr != len(self._buffer):
+            raise ValueError('invalid save: trailing data')
+
+        # all items were verified, use them to generate test data
+        for item in self._pdata + self._cdata + self._mdata + self._gdata:
+            data = item.rawdata
+
+            key = item.name
+            if isinstance(item, self.ExtendedItem):
+                key += f' - {item.uid:#010x}'
+
+            path = f'tests/itemdata/{key}'
+            if os.path.exists(path):
+                continue
+
+            staging_path = f'tests/itemdata/new/{key}'
+
+            print(f'writing testdata for item {key}')
+            with open(staging_path, 'wb') as itemfile:
+                itemfile.write(data)
+            with open(staging_path + '.desc', 'w', encoding='ascii') as descfile:
+                descfile.write(str(item))
 
     @property
     def _header(self):

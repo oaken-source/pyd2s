@@ -13,8 +13,8 @@ d2s = pyd2s.D2SaveFile(sys.argv[1])
 d2s_qdata = d2s.questdata.normal
 
 # regress the quest to clear the darkness
-if not d2s_qdata[Quest.TAINTED_SUN] & (1<<10):
-    d2s_qdata[Quest.TAINTED_SUN] = d2s_qdata[Quest.TAINTED_SUN] & ~(1<<2)
+if not d2s_qdata[Quest.TAINTED_SUN] & (1 << 10):
+    d2s_qdata[Quest.TAINTED_SUN] = d2s_qdata[Quest.TAINTED_SUN] & ~(1 << 2)
 
 # save data back to disk
 d2s.flush()
