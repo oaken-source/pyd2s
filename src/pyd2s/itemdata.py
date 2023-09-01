@@ -722,16 +722,17 @@ Level {self.character_level}'''
             if isinstance(item, self.ExtendedItem):
                 key += f' - {item.uid:#010x}'
 
-            path = f'tests/itemdata/{key}'
+            path = f'tests/itemdata/{key}.data'
             if os.path.exists(path):
                 continue
 
-            staging_path = f'tests/itemdata/new/{key}'
-
             print(f'writing testdata for item {key}')
+            staging_path = f'tests/itemdata/new/{key}.data'
             with open(staging_path, 'wb') as itemfile:
                 itemfile.write(data)
-            with open(staging_path + '.desc', 'w', encoding='ascii') as descfile:
+
+            staging_path = f'tests/itemdata/new/{key}.desc'
+            with open(staging_path, 'w', encoding='ascii') as descfile:
                 descfile.write(str(item))
 
     @property

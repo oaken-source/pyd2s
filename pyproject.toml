@@ -11,5 +11,10 @@ license = { text = "MIT" }
 
 dependencies = ['colorama']
 
+[project.optional-dependencies]
+tests = [
+    'pytest',
+]
+
 [project.scripts]
 pyd2s_stat = "pyd2s_stat:pyd2s_stat"
