@@ -145,6 +145,7 @@ class Item:
         '''
         return self._buffer[self._offset:self._offset + self.length]
 
+
 class SimpleItem(Item):
     '''
     save data related to a simple item that is not an ear
@@ -207,12 +208,12 @@ class SimpleItem(Item):
             block.append('Can be Inserted into Socketed Items')
 
             gem = GameData.gems[self._itemdata["code"]]
-            #print(gem)
+            # print(gem)
             weapon_mod = GameData.properties[gem['weaponMod1Code']]
-            #print(weapon_mod)
+            # print(weapon_mod)
 
             item_stat_cost = next((isc for isc in GameData.itemstatcost if isc['Stat'] == weapon_mod['stat1']), None)
-            #print(item_stat_cost)
+            # print(item_stat_cost)
             block.append(f'\nWeapons: {gem["weaponMod1Min"]} {gem["weaponMod1Code"]}')
             block.append(f'Armor: {None}')
             block.append(f'Helms: {None}')
@@ -222,6 +223,7 @@ class SimpleItem(Item):
             block.append(f'\nRequired Level: {self._itemdata["levelreq"]}')
 
         return '\n'.join(block)
+
 
 class EarItem(Item):
     '''
@@ -292,6 +294,7 @@ class EarItem(Item):
 {self.name}
 {self.character_class}
 {self.character_level}'''
+
 
 class ExtendedItem(SimpleItem):
     '''
@@ -679,7 +682,7 @@ class ExtendedItem(SimpleItem):
             else:
                 block.append(f'Defense: {defense}')
         if self._itemdata['type'] in ['shie', 'head']:
-            chance = int(self._itemdata['block']) + 20 # assuming a non-proficient class
+            chance = int(self._itemdata['block']) + 20  # assuming a non-proficient class
             if 'toblock' in self._immediate_mods:
                 chance += int(self._immediate_mods['toblock'])
             block.append(f'Chance to Block: {colorama.Fore.BLUE}{chance}%{colorama.Fore.RESET}')

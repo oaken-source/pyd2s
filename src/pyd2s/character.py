@@ -407,7 +407,6 @@ class Character:
                     self.GOLDBANK: 25,
                 }[self]
 
-
         def __init__(self, buffer):
             '''
             constructor - propagate buffer and parse stats section

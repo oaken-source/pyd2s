@@ -3,10 +3,9 @@
 this module provides classes to manage item data of a d2s save
 '''
 
-import os
 import struct
 
-from pyd2s.item import Item, ExtendedItem
+from pyd2s.item import Item
 from pyd2s.character import Character, CharacterClass
 
 
@@ -21,9 +20,13 @@ class ItemData:
         self._buffer = buffer
         self._offset = offset
 
+        # items on player / belt / cursor / in stash
         self._pdata = []
+        # items on player corpse, if any
         self._cdata = []
+        # items on mercenary, if any
         self._mdata = []
+        # iron golem
         self._gdata = []
 
         if self._header != 'JM':
@@ -92,27 +95,6 @@ class ItemData:
         if ptr != len(self._buffer):
             raise ValueError('invalid save: trailing data')
 
-        # all items were verified, use them to generate test data
-        for item in self._pdata + self._cdata + self._mdata + self._gdata:
-            data = item.rawdata
-
-            key = item.name
-            if isinstance(item, ExtendedItem):
-                key += f' - {item.uid:#010x}'
-
-            path = f'tests/itemdata/{key}.data'
-            if os.path.exists(path):
-                continue
-
-            print(f'writing testdata for item {key}')
-            staging_path = f'tests/itemdata/new/{key}.data'
-            with open(staging_path, 'wb') as itemfile:
-                itemfile.write(data)
-
-            staging_path = f'tests/itemdata/new/{key}.desc'
-            with open(staging_path, 'w', encoding='ascii') as descfile:
-                descfile.write(str(item))
-
     @property
     def _header(self):
         '''
@@ -123,53 +105,29 @@ class ItemData:
         return self._buffer[self._offset:self._offset + 2].decode('ascii')
 
     @property
-    def pcount(self):
+    def pdata(self):
         '''
-        player item count
+        get the player item data
         '''
-        return len(self._pdata)
-
-    def getpdata(self, index):
-        '''
-        Get player item data
-        '''
-        return self._pdata[index]
+        return self._pdata
 
     @property
-    def ccount(self):
+    def cdata(self):
         '''
-        corpse item count
+        get the player corpse item data
         '''
-        return len(self._cdata)
-
-    def getcdata(self, index):
-        '''
-        Get corpse item data
-        '''
-        return self._cdata[index]
+        return self._pdata
 
     @property
-    def mcount(self):
+    def mdata(self):
         '''
-        mercenary item count
+        get the mercenary item data
         '''
-        return len(self._mdata)
-
-    def getmdata(self, index):
-        '''
-        Get mercenary item data
-        '''
-        return self._mdata[index]
+        return self._pdata
 
     @property
-    def gcount(self):
+    def gdata(self):
         '''
-        iron golem item count
+        get the iron golem item data
         '''
-        return len(self._gdata)
-
-    def getgdata(self, index):
-        '''
-        Get iron golem item data
-        '''
-        return self._gdata[index]
+        return self._pdata

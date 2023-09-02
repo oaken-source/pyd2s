@@ -2,12 +2,14 @@
 display diablo 2 save file information using pyd2s
 '''
 
+import os
 import argparse
 import datetime
 
 import pyd2s
 from pyd2s.questdata import Quest
 from pyd2s.character import Character
+from pyd2s.item import ExtendedItem
 
 parser_config = [
     (['filename'], {
@@ -33,6 +35,9 @@ parser_config = [
     (['-i'], {
         'action': 'store_true',
         'help': 'display inventory information'}),
+    (['-t'], {
+        'action': 'store_true',
+        'help': 'create testdata entries from input (dev option)'}),
 ]
 
 parser = argparse.ArgumentParser(
@@ -179,31 +184,56 @@ def print_item_data(d2s):
 
     print(f'''\
 [[ Player Item Information ]]
-Count       : { d2s_item.pcount }''')
+Count       : { len(d2s_item.pdata) }''')
 
-    for i in range(d2s_item.pcount):
-        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getpdata(i)).splitlines()))
+    for (i, item) in enumerate(d2s_item.pdata):
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
 [[ Corpse Item Information ]]
-Count       : { d2s_item.ccount }''')
+Count       : { len(d2s_item.cdata) }''')
 
-    for i in range(d2s_item.ccount):
-        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getcdata(i)).splitlines()))
+    for (i, item) in enumerate(d2s_item.cdata):
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
 [[ Mercenary Item Information ]]
-Count       : { d2s_item.mcount }''')
+Count       : { len(d2s_item.mdata) }''')
 
-    for i in range(d2s_item.mcount):
-        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getmdata(i)).splitlines()))
+    for (i, item) in enumerate(d2s_item.mdata):
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
 [[ Iron Golem Item Information ]]
-Count       : { d2s_item.gcount }''')
+Count       : { len(d2s_item.gdata) }''')
 
-    for i in range(d2s_item.gcount):
-        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getgdata(i)).splitlines()))
+    for (i, item) in enumerate(d2s_item.gdata):
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+
+
+def make_testdata_entries(itemdata):
+    '''
+    write test data files for creating test cases with real data
+    '''
+    for item in itemdata.pdata + itemdata.cdata + itemdata.mdata + itemdata.gdata:
+        raw_data = item.rawdata
+
+        key = item.name
+        if isinstance(item, ExtendedItem):
+            key += f' - {item.uid:#010x}'
+
+        path = f'tests/itemdata/{key}.data'
+        if os.path.exists(path):
+            continue
+
+        print(f'writing testdata for item {key}')
+        staging_path = f'tests/itemdata/new/{key}.data'
+        with open(staging_path, 'wb') as itemfile:
+            itemfile.write(raw_data)
+
+        staging_path = f'tests/itemdata/new/{key}.desc'
+        with open(staging_path, 'w', encoding='ascii') as descfile:
+            descfile.write(str(item))
 
 
 def pyd2s_stat(argv=None):
@@ -216,6 +246,10 @@ def pyd2s_stat(argv=None):
     needs_newline = False
 
     d2s = pyd2s.D2SaveFile(path)
+
+    if args.t:
+        make_testdata_entries(d2s.itemdata)
+        return
 
     if args.a or args.s:
         needs_newline = True
