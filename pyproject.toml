@@ -16,5 +16,10 @@ tests = [
     'pytest',
 ]
 
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
 [project.scripts]
 pyd2s_stat = "pyd2s_stat:pyd2s_stat"

@@ -17,20 +17,15 @@ class _GameData:
         'itemdata': ['armor', 'weapons', 'misc'],
         'rareaffix': ['raresuffix', 'rareprefix']
     }
-    _TABLE_TRANSLATE = {
-        'itemstatcost': 'ItemStatCost',
-        'itemtypes': 'ItemTypes',
-        'magicsuffix': 'MagicSuffix',
-        'magicprefix': 'MagicPrefix',
-        'raresuffix': 'RareSuffix',
-        'rareprefix': 'RarePrefix',
-    }
     _TABLE_PRIMARY_KEYS = {
         'itemdata': 'code',
         'armor': 'code',
         'weapons': 'code',
         'misc': 'code',
         'itemtypes': 'Code',
+        'skilldesc': 'skilldesc',
+        'gems': 'code',
+        'properties': 'code',
     }
     _TABLE_INDEX_OFFSETS = {
         'magicprefix': 1,
@@ -88,10 +83,9 @@ class _GameData:
                 entries.update(subtable_entries)
             return entries
 
-        base = f'gamedata/d2{"exp-1.14d" if self._expansion else "data"}/data/global/excel/'
+        base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
-        filename = self._TABLE_TRANSLATE.get(table, table)
-        with open(os.path.join(base, f'{filename}.txt'), 'r', encoding='ascii') as csvfile:
+        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='ascii') as csvfile:
             reader = csv.DictReader(csvfile, delimiter='\t')
             entries = {row[primary_key]: row for row in reader}
 
@@ -108,10 +102,9 @@ class _GameData:
                 entries.extend(self._load_table_as_list(subtable, 0))
             return entries
 
-        base = f'gamedata/d2{"exp-1.14d" if self._expansion else "data"}/data/global/excel/'
+        base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
-        filename = self._TABLE_TRANSLATE.get(table, table)
-        with open(os.path.join(base, f'{filename}.txt'), 'r', encoding='ascii') as csvfile:
+        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='ascii') as csvfile:
             reader = csv.DictReader(csvfile, delimiter='\t')
             entries = list(reader)
 
@@ -132,8 +125,8 @@ class _GameData:
         string_tbl_classic = [
             'gamedata/d2data/data/local/lng/eng/string.tbl']
         string_tbl_expansion = [
-            'gamedata/d2exp-1.14d/data/local/LNG/ENG/expansionstring.tbl',
-            'gamedata/d2exp-1.14d/data/local/LNG/ENG/patchstring.tbl']
+            'gamedata/d2exp/data/local/lng/eng/expansionstring.tbl',
+            'gamedata/d2exp/data/local/lng/eng/patchstring.tbl']
 
         entries = {}
         for tbl in string_tbl_classic:

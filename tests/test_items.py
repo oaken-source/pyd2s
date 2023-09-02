@@ -17,7 +17,7 @@ def item_source():
 @pytest.mark.parametrize('item', item_source())
 def test_item(item):
     with open(item['desc'], 'r', encoding='ascii') as descfile:
-        desc = descfile.read()
+        desc = descfile.read().strip()
 
     data = SaveBuffer(item['data'])
     item = ItemData.Item.from_data(data, 0)

@@ -178,7 +178,28 @@ class ItemData:
             '''
             a string representation of the item
             '''
-            return self.name
+            blocks = [self.name]
+
+            if self._itemdata['type'] == 'rune':
+                blocks.append('Item Level 1')
+                blocks.append('Can be Inserted into Socketed Items')
+
+                gem = GameData.gems[self._itemdata["code"]]
+                print(gem)
+                weapon_mod = GameData.properties[gem['weaponMod1Code']]
+                print(weapon_mod)
+
+                item_stat_cost = next((isc for isc in GameData.itemstatcost if isc['Stat'] == weapon_mod['stat1']), None)
+                print(item_stat_cost)
+                blocks.append(f'\nWeapons: {gem["weaponMod1Min"]} {gem["weaponMod1Code"]}')
+                blocks.append(f'Armor:')
+                blocks.append(f'Helms:')
+                blocks.append(f'Shields:')
+
+            if self._itemdata['levelreq'] and int(self._itemdata['levelreq']) > 1:
+                blocks.append(f'\nRequired Level: {self._itemdata["levelreq"]}')
+    
+            return '\n'.join(blocks)
 
     class EarItem(Item):
         '''
@@ -262,7 +283,11 @@ Level {self.character_level}'''
 
             # parse extended data
             self._attributes = {}
+            self._immediate_mods = {}
             pos = 154
+
+            if 'levelreq' in self._itemdata and self._itemdata['levelreq']:
+                self._immediate_mods['levelreq'] = int(self._itemdata['levelreq'])
 
             # icon select
             if self._buffer.getbits(self._offset * 8 + pos, 1):
@@ -290,10 +315,20 @@ Level {self.character_level}'''
 
             # magic item details
             if self.quality == ItemQuality.MAGICAL:
-                self._attributes['magic_prefix'] = self._buffer.getbits(self._offset * 8 + pos, 11)
+                affix = self._buffer.getbits(self._offset * 8 + pos, 11)
                 pos += 11
-                self._attributes['magic_suffix'] = self._buffer.getbits(self._offset * 8 + pos, 11)
+                self._attributes['magic_prefix'] = affix
+                if affix:
+                    affix_info = GameData.magicprefix[affix]
+                    if affix_info['levelreq']:
+                        self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(affix_info['levelreq']))
+                affix = self._buffer.getbits(self._offset * 8 + pos, 11)
                 pos += 11
+                self._attributes['magic_suffix'] = affix
+                if affix:
+                    affix_info = GameData.magicsuffix[affix]
+                    if affix_info['levelreq']:
+                        self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(affix_info['levelreq']))
 
             # set item details part 1
             if self.quality == ItemQuality.SET:
@@ -308,12 +343,20 @@ Level {self.character_level}'''
                 pos += 8
                 for i in range(1, 4):
                     if self._buffer.getbits(self._offset * 8 + pos, 1):
-                        self._attributes[f'rare_prefix_{i}'] = self._buffer.getbits(self._offset * 8 + pos + 1, 11)
+                        affix = self._buffer.getbits(self._offset * 8 + pos + 1, 11)
+                        self._attributes[f'rare_prefix_{i}'] = affix
+                        affix_info = GameData.magicprefix[affix]
+                        if affix_info['levelreq']:
+                            self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(affix_info['levelreq']))
                         pos += 12
                     else:
                         pos += 1
                     if self._buffer.getbits(self._offset * 8 + pos, 1):
-                        self._attributes[f'rare_suffix_{i}'] = self._buffer.getbits(self._offset * 8 + pos + 1, 11)
+                        affix = self._buffer.getbits(self._offset * 8 + pos + 1, 11)
+                        self._attributes[f'rare_suffix_{i}'] = affix
+                        affix_info = GameData.magicsuffix[affix]
+                        if affix_info['levelreq']:
+                            self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(affix_info['levelreq']))
                         pos += 12
                     else:
                         pos += 1
@@ -358,7 +401,7 @@ Level {self.character_level}'''
                 self._attributes['personalized_name'] = name
 
             # tomes
-            if self.type.strip() in ['ibk', 'tbk']:
+            if self._itemdata['type'] == 'book':
                 # unknown bits
                 pos += 5
 
@@ -404,6 +447,7 @@ Level {self.character_level}'''
                 if eid == 0x1FF:
                     break
                 consecutive = GameData.get_consecutive_item_stat_blocks(eid)
+                group = []
                 for _eid in range(eid, eid + consecutive):
                     item_stat_cost = GameData.itemstatcost[_eid]
                     val = {}
@@ -417,7 +461,31 @@ Level {self.character_level}'''
                         if item_stat_cost['Save Add'] and int(item_stat_cost['Save Add']):
                             val['v'] -= int(item_stat_cost['Save Add'])
                         pos += field_width
-                    enhancements.append((_eid, val))
+                    group.append({'eid': _eid, 'val': val})
+                    # process immediate effects
+                    self._immediate_mods[item_stat_cost['Stat']] = val['v']
+                    if item_stat_cost['Stat'] == 'item_singleskill':
+                        skill_data = GameData.skills[val['p']]
+                        if skill_data['reqlevel']:
+                            self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(skill_data['reqlevel']))
+                group[0]['children'] = group[1:]
+                enhancements.append(group[0])
+            
+            # sort enhancements
+            def sort_enhancements(enhancement):
+                '''
+                a key function to sort the list of enhancements
+                '''
+                key_1 = int(GameData.itemstatcost[enhancement['eid']]['descpriority'] or 0)
+                key_2 = 0
+
+                if enhancement['eid'] == 107:
+                    key_2 = enhancement['val']['p']
+
+                return (key_1, key_2)
+
+            enhancements.sort(key=sort_enhancements, reverse=True)
+
             self._attributes['enhancements'] = enhancements
 
             # mark the length of the item in bits
@@ -520,24 +588,57 @@ Level {self.character_level}'''
             '''
             a string representation of the item
             '''
-            levelreq = 1
-
             name = self.display_name
             if self.quality > ItemQuality.MAGICAL and self.is_identified:
                 name += f'\n{self.name}'
             name = f'{self.name_color}{name}{colorama.Fore.RESET}'
 
             block = [name]
-            block.append(f'Item Level: {self.ilvl}')
+
+            # tomes are weird
+            if self._itemdata['type'] == 'book':
+                block.append('Insert Scrolls\nRight Click to Use')
+            else:
+                block.append(f'Item Level: {self.ilvl}')
+
+            # charms are also weird
+            if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
+                block.append('Keep in Inventory to Gain Bonus')
 
             if 'defense' in self._attributes:
-                block.append(f'Defense: {self._attributes["defense"]}')
+                defense = self._attributes['defense']
+                if 'item_armor_percent' in self._immediate_mods:
+                    new_defense = (defense * (100 + self._immediate_mods['item_armor_percent'])) // 100
+                    if new_defense > defense:
+                        block.append(f'Defense: {colorama.Fore.BLUE}{new_defense}{colorama.Fore.RESET}')
+                    else:
+                        block.append(f'Defense: {defense}')
+                else:
+                    block.append(f'Defense: {defense}')
             if self._itemdata['type'] in ['shie', 'head']:
-                block.append(f'Chance to Block: {colorama.Fore.BLUE}{int(self._itemdata["block"]) + 20}%{colorama.Fore.RESET}')
+                chance = int(self._itemdata['block']) + 20 # assuming a non-proficient class
+                if 'toblock' in self._immediate_mods:
+                    chance += int(self._immediate_mods['toblock'])
+                block.append(f'Chance to Block: {colorama.Fore.BLUE}{chance}%{colorama.Fore.RESET}')
+            if 'minmisdam' in self._itemdata and self._itemdata['minmisdam'] and int(self._itemdata['minmisdam']):
+                block.append(f'Throw Damage: {self._itemdata["minmisdam"]} to {self._itemdata["maxmisdam"]}')
             if 'mindam' in self._itemdata and self._itemdata['mindam'] and int(self._itemdata['mindam']):
-                block.append(f'Damage: {self._itemdata["mindam"]} to {self._itemdata["maxdam"]}')
-            if 'durability' in self._attributes:
-                block.append(f'Durability: {self._attributes["durability"]} of {self._attributes["max_durability"]}')
+                if 'maxdamage' in self._immediate_mods:
+                    maxdamage = int(self._itemdata['maxdam']) + self._immediate_mods['maxdamage']
+                    block.append(f'One-Hand Damage: {colorama.Fore.BLUE}{self._itemdata["mindam"]} to {maxdamage}{colorama.Fore.RESET}')
+                else:
+                    block.append(f'One-Hand Damage: {self._itemdata["mindam"]} to {self._itemdata["maxdam"]}')
+            if '2handmindam' in self._itemdata and self._itemdata['2handmindam'] and int(self._itemdata['2handmindam']):
+                block.append(f'Two-Hand Damage: {self._itemdata["2handmindam"]} to {self._itemdata["2handmaxdam"]}')
+
+            if 'quantity' in self._attributes:
+                block.append(f'Quantity: {self._attributes["quantity"]}')
+            elif 'durability' in self._attributes:
+                durability = self._attributes['durability']
+                max_durability = self._attributes['max_durability']
+                if 'item_maxdurability_percent' in self._immediate_mods:
+                    max_durability = (max_durability * (100 + int(self._immediate_mods['item_maxdurability_percent']))) // 100
+                block.append(f'Durability: {durability} of {max_durability}')
             if 'type' in self._itemdata and self._itemdata['type']:
                 item_class = GameData.itemtypes[self._itemdata['type']]
                 if item_class['Class']:
@@ -546,15 +647,68 @@ Level {self.character_level}'''
                 block.append(f'Required Dexterity: {self._itemdata["reqdex"]}')
             if 'reqstr' in self._itemdata and self._itemdata['reqstr'] and int(self._itemdata['reqstr']):
                 block.append(f'Required Strength: {self._itemdata["reqstr"]}')
-            if levelreq > 1:
-                block.append(f'Required Level: {levelreq}')
+            if 'levelreq' in self._immediate_mods and int(self._immediate_mods['levelreq']) > 1:
+                block.append(f'Required Level: {self._immediate_mods["levelreq"]}')
+
+            weapon_classes = {
+                'club': 'mace',
+                'hamm': 'mace',
+                'scep': 'mace',
+                'axe': 'axe',
+                'taxe': 'axe',
+                'swor': 'sword',
+                'knif': 'dagger',
+                'tkni': 'dagger',
+                'ajav': 'javelin',
+                'jave': 'javelin',
+                'aspe': 'spear',
+                'spea': 'spear',
+                'abow': 'bow',
+                'bow': 'bow',
+                'orb': 'staff',
+                'staf': 'staff',
+                'wand': 'staff',
+                'pole': 'polearm',
+                'xbow': 'crossbow',
+                'h2h': 'h2h',
+                'h2h2': 'h2h2',
+            }
+
+            if self._itemdata['kind'] == 'weapons':
+                weapon_class = GameData.get_string(f'weapondesc{weapon_classes[self._itemdata["type"]]}')
+                speed = int(self._itemdata['speed'] or 0)
+                block.append(f'{weapon_class} - [{speed}] Attack Speed')
 
             if self.quality.value >= ItemQuality.MAGICAL.value and not self.is_identified:
                 block.append(f'{colorama.Fore.RED}Unidentified{colorama.Fore.RESET}')
             elif 'enhancements' in self._attributes:
-                for (key, value) in self._attributes['enhancements']:
+                for enhancement in self._attributes['enhancements']:
+                    value = enhancement['val']
+                    key = enhancement['eid']
                     item_stat_cost = GameData.itemstatcost[key]
-                    if item_stat_cost['descfunc'] and int(item_stat_cost['descfunc']):
+                    # special cases
+                    if item_stat_cost['Stat'] == 'poisonmindam':
+                        poisonmindam = value['v']
+                        poisonmaxdam = enhancement['children'][0]['val']['v']
+                        poisonlength = enhancement['children'][1]['val']['v']
+                        if poisonmindam == poisonmaxdam:
+                            str1_key = 'strModPoisonDamage'
+                            line = GameData.get_string(str1_key) % (int(poisonmindam / 256 * poisonlength), int(poisonlength / 25))
+                        else:
+                            str1_key = 'strModPoisonDamageRange'
+                            line = GameData.get_string(str1_key) % (int(poisonmindam / 256 * poisonlength), int(poisonmaxdam / 256 * poisonlength), int(poisonlength / 25))
+                        block.append(f'{colorama.Fore.BLUE}{line}{colorama.Fore.RESET}')
+                    elif item_stat_cost['Stat'] == 'firemindam':
+                        firemindam = value['v']
+                        firemaxdam = enhancement['children'][0]['val']['v']
+                        if firemindam == firemaxdam:
+                            str1_key = 'strModFireDamage'
+                            line = GameData.get_string(str1_key) % firemindam
+                        else:
+                            str1_key = 'strmodfiredamagerange'
+                            line = GameData.get_string(str1_key) % (firemindam, firemaxdam)
+                        block.append(f'{colorama.Fore.BLUE}{line}{colorama.Fore.RESET}')
+                    elif item_stat_cost['descfunc'] and int(item_stat_cost['descfunc']):
                         desc_func = int(item_stat_cost['descfunc'])
                         if desc_func == 1:
                             str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
@@ -594,11 +748,14 @@ Level {self.character_level}'''
                         elif desc_func == 15:
                             str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
                             skill_data = GameData.skills[value['p'] >> 6]
-                            line = GameData.get_string(item_stat_cost[str1_key]) % (value['v'], value['p'] & 0b111111, GameData.get_string(f'skillname{skill_data["Id"]}'))
+                            skill_desc = GameData.skilldesc[skill_data['skilldesc']]
+                            skill_name = GameData.get_string(skill_desc['str name'])
+                            line = GameData.get_string(item_stat_cost[str1_key]) % (value['v'], value['p'] & 0b111111, skill_name)
                         elif desc_func == 27:
                             str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
                             skill_data = GameData.skills[value['p']]
-                            skill_name = GameData.get_string(f'skillname{skill_data["Id"]}')
+                            skill_desc = GameData.skilldesc[skill_data['skilldesc']]
+                            skill_name = GameData.get_string(skill_desc['str name'])
                             line = f'+{value["v"]} to {skill_name} ({GameData.get_string("partychar" + skill_data["charclass"])} Only)'
 
                             # 5   '{value*100/128}% {string1}'
@@ -610,7 +767,6 @@ Level {self.character_level}'''
                             # 12   '+{value} {string1}'
                             # 13   '+{value} to {class} Skill Levels'
                             # 14   '+{value} to {skilltab} Skill Levels ({class} Only)'
-                            # 15   '{chance}% to case {slvl} {skill} on {event}'
                             # 16   'Level {sLvl} {skill} Aura When Equipped '
                             # 17   '{value} {string1} (Increases near {time})'
                             # 18   '{value}% {string1} (Increases near {time})'
@@ -627,12 +783,14 @@ Level {self.character_level}'''
                             line = f'[{desc_func}]{(key, value)}: {GameData.itemstatcost[key]["Stat"]}'
                             raise NotImplementedError(line)
                         block.append(f'{colorama.Fore.BLUE}{line}{colorama.Fore.RESET}')
+                    if block[-1] == block[-2]:
+                        block = block[:-1]
+
+            if self._itemdata['kind'] == 'weapons' and weapon_classes[self._itemdata['type']] in ['mace', 'staff']:
+                block.append(f'{colorama.Fore.BLUE}+50% Damage to Undead{colorama.Fore.RESET}')
 
             if self.is_socketed:
                 block.append(f'{colorama.Fore.BLUE}Socketed ({self._attributes["socket_count"]}){colorama.Fore.RESET}')
-
-            if 'quantity' in self._attributes:
-                block.append(f'Quantity: {self._attributes["quantity"]}')
 
             return '\n'.join(block)
 
