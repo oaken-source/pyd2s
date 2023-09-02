@@ -189,7 +189,7 @@ class _GameData:
         '''
         indicate how many stat blocks follow implicitly from the given first one
         '''
-        # FIXME: how can I get this info out of the game files?
+        # I think this is hard coded in the game
         item_stat_cost = self.itemstatcost[eid]
         if item_stat_cost['Stat'] in [
                 'item_maxdamage_percent',

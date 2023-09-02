@@ -5,7 +5,7 @@ this module provides a class to manage mercenary data
 
 import struct
 
-from pyd2s.basictypes import MercenaryType
+from pyd2s.gamedata import GameData
 
 
 class Mercenary:
@@ -18,6 +18,9 @@ class Mercenary:
         constructor - propagate buffer
         '''
         self._buffer = buffer
+
+        self._merc_data = next(
+            hireling for hireling in GameData.hireling if int(hireling['Id']) == self.type)
 
     @property
     def is_dead(self):
@@ -62,20 +65,33 @@ class Mercenary:
         struct.pack_into('<H', self._buffer, 183, value)
 
     @property
+    def name(self):
+        '''
+        the name of the mercenary
+        '''
+        str_key = f'{self._merc_data["NameFirst"][:-2]}{self.name_id + 1:02}'
+        return GameData.get_string(str_key)
+
+    @property
     def type(self):
         '''
         the type of the active mercenary - encodes act and capabilities
         '''
-        return MercenaryType(struct.unpack_from('<H', self._buffer, 185)[0])
+        return struct.unpack_from('<H', self._buffer, 185)[0]
 
     @type.setter
     def type(self, value):
         '''
         set the type of the active mercenary
         '''
-        if not isinstance(value, MercenaryType):
-            value = MercenaryType(value)
-        struct.pack_into('<H', self._buffer, 185, value.value)
+        struct.pack_into('<H', self._buffer, 185, value)
+
+    @property
+    def type_str(self):
+        '''
+        the human-readable type of the mercenary
+        '''
+        return f'{self._merc_data["Hireling"]} / {self._merc_data["SubType"]}'
 
     @property
     def experience(self):

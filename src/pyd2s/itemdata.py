@@ -178,28 +178,32 @@ class ItemData:
             '''
             a string representation of the item
             '''
-            blocks = [self.name]
+            block = [self.name]
 
-            if self._itemdata['type'] == 'rune':
-                blocks.append('Item Level 1')
-                blocks.append('Can be Inserted into Socketed Items')
+            if 'spelldescstr' in self._itemdata and self._itemdata['spelldescstr'] and self._itemdata['spelldesc'] == '1':
+                block.append('Item Level: 1')
+                block.append(GameData.get_string(self._itemdata['spelldescstr']))
+
+            if self._itemdata['type'] in ['rune', 'gema', 'gemt', 'gems', 'geme', 'gemr', 'gemd', 'gemz']:
+                block.append('Item Level 1')
+                block.append('Can be Inserted into Socketed Items')
 
                 gem = GameData.gems[self._itemdata["code"]]
-                print(gem)
+                #print(gem)
                 weapon_mod = GameData.properties[gem['weaponMod1Code']]
-                print(weapon_mod)
+                #print(weapon_mod)
 
                 item_stat_cost = next((isc for isc in GameData.itemstatcost if isc['Stat'] == weapon_mod['stat1']), None)
-                print(item_stat_cost)
-                blocks.append(f'\nWeapons: {gem["weaponMod1Min"]} {gem["weaponMod1Code"]}')
-                blocks.append(f'Armor:')
-                blocks.append(f'Helms:')
-                blocks.append(f'Shields:')
+                #print(item_stat_cost)
+                block.append(f'\nWeapons: {gem["weaponMod1Min"]} {gem["weaponMod1Code"]}')
+                block.append(f'Armor: {None}')
+                block.append(f'Helms: {None}')
+                block.append(f'Shields: {None}')
 
             if self._itemdata['levelreq'] and int(self._itemdata['levelreq']) > 1:
-                blocks.append(f'\nRequired Level: {self._itemdata["levelreq"]}')
-    
-            return '\n'.join(blocks)
+                block.append(f'\nRequired Level: {self._itemdata["levelreq"]}')
+
+            return '\n'.join(block)
 
     class EarItem(Item):
         '''
@@ -333,6 +337,7 @@ Level {self.character_level}'''
             # set item details part 1
             if self.quality == ItemQuality.SET:
                 self._attributes['set_id'] = self._buffer.getbits(self._offset * 8 + pos, 12)
+                print(self._attributes)
                 pos += 12
 
             # rare item details
@@ -436,7 +441,7 @@ Level {self.character_level}'''
 
             # set details part 2
             if self.quality == ItemQuality.SET:
-                self._attributes['set_properties'] = self._buffer.getbits(self._offset * 8 + pos, 5)
+                set_properties = self._buffer.getbits(self._offset * 8 + pos, 5)
                 pos += 5
 
             # enhancements
@@ -470,7 +475,39 @@ Level {self.character_level}'''
                             self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(skill_data['reqlevel']))
                 group[0]['children'] = group[1:]
                 enhancements.append(group[0])
-            
+
+            if self.quality == ItemQuality.SET:
+                set_enhancements = []
+                while True:
+                    eid = self._buffer.getbits(self._offset * 8 + pos, 9)
+                    pos += 9
+                    if eid == 0x1FF:
+                        break
+                    consecutive = GameData.get_consecutive_item_stat_blocks(eid)
+                    group = []
+                    for _eid in range(eid, eid + consecutive):
+                        item_stat_cost = GameData.itemstatcost[_eid]
+                        val = {}
+                        if item_stat_cost['Save Param Bits'] and int(item_stat_cost['Save Param Bits']):
+                            field_width = int(item_stat_cost['Save Param Bits'])
+                            val['p'] = self._buffer.getbits(self._offset * 8 + pos, field_width)
+                            pos += field_width
+                        if item_stat_cost['Save Bits'] and int(item_stat_cost['Save Bits']):
+                            field_width = int(item_stat_cost['Save Bits'])
+                            val['v'] = self._buffer.getbits(self._offset * 8 + pos, field_width)
+                            if item_stat_cost['Save Add'] and int(item_stat_cost['Save Add']):
+                                val['v'] -= int(item_stat_cost['Save Add'])
+                            pos += field_width
+                        group.append({'eid': _eid, 'val': val})
+                        # process immediate effects
+                        self._immediate_mods[item_stat_cost['Stat']] = val['v']
+                        if item_stat_cost['Stat'] == 'item_singleskill':
+                            skill_data = GameData.skills[val['p']]
+                            if skill_data['reqlevel']:
+                                self._immediate_mods['levelreq'] = max(self._immediate_mods.get('levelreq', 1), int(skill_data['reqlevel']))
+                    group[0]['children'] = group[1:]
+                    set_enhancements.append(group[0])
+
             # sort enhancements
             def sort_enhancements(enhancement):
                 '''
@@ -485,8 +522,11 @@ Level {self.character_level}'''
                 return (key_1, key_2)
 
             enhancements.sort(key=sort_enhancements, reverse=True)
-
             self._attributes['enhancements'] = enhancements
+
+            if self.quality == ItemQuality.SET:
+                set_enhancements.sort(key=sort_enhancements, reverse=True)
+                self._attributes['set_enhancements'] = set_enhancements
 
             # mark the length of the item in bits
             self._length = pos
@@ -511,6 +551,7 @@ Level {self.character_level}'''
                     affix = GameData.magicsuffix[self._attributes["magic_suffix"]]
                     name = f'{name} {GameData.get_string(affix["Name"])}'
             if self.quality == ItemQuality.SET:
+                print(self._attributes)
                 raise NotImplementedError()
             if self.quality == ItemQuality.RARE:
                 name_1 = GameData.get_string(
@@ -604,6 +645,10 @@ Level {self.character_level}'''
             # charms are also weird
             if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
                 block.append('Keep in Inventory to Gain Bonus')
+
+            # jewels are special
+            if self._itemdata['code'] == 'jew':
+                block.append('Can be Inserted into Socketed Items')
 
             if 'defense' in self._attributes:
                 defense = self._attributes['defense']
