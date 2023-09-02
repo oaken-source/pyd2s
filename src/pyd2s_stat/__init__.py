@@ -6,6 +6,7 @@ import argparse
 import datetime
 
 import pyd2s
+from pyd2s.questdata import Quest
 from pyd2s.basictypes import CharacterStat
 
 parser_config = [
@@ -106,7 +107,7 @@ def print_mercenary_data(d2s):
 IsDead      : {d2s_merc.is_dead}
 ControlSeed : {d2s_merc.control_seed:#x}
 Name        : {d2s_merc.name} ({d2s_merc.name_id:#04x})
-Type        : {d2s_merc.type_str} ({d2s_merc.type:#04x})
+Type        : {d2s_merc.type} ({d2s_merc.type_id:#04x})
 Experience  : {d2s_merc.experience}''')
 
 
@@ -114,13 +115,19 @@ def print_quest_act_data(act, d2s_qdata):
     '''
     print quest savefile information for a given act
     '''
+    quests = {}
+    for act_id in range(1, 6):
+        quests[act_id] = map(
+            lambda e: format(d2s_qdata[e], '#018b') + f' - {e}',
+            filter(lambda e, act_id=act_id: e.act == act_id, Quest))
+
     print(f'''\
 * { act } *
-Act I       : { GLUE.join(format(d2s_qdata[j], '#018b') for j in range(0, 6)) }
-Act II      : { GLUE.join(format(d2s_qdata[j], '#018b') for j in range(6, 12)) }
-Act III     : { GLUE.join(format(d2s_qdata[j], '#018b') for j in range(12, 18)) }
-Act IV      : { GLUE.join(format(d2s_qdata[j], '#018b') for j in range(18, 21)) }
-Act V       : { GLUE.join(format(d2s_qdata[j], '#018b') for j in range(21, 27)) }''')
+Act I       : { GLUE.join(quests[1]) }
+Act II      : { GLUE.join(quests[2]) }
+Act III     : { GLUE.join(quests[3]) }
+Act IV      : { GLUE.join(quests[4]) }
+Act V       : { GLUE.join(quests[5]) }''')
 
 
 def print_quest_data(d2s):
@@ -175,28 +182,28 @@ def print_item_data(d2s):
 Count       : { d2s_item.pcount }''')
 
     for i in range(d2s_item.pcount):
-        print(' - ' + '\n   '.join(str(d2s_item.getpdata(i)).splitlines()))
+        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getpdata(i)).splitlines()))
 
     print(f'''
 [[ Corpse Item Information ]]
 Count       : { d2s_item.ccount }''')
 
     for i in range(d2s_item.ccount):
-        print(' - ' + '\n   '.join(str(d2s_item.getcdata(i)).splitlines()))
+        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getcdata(i)).splitlines()))
 
     print(f'''
 [[ Mercenary Item Information ]]
 Count       : { d2s_item.mcount }''')
 
     for i in range(d2s_item.mcount):
-        print(' - ' + '\n   '.join(str(d2s_item.getmdata(i)).splitlines()))
+        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getmdata(i)).splitlines()))
 
     print(f'''
 [[ Iron Golem Item Information ]]
 Count       : { d2s_item.gcount }''')
 
     for i in range(d2s_item.gcount):
-        print(' - ' + '\n   '.join(str(d2s_item.getgdata(i)).splitlines()))
+        print(f'{i:3} ' + '\n    '.join(str(d2s_item.getgdata(i)).splitlines()))
 
 
 def pyd2s_stat(argv=None):

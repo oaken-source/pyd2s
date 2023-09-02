@@ -183,7 +183,7 @@ class _GameData:
         '''
         produce a string from the string.tbl files
         '''
-        return self.strings.get(key.lower(), f'{{{key}}}')
+        return self.strings.get(key.lower(), key)
 
     def get_consecutive_item_stat_blocks(self, eid):
         '''

@@ -5,7 +5,7 @@ sample usage of pyd2s that clears the darkness in act 2
 import sys
 
 import pyd2s
-from pyd2s.basictypes import Quest
+from pyd2s.questdata import Quest
 
 
 # open a d2s file

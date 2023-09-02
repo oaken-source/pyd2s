@@ -20,17 +20,17 @@ class Mercenary:
         self._buffer = buffer
 
         self._merc_data = next(
-            hireling for hireling in GameData.hireling if int(hireling['Id']) == self.type)
+            hireling for hireling in GameData.hireling if int(hireling['Id']) == self.type_id)
 
     @property
     def is_dead(self):
         '''
         True if the mercenary is currently dead, False otherwise
         '''
-        return struct.unpack_from('<H', self._buffer, 177)[0] != 0
+        return bool(struct.unpack_from('<H', self._buffer, 177)[0])
 
     @is_dead.setter
-    def is_head(self, value):
+    def is_dead(self, value):
         '''
         set whether the mercenary is dead
         '''
@@ -73,21 +73,21 @@ class Mercenary:
         return GameData.get_string(str_key)
 
     @property
-    def type(self):
+    def type_id(self):
         '''
         the type of the active mercenary - encodes act and capabilities
         '''
         return struct.unpack_from('<H', self._buffer, 185)[0]
 
-    @type.setter
-    def type(self, value):
+    @type_id.setter
+    def type_id(self, value):
         '''
         set the type of the active mercenary
         '''
         struct.pack_into('<H', self._buffer, 185, value)
 
     @property
-    def type_str(self):
+    def type(self):
         '''
         the human-readable type of the mercenary
         '''

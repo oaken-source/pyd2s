@@ -126,7 +126,7 @@ class Character:
             get the skill by id
             '''
             if isinstance(skillid, SkillTree):
-                skillid = skillid.value
+                skillid = skillid.value - skillid.offset()
 
             if self._buffer.sparse:
                 return 0
@@ -141,7 +141,7 @@ class Character:
                 raise ValueError('unable to set skill data on sparse save.')
 
             if isinstance(skillid, SkillTree):
-                skillid = skillid.value
+                skillid = skillid.value - skillid.offset
 
             self._buffer[self._offset + 2 + skillid] = value
 
