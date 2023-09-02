@@ -6,12 +6,36 @@ this module provides classes to manage item of a d2s save
 import os
 import math
 import struct
+from enum import Enum
+from functools import total_ordering
 
 import colorama
 
-from pyd2s.character import Character
-from pyd2s.basictypes import CharacterClass, ItemQuality
+from pyd2s.character import Character, CharacterClass
 from pyd2s.gamedata import GameData
+
+
+@total_ordering
+class ItemQuality(Enum):
+    '''
+    an enum for possible item qualities
+    '''
+    LOW_QUALITY = 1
+    NORMAL = 2
+    HIGH_QUALITY = 3
+    MAGICAL = 4
+    SET = 5
+    RARE = 6
+    UNIQUE = 7
+    CRAFTED = 8
+
+    def __lt__(self, other):
+        '''
+        comparison for item qualities
+        '''
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
 
 
 class ItemData:

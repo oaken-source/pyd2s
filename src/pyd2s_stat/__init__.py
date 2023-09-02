@@ -7,7 +7,7 @@ import datetime
 
 import pyd2s
 from pyd2s.questdata import Quest
-from pyd2s.basictypes import CharacterStat
+from pyd2s.character import Character
 
 parser_config = [
     (['filename'], {
@@ -67,7 +67,7 @@ def print_character_data(d2s):
     skill_tree = d2s_char.character_class.skilltree
     skills = (f'{d2s_char.skills[s]:<2} - {s}' for s in skill_tree if d2s_char.skills[s])
 
-    maxgold = d2s_char.stats[CharacterStat.LEVEL] * 10000
+    maxgold = d2s_char.stats[Character.StatData.CharacterStat.LEVEL] * 10000
 
     print(f'''\
 [[ Character Information ]]
@@ -76,22 +76,22 @@ IsExpansion : {d2s_char.is_expansion}
 IsHardcore  : {d2s_char.is_hardcore}
 HasDied     : {d2s_char.has_died}
 Class       : {d2s_char.character_class}
-Level       : {d2s_char.stats[CharacterStat.LEVEL]}
+Level       : {d2s_char.stats[Character.StatData.CharacterStat.LEVEL]}
 
-Strength    : {d2s_char.stats[CharacterStat.STRENGTH]}
-Dexterity   : {d2s_char.stats[CharacterStat.DEXTERITY]}
-Vitality    : {d2s_char.stats[CharacterStat.VITALITY]}
-Energy      : {d2s_char.stats[CharacterStat.ENERGY]}
-StatPts     : {d2s_char.stats[CharacterStat.STATPTS]}
-NewSkills   : {d2s_char.stats[CharacterStat.NEWSKILLS]}
+Strength    : {d2s_char.stats[Character.StatData.CharacterStat.STRENGTH]}
+Dexterity   : {d2s_char.stats[Character.StatData.CharacterStat.DEXTERITY]}
+Vitality    : {d2s_char.stats[Character.StatData.CharacterStat.VITALITY]}
+Energy      : {d2s_char.stats[Character.StatData.CharacterStat.ENERGY]}
+StatPts     : {d2s_char.stats[Character.StatData.CharacterStat.STATPTS]}
+NewSkills   : {d2s_char.stats[Character.StatData.CharacterStat.NEWSKILLS]}
 
-MaxHP       : {int(d2s_char.stats[CharacterStat.MAXHP] / 256)}
-MaxMana     : {int(d2s_char.stats[CharacterStat.MAXMANA] / 256)}
-MaxStamina  : {int(d2s_char.stats[CharacterStat.MAXSTAMINA] / 256)}
+MaxHP       : {int(d2s_char.stats[Character.StatData.CharacterStat.MAXHP] / 256)}
+MaxMana     : {int(d2s_char.stats[Character.StatData.CharacterStat.MAXMANA] / 256)}
+MaxStamina  : {int(d2s_char.stats[Character.StatData.CharacterStat.MAXSTAMINA] / 256)}
 
-Experience  : {d2s_char.stats[CharacterStat.EXPERIENCE]}
-Gold        : {d2s_char.stats[CharacterStat.GOLD]:7} / {maxgold:7}
-GoldBank    : {d2s_char.stats[CharacterStat.GOLDBANK]:7} / 2500000
+Experience  : {d2s_char.stats[Character.StatData.CharacterStat.EXPERIENCE]}
+Gold        : {d2s_char.stats[Character.StatData.CharacterStat.GOLD]:7} / {maxgold:7}
+GoldBank    : {d2s_char.stats[Character.StatData.CharacterStat.GOLDBANK]:7} / 2500000
 
 Skill Tree  : {GLUE.join(skills)}''')
 
