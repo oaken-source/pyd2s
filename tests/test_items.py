@@ -1,7 +1,7 @@
 
 import os
 
-from pyd2s.itemdata import ItemData
+from pyd2s.item import Item
 from pyd2s.savebuffer import SaveBuffer
 
 import pytest
@@ -20,7 +20,8 @@ def test_item(item):
         desc = descfile.read().strip()
 
     data = SaveBuffer(item['data'])
-    item = ItemData.Item.from_data(data, 0)
+    item = Item.from_data(data, 0)
+
     assert str(item) == desc
     assert str(item) == desc
     assert str(item) == desc
