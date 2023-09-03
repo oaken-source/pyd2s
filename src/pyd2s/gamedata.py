@@ -27,6 +27,9 @@ class _GameData:
         'gems': 'code',
         'properties': 'code',
     }
+    _TABLE_INDICES = {
+        'itemstatcost': 'Stat',
+    }
     _TABLE_INDEX_OFFSETS = {
         'magicprefix': 1,
         'magicsuffix': 1,
@@ -56,6 +59,8 @@ class _GameData:
         if table not in self._tables[self._expansion]:
             if table == 'strings':
                 self._tables[self._expansion][table] = self._load_strings()
+            elif table.endswith('_index'):
+                self._tables[self._expansion][table] = self._load_index_table(table)
             else:
                 self._tables[self._expansion][table] = self._load_table(table)
 
@@ -115,6 +120,17 @@ class _GameData:
                     entry['descstrpos'] = 'ModStre9u'
                 if entry['descstrneg'] == 'ModStre9t':
                     entry['descstrneg'] = 'ModStre9u'
+
+        return entries
+
+    def _load_index_table(self, index_table):
+        '''
+        load an index for an existing table
+        '''
+        table = getattr(self, index_table.removesuffix('_index'))
+        key = self._TABLE_INDICES[index_table.removesuffix('_index')]
+
+        entries = {row[key]: row for row in table}
 
         return entries
 
