@@ -1,0 +1,43 @@
+Name	Class	Mod1	Mod2	Mod3	MinGrp	MaxGrp
+Bishibosh	58	8	9	0	2	2
+Bonebreak	0	5	8	0	5	5
+Coldcrow	160	18	0	0	4	4
+Rakanishu	20	17	6	0	8	8
+Treehead WoodFist	24	5	6	0	2	2
+Griswold	365	7	0	0	0	0
+The Countess	45	9	0	0	6	6
+Pitspawn Fouldog	11	7	18	0	4	4
+Flamespike the Crawler	66	9	7	0	6	6
+Boneash	276	8	5	18	0	0
+Radament	229	6	0	0	3	3
+Bloodwitch the Wild	83	5	7	0	5	5
+Fangskin	75	17	6	0	4	4
+Beetleburst	92	8	0	0	3	3
+Leatherarm	97	5	18	0	5	5
+Coldworm the Burrower	284	18	8	0	0	0
+Fire Eye	31	9	6	0	3	3
+Dark Elder	9	6	8	0	4	4
+The Summoner	250	5	6	0	0	0
+Ancient Kaa the Soulless	103	8	5	17	3	3
+The Smith	402	5	0	0	0	0
+Web Mage the Burning	125	5	7	0	5	5
+Witch Doctor Endugu	281	8	9	0	6	6
+Stormtree	129	6	17	0	4	4
+Sarina the Battlemaid	47	6	27	0	9	9
+Icehawk Riftwing	138	18	26	0	7	7
+Ismail Vilehand	345	6	7	0	2	2
+Geleb Flamefinger	346	5	9	0	2	2
+Bremm Sparkfist	347	30	17	0	2	2
+Toorc Icefist	345	18	28	0	0	0
+Wyand Voidfinger	346	25	26	0	0	0
+Maffer Dragonhand	347	5	6	0	0	0
+Winged Death	362	5	7	0	7	7
+The Tormentor	120	8	9	0	5	5
+Taintbreeder	299	6	0	0	6	6
+Riftwraith the Cannibal	308	18	26	0	8	8
+Infector of Souls	362	6	27	0	9	9
+Lord De Seis	312	5	30	24	5	5
+Grand Vizier of Chaos	306	5	9	0	9	9
+The Cow King	391	8	17	0	6	6
+Corpsefire	5	27	0	0	5	5
+The Feature Creep	409	5	7	8	0	0

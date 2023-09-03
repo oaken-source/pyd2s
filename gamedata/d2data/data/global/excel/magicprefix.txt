@@ -1,0 +1,130 @@
+Name	spawnable	level	group	nummods	mod1code	mod1offset	mod1min	mod1max	mod2code	mod2offset	mod2min	mod2max	mod3code	mod3offset	mod3min	mod3max	effect1	effect2	transform	transformcolor	armor	weapon	shield	thrown	scepter	wand	staff	bow	boots	gloves	belt	ring	amulet	charm	orb	divide	multiply	add
+Resiliant	1	1	101	2	ar00	0	1	1		0				0			ac 1		0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0
+Sturdy	1	4	102	2	ar02	0	20	30		0				0			ac% 120 130		0	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Strong	1	9	102	2	ar02	0	31	40		0				0			ac% 131 140		0	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Glorious	1	19	102	2	ar02	0	41	50		0				0			ac% 141 150		0	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Blessed	1	25	102	2	ar02	0	51	65		0				0			ac% 151 165		0	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Saintly	1	31	102	2	ar02	0	66	80		0				0			ac% 166 180		1	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Holy	1	36	102	2	ar02	0	81	100		0				0			ac% 181 200		1	16	1	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0	0	0
+Devious	1	7	103	2	ar03	0	1	1		0				0			magic damage taken -1		1	5	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Fortified	1	14	103	2	ar03	0	2	2		0				0			mtaken -2	noblock	1	5	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Urgent	1	9	104	2	at02	0	10	10	tm00	0	150	150		0			increased attack speed -1	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Fleet	1	6	104	2	at03	0	20	20	tm00	0	150	150		0			increased attack speed -2	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Muscular	1	12	105	2	dm01	0	1	1		0				0			damin 1		0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0
+Jagged	1	1	106	2	dm02	0	10	20		0				0			dam% 110 120		0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Deadly	1	5	106	2	dm02	0	21	30		0				0			dam% 121 130		0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	1	0	0	0	0
+Vicious	1	8	106	2	dm02	0	31	40		0				0			dam% 131 140		0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Brutal	1	14	106	2	dm02	0	41	50		0				0			dam% 141 150		0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Massive	1	20	106	2	dm02	0	51	65		0				0			dam% 151 165		1	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Savage	1	26	106	2	dm02	0	66	80		0				0			dam% 166 180		1	16	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+Merciless	1	32	106	2	dm02	0	81	100		0				0			dam% 181 200		1	16	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+Vulpine	1	9	107	2	dm03	0	10	10		0				0			10% damage taken goes to mana		1	6	0	0	1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Swift	0	4	108	2	dx00	0	1	1		0				0			dex 1		0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Artful	0	3	108	2	dx00	0	20	20	tm00	0	150	150		0			dexterity +20	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Skillful	0	23	108	2	dx00	0	50	50	tm00	0	150	150		0			dexterity +50	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Adroit	0	26	108	2	dx00	0	100	100	tm00	0	150	150		0			dexterity +100	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Tireless	1	14	109	2	hl08	0	50	50		0				0			staminaheal% 150		0	2	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
+Rugged	1	14	110	2	hl12	0	5	10		0				0			staminabase 3-5		0	2	0	0	0	0	0	0	0	0	1	1	1	1	1	1	0	0	0	0
+Bronze	1	1	111	2	ht00	0	10	20		0				0			hit 1 5		0	15	0	1	0	0	1	1	1	1	0	1	0	1	1	0	0	0	0	0
+Iron	1	4	111	2	ht00	0	21	40		0				0			hit 6 10		0	15	0	1	0	0	1	1	1	1	0	0	0	1	0	0	0	0	0	0
+Steel	1	8	111	2	ht00	0	41	60		0				0			hit 2		0	15	0	1	0	0	1	1	1	1	0	0	0	1	0	0	0	0	0	0
+Silver	1	12	111	2	ht00	0	61	80		0				0			hit 11 15		0	15	0	1	0	0	1	1	1	1	0	0	0	1	0	0	0	0	0	0
+Silver	1	17	111	2	ht00	0	40	80		0				0			hit 16 20		0	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Gold	1	17	111	2	ht00	0	81	100		0				0			hit 21 30		1	15	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Platinum	1	22	111	2	ht00	0	101	120		0				0			hit 31 40		1	15	0	1	0	0	1	1	1	1	0	0	0	1	0	0	0	0	0	0
+Meteoric	1	27	111	2	ht00	0	121	150		0				0			hit 41 60		1	15	0	1	0	0	1	0	0	1	0	0	0	1	0	0	0	0	0	0
+Sharp	1	5	112	2	ht00	0	10	20	dm02	0	10	20		0			hit 1 5	dam% 110 120	0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Fine	1	9	112	2	ht00	0	21	40	dm02	0	21	30		0			hit 6 10	dam% 121 130	0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Warrior's	1	15	112	2	ht00	0	41	60	dm02	0	31	40		0			hit 11 15	dam% 131 140	0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Soldier's	1	21	112	2	ht00	0	61	80	dm02	0	41	50		0			hit 16 20	dam% 141 150	0	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Knight's	1	25	112	2	ht00	0	81	100	dm02	0	51	65		0			hit 21 30	dam% 151 165	1	16	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+Lord's	1	30	112	2	ht00	0	101	120	dm02	0	66	80		0			hit 31 40	dam% 166 180	1	16	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+King's	1	35	112	2	ht00	0	121	150	dm02	0	81	100		0			hit 41 60	dam% 181 200	1	16	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+Howling	1	16	113	2	hw00	0	1	1		0				0			if target lev+4<Clev hit causes flee (like fallen)		1	19	0	1	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+Fortuitous	1	5	114	2	ib01	0	10	15		0				0			adds 2% chance to magic item generation		0	15	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0
+Brilliant	0	4	115	2	mm00	0	10	10		0				0			int 1		0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Omniscient	1	1	115	2	in00	0	10	10	tm00	0	150	150		0			intelligence +5 	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Sage	1	8	115	2	in00	0	20	20	tm00	0	150	150		0			intelligence +20	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Shrewd	1	23	115	2	in00	0	50	50	tm00	0	150	150		0			intelligence +50	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Vivid	1	27	115	2	in00	0	100	100	tm00	0	150	150		0			intelligence +100	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Glimmering	1	1	116	2	lt00	0	1	1		0				0			light radius +1		0	13	1	0	1	0	0	1	1	0	1	1	1	1	1	1	1	0	0	0
+Glowing	1	6	116	2	lt00	0	2	2		0				0			light radius +2		1	13	1	0	1	0	0	1	1	0	1	1	1	1	1	1	1	0	0	0
+Bright	1	9	117	2	mh01	0	50	50	tm00	0	150	150		0			life 150%	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Solar	1	20	117	2	mh01	0	100	100	tm00	0	150	150		0			life 200%	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Lizard's	1	3	118	2	mm00	0	1	5		0				0			mana 1 5		0	6	1	0	1	0	1	1	1	0	0	0	1	1	1	1	1	0	0	0
+Forceful	1	13	118	2	mm00	0	5	5		0				0			mana 5		0	6	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0
+Snake's	1	6	118	2	mm00	0	5	10		0				0			mana 5 10		0	6	0	0	1	0	1	1	1	0	0	0	1	1	1	0	1	0	0	0
+Serpent's	1	14	118	2	mm00	0	11	20		0				0			mana 11 20		0	6	0	0	1	0	1	1	1	0	0	0	1	1	1	0	1	0	0	0
+Serpent's	1	37	118	2	mm00	0	11	20		0				0			mana 11 20		0	6	1	1	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0
+Drake's	1	20	118	2	mm00	0	21	30		0				0			mana 21 30		1	6	0	0	0	0	1	1	1	0	0	0	1	1	1	0	1	0	0	0
+Dragon's	1	24	118	2	mm00	0	31	40		0				0			mana 31 40		1	6	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+Dragon's	1	52	118	2	mm00	0	31	40		0				0			mana 31 40		1	6	1	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0
+Wyrm's	1	30	118	2	mm00	0	41	60		0				0			mana 41 60		1	6	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+Dazzling	1	9	119	2	mm01	0	50	50	tm00	0	150	150	tm00	0			mana 150%	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Facinating	1	20	119	2	mm01	0	100	100	tm00	0	150	150	tm00	0			mana 200%	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Prismatic	1	27	120	2	ra00	0	15	25		0				0			rall =25		1	17	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Prismatic	1	62	120	2	ra00	0	15	15		0				0			rall =25		1	17	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0
+Azure	1	5	121	2	rc00	0	5	10		0				0			resist cold 5-10%		0	4	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1	0	0	0
+Lapis	1	12	121	2	rc00	0	11	20		0				0			resist cold 11-20%		0	4	1	0	1	0	1	1	1	0	1	1	1	1	1	0	1	0	0	0
+Lapis	1	35	121	2	rc00	0	11	20		0				0			resist cold 11-20%		0	4	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	0
+Cobalt	1	18	121	2	rc00	0	21	30		0				0			resist cold 21-30%		0	4	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	0	0
+Cobalt	1	55	121	2	rc00	0	21	30		0				0			resist cold 21-30%		0	4	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	0
+Indigo	1	3	121	2	rc00	0	25	25	tm00	0	150	150		0			resist cold +25	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Sapphire	1	25	121	2	rc00	0	31	50		0				0			resist cold 31-50%		1	4	0	0	0	0	0	1	1	1	1	0	0	1	1	1	1	0	0	0
+Cerulean	1	7	121	2	rc00	0	50	50	tm00	0	150	150		0			resist cold +50	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Red	1	7	122	2	rf00	0	2	2		0				0			rfire 2		0	7	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0
+Crimson	1	5	122	2	rf00	0	5	10		0				0			resist fire %		0	7	1	0	1	0	1	1	1	1	1	1	1	1	1	0	1	0	0	0
+Burgundy	1	12	122	2	rf00	0	11	20		0				0			resist fire %		0	7	1	0	1	0	1	1	1	0	1	1	1	1	1	0	1	0	0	0
+Burgundy	1	35	122	2	rf00	0	11	20		0				0			resist fire %		0	7	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+Garnet	1	18	122	2	rf00	0	21	30		0				0			resist fire %		0	7	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	0	0
+Garnet	1	55	122	2	rf00	0	21	30		0				0			resist fire %		0	7	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	0
+Russet	1	3	122	2	rf00	0	25	25	tm00	0	150	150		0			resist fire +25	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Ruby	1	25	122	2	rf00	0	31	50		0				0			resist fire %		1	7	0	0	0	0	0	1	1	0	1	0	0	1	1	0	1	0	0	0
+Vermilion	1	7	122	2	rf00	0	50	50	tm00	0	150	150		0			resist fire +30	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Orange	1	7	123	2	rl00	0	2	2		0				0			rltng 2		0	13	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0
+Ocher	1	5	123	2	rl00	0	5	10		0				0			resist lightning %		0	13	1	0	1	0	1	1	1	1	1	1	1	1	1	0	1	0	0	0
+Tangerine	1	12	123	2	rl00	0	11	20		0				0			resist lightning %		0	13	1	0	1	0	1	1	1	0	1	1	1	1	1	0	1	0	0	0
+Tangerine	1	35	123	2	rl00	0	11	20		0				0			resist lightning %		0	13	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+Coral	1	18	123	2	rl00	0	21	30		0				0			resist lightning %		0	13	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	0	0
+Coral	1	55	123	2	rl00	0	21	30		0				0			resist lightning %		0	13	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0	0
+Crackling	1	3	123	2	rl00	0	25	25	tm00	0	150	150		0			resist lightnig +25	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Amber	1	25	123	2	rl00	0	31	50		0				0			resist lightning %		1	13	1	0	0	0	0	1	1	0	1	0	1	1	1	0	1	0	0	0
+Forked	1	21	123	2	rl00	0	50	50	tm00	0	150	150		0			resist lightnig +50	10 second duration	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+Green	1	7	124	2	rp00	0	2	2		0				0			rpois 2		0	10	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0
+Beryl	1	5	124	2	rp00	0	5	10		0				0			resist poison 5-10%		0	10	1	0	1	0	1	0	1	1	1	1	1	1	1	0	0	0	0	0
+Jade	1	12	124	2	rp00	0	11	20		0				0			resist poison 11-20%		0	10	1	0	1	0	1	0	1	0	1	1	1	1	1	0	0	0	0	0
+Jade	1	35	124	2	rp00	0	11	20		0				0			resist poison 11-20%		0	10	0	1	0	0	0	1	0	1	0	0	0	1	0	0	0	0	0	0
+Viridian	1	18	124	2	rp00	0	21	30		0				0			rpois 21 30		0	10	1	0	1	0	1	0	1	0	0	0	0	1	1	0	0	0	0	0
+Viridian	1	55	124	2	rp00	0	21	30		0				0			rpois 21 30		0	10	0	1	0	0	0	1	0	1	1	1	1	0	0	0	0	0	0	0
+Vital	1	11	124	2	rp00	0	25	25	tm00	0	150	150		0			resist poison +25	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Emerald	1	25	124	2	rp00	0	31	50		0				0			rpois 31 50		1	10	0	0	0	0	1	0	0	0	0	0	0	1	1	0	0	0	0	0
+Enduring	1	14	124	2	rp00	0	50	50	tm00	0	150	150		0			resist poison +50	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Fletcher's	1	30	125	2	sk00	0	1	1		0				0			askills 1		0	12	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0
+Archer's	1	40	125	2	sk00	0	2	2		0				0			askills 2		1	12	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+Archer's	1	90	125	2	sk00	0	2	2		0				0			askills 2		1	12	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Monk's	1	30	126	2	sk01	0	1	1		0				0			pskills 1		0	12	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0
+Priest's	1	40	126	2	sk01	0	2	2		0				0			pskills 2		1	12	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0
+Priest's	1	90	126	2	sk01	0	2	2		0				0			pskills 2		1	12	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Summoner's	1	30	127	2	sk02	0	1	1		0				0			nskills 1		0	12	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0
+Necromancer's	1	40	127	2	sk02	0	2	2		0				0			nskills 2		1	12	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0
+Necromancer's	1	90	127	2	sk02	0	2	2		0				0			nskills 2		1	12	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Angel's	1	30	128	2	sk03	0	1	1		0				0			sskills 2		0	12	0	0	0	0	0	0	1	0	0	0	0	0	1	0	1	0	0	0
+Arch-Angel's	1	40	128	2	sk03	0	2	2		0				0			sskills 2		1	12	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0
+Arch-Angel's	1	90	128	2	sk03	0	2	2		0				0			sskills 2		1	12	0	0	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0
+Slayer's	1	30	129	2	sk04	0	1	1		0				0			bskills 1		0	12	0	1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+Berserker's	1	40	129	2	sk04	0	2	2		0				0			bskills 2		1	12	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Berserker's	1	90	129	2	sk04	0	2	2		0				0			bskills 2		1	12	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+unused	0	9	130	2	sk05	0	1	1		0				0			doubles the duration of herbs		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Kicking	1	3	131	2	sp04	0	1	3		0				0			kickdam 1 3		0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Triumphant	1	3	132	2	sp05	0	1	1		0				0			managain1 after kill		0	6	0	1	0	0	1	1	1	0	0	0	0	1	0	0	0	0	0	0
+Mighty	0	4	133	2	st00	0	1	1		0				0			str 1		0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Energizing	0	3	133	2	st00	0	20	20	tm00	0	150	150		0			strength +20	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Strengthening	0	23	133	2	st00	0	50	50	tm00	0	150	150		0			strength +50	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Empowering	0	26	133	2	st00	0	100	100	tm00	0	150	150		0			strength +100	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Brisk	0	5	134	2	ve01	0	10	10	tm00	0	150	150		0			increased velocity speed -1	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Swift	0	19	134	2	ve02	0	20	20	tm00	0	150	150		0			increased velocity speed -2	120 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Tough	0	4	135	2	mh00	0	10	10		0				0			vit 1		0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Sturdy	0	11	135	2	mh00	0	20	20	tm00	0	150	150		0			vitality +20	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Hardy	0	23	135	2	mh00	0	50	50	tm00	0	150	150		0			vitality +50	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Robust	0	27	135	2	mh00	0	100	100	tm00	0	150	150		0			vitality +100	10 second duration	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+																																						

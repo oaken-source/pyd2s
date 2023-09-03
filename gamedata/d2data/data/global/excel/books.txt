@@ -1,0 +1,4 @@
+Name	Namco	Completed	ScrollSpellCode	BookSpellCode	SpellOffset	SpellIcon	SkillScrollOffset	SkillBookOffset	BaseCost	CostPerCharge
+unused	of Town Portal	1	tsc	tbk	0	-1	0	0	250	50
+unused	of Identify	1	isc	ibk	0	0	0	0	200	40
+unused	of Ressurect	0			0	-1	0	0	500	100

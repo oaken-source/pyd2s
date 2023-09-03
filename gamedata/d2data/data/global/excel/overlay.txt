@@ -1,0 +1,191 @@
+Overlay	Filename	Frames	Character	PreDraw	1ofN	Dir	Open	Beta	Xoffset	Yoffset	Height1	Height2	Height3	Height4	AnimRate	LoopWaitTime	Trans	InitRadius	Radius	Red	Green	Blue	NumDirections	LocalBlood
+Null	null	2	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Lightning	ShockHitSm	20	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	11	11	255	255	255	1	0
+CastResistFire	AuraResistFireFrontCast	11	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	1	10	255	193	103	1	0
+AuraResistFire	AuraResistFireFront	20	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	6	6	255	193	103	1	0
+CastResistCold	AuraResistColdBackCast	11	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	10	210	210	255	1	0
+AuraResistCold	AuraResistColdBack	20	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	6	6	210	210	255	1	0
+CastResistLight	AuraResistLightningBackCast	11	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	10	255	255	200	1	0
+AuraResistLight	AuraResistLightningBack	20	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	6	6	255	255	200	1	0
+CastResistAll	AuraResistAllCast	20	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	1	10	211	148	255	1	0
+AuraResistAllFront	AuraResistAllFront	20	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	6	6	211	148	255	1	0
+AuraResistAllBack	AuraResistAllBack	20	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	6	6	211	148	255	1	0
+AuraMightFront	AuraMightFront	15	Paladin	0	1	0	1	1	4	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraMightBack	AuraMightBack	15	Paladin	1	1	0	1	1	4	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraPrayerFront	AuraPrayerFront	16	Paladin	0	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+AuraPrayerBack	AuraPrayerBack	16	Paladin	1	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+AuraHolyFireFront	AuraHolyFireFront	12	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraHolyFireBack	AuraHolyFireBack	12	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HItHolyFire	AuraHolyFireHit	12	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+TargetHolyFire	AuraHfireIndicate	19	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraThornsFront	AuraThornsFront	18	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraThornsBack	AuraThornsBack	18	Paladin	1	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HItThorns	AuraThornsHit	10	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+TargetThorns	AuraHfireIndicate	19	Paladin	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+AuraDefianceFront	AuraDefianceFront	15	Paladin	0	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+AuraDefianceBack	AuraDefianceBack	15	Paladin	1	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+AuraFanatic	AuraFanatic	20	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Healing	OverlayH	17	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Receiving	AmazonHealSpell	20	Amazon	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	8	255	184	199	1	0
+CastUndead	HolyBoltCloud	16	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	0	0	0	1	0
+FireCast	FireCast_for_Sorceress	14	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	255	178	64	1	0
+FireCast2	FireCast2	16	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	255	178	64	1	0
+IceCast1	IceCastNew01	15	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	81	81	255	1	0
+IceCast2	IceCastNew02	15	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	81	81	255	1	0
+IceCast3	IceCastNew03	15	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	81	81	255	1	0
+LightCast	LightningCast	10	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	255	255	255	1	0
+FireExplode	FireExplode	12	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	14	14	255	193	103	1	0
+IceExplode	IceExplode	16	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	14	14	210	210	255	1	0
+Warmth	Warmth	14	?	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	8	255	193	103	1	0
+FrozenArmor	FrozenArmor	24	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	13	200	200	255	1	0
+ShiverArmor	FrozenArmor	24	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	13	200	200	255	1	0
+ChillArmor	FrozenArmor	24	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	13	200	200	255	1	0
+Shivers Cast	AuraResistColdCast	11	Sorceress	1	1	0	0	0	0	0	14	0	-14	-60	24	0	3	1	6	81	81	255	1	0
+FrozenArmorHit	AuraResistColdCast	11	Sorceress	1	1	0	0	0	0	0	14	0	-14	-60	24	0	3	1	6	81	81	255	1	0
+ShiverArmorHit	AuraResistColdCast	11	Sorceress	1	1	0	1	1	0	0	14	0	-14	-60	24	0	3	1	6	81	81	255	1	0
+ChillArmorHit	AuraResistColdCast	11	Sorceress	1	1	0	0	0	0	0	14	0	-14	-60	24	0	3	1	6	81	81	255	1	0
+Teleport	Teleport	18	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	1	5	255	255	200	1	0
+SRFireHit	SRFireHit	16	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	193	103	1	0
+CastInnerSight	EOZCast	29	Amazon	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	6	255	255	255	1	0
+InnerSight	HardenArmor	24	Amazon	0	1	0	1	1	0	0	0	0	0	0	16	0	3	6	6	255	255	255	1	0
+CastSlowMissiles	HOAcast	21	Amazon	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	6	255	255	255	1	0
+HandOfAthena	HOAmissileExplode	9	Amazon	0	1	0	0	0	0	0	0	0	0	0	16	0	3	2	2	255	255	255	1	0
+CastFistOfAres	FOACast	20	Amazon	0	1	0	0	0	0	0	0	0	0	0	16	0	3	1	6	255	255	255	1	0
+DurielDeadFwd	DurielBloodsplatOverlayFwd	26	?	1	1	0	0	0	0	0	0	0	0	0	8	0	5	0	0	255	255	255	1	1
+FamiliarCast	FamiliarCast	21	Necro	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+DoubleDamage1	impacting01	4	all	0	3	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+DoubleDamage2	impacting02	4	all	0	2	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+DoubleDamage3	impacting03	4	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+Shrine Shimmer 00	ShrineShimmer00	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer 01	ShrineShimmer01	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Armor	ShrineArmor	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Combat	ShrineCombat	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Resist Lightning	ShrineResistLightning	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Resist Fire	ShrineResistFire	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Resist Cold	ShrineResistCold	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Resist Poison	ShrineResistPoison	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Skill	ShrineSkill	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Mana Regen	ShrineManaRegen	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Stamina	ShrineStamina	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Shrine Shimmer Experience	ShrineExperience	15	all	0	1	0	1	1	0	0	14	0	-14	-60	8	0	3	0	0	255	255	255	1	0
+Curse Hit	CurseHit	10	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	10	255	193	103	1	0
+Item Gleam	Gleam	8	item	0	1	0	1	1	0	0	0	0	0	0	16	4000	3	0	0	255	255	255	1	0
+multi gleam	multigleam	10	objects	0	1	0	0	0	0	0	0	0	0	0	10	4000	3	0	0	255	255	255	1	0
+npc hail	NPCSpeechBalloon	16	npcs	0	1	0	1	1	-5	-7	-30	0	0	-50	9	7000	3	0	0	255	255	255	1	0
+test #3	Gleam	8	test	0	1	0	1	1	10	-14	0	0	0	0	11	4000	3	0	0	255	255	255	1	0
+test #4	Gleam	8	test	0	1	0	1	1	-10	-12	0	0	0	0	12	4000	3	0	0	255	255	255	1	0
+ShoutStart	ShoutStart	20	all	0	1	0	1	1	0	0	0	0	0	0	8	0	3	1	6	255	255	255	1	0
+Shout	Shout	20	all	0	1	0	1	1	0	0	0	0	0	0	8	0	3	1	6	255	255	255	1	0
+Taunt	CurseConfuseEffect	24	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	6	255	193	103	1	0
+Zakarum Priest Die	Zakarum_Priest_DeathGlow	24	all	0	1	0	1	1	0	0	0	0	0	0	8	0	3	2	2	103	193	255	1	0
+Thorned Hulk Die	ThornedHulkDeathOverlay	25	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	2	2	255	193	103	1	0
+Dust	BAJumpLandPuff01	8	all	0	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+FireHit	FireHit	8	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	3	1	255	193	103	1	0
+Frog Demon Die	FrogExplode	14	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Fetish Aura	FetishFreakOut	16	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Raven Raise Dead Front	brraisedeadfront	16	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Raven Raise Dead Back	brraisedeadback	16	all	1	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+EnergyShield	ManaShieldBall	8	Sorceress	0	1	0	0	0	0	0	0	0	0	0	8	0	5	0	0	255	255	255	1	0
+EnergyShieldHit0	ManaShieldDir00	9	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit1	ManaShieldDir02	9	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit2	ManaShieldDir04	9	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit3	ManaShieldDir06	9	Sorceress	1	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit4	ManaShieldDir08	9	Sorceress	1	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit5	ManaShieldDir10	9	Sorceress	1	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit6	ManaShieldDir12	9	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+EnergyShieldHit7	ManaShieldDir14	9	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	3	3	255	255	255	1	0
+ChillBlood	ChillBloodPuff_curse	14	all	1	1	0	0	0	0	0	14	0	-14	-60	16	0	3	3	3	81	81	255	1	0
+ThunderStormFront	null	2	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	8	8	255	255	255	1	0
+ThunderStormBack	ThunderstormCast_operate	19	Sorceress	1	1	0	0	0	0	0	0	0	0	0	16	0	3	8	8	255	255	255	1	0
+ThunderStormCast	ThunderstormCast	10	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	1	8	255	255	255	1	0
+BlessedAimFront	BlessedAim_front	10	Paladin	0	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+BlessedAimBack	BlessedAim_back	10	Paladin	1	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+StaminaFront	Stamina_front	16	Paladin	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+StaminaBack	Stamina_back	16	Paladin	1	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+ConcentrationFront	Concentration_front	10	Paladin	0	1	0	0	0	0	0	14	0	-14	-60	3	0	3	0	0	255	255	255	1	0
+ConcentrationBack	Concentration_back	10	Paladin	1	1	0	0	0	0	1	0	0	0	0	3	0	3	0	0	255	255	255	1	0
+HolyFreeze	HolyFreeze	15	Paladin	1	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+CleansingFront	Cleansing_front	16	Paladin	0	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+CleansingBack	Cleansing_back	16	Paladin	1	1	0	1	1	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+HolyShockFront	HolyShock_front	14	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HolyShockBack	HolyShock_back	14	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HolyShockHit	ShockHitSm	20	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	11	11	255	255	255	1	0
+SanctuaryFront	SanctuaryAura_Front	12	Paladin	1	1	0	0	0	0	-1	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+SanctuaryBack	SanctuaryAura_Back	12	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+SanctuaryKnockBack	SanctuaryKnockback	13	all	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+MeditationFront	Meditation	13	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+MeditationBack	null	2	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+FanaticismFront	Fanatacism_Front	30	Paladin	0	1	0	0	0	0	-1	0	0	0	0	6	0	3	0	0	255	255	255	1	0
+FanaticismBack	Fanatacism_Back	30	Paladin	1	1	0	0	0	0	0	0	0	0	0	6	0	3	0	0	255	255	255	1	0
+RedemptionFront	null	2	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+RedemptionBack	Redemption	12	Paladin	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+ConvictionFront	null	2	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+ConvictionBack	Conviction	21	all	1	1	0	0	0	0	0	0	0	0	0	6	0	3	0	0	255	255	255	1	0
+Mephisto	MephistoOverlay	26	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+ConversionCast	AuraResistColdBackCast	11	Monster	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	1	10	210	210	255	1	0
+ConversionAura	Conversion	10	Monster	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+Charge	Charge	8	Paladin	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+FingerMageSpiderExplode	FingerMageSpiderXplode	6	Monster	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+FingerMageSpiderCurse	FingerMageCurse	15	Monster	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+CurseAmplifyDamage	CurseAmplifyDamageEffect	24	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	1	6	255	64	64	1	0
+CurseDimVision	CurseDimVisionEffect	24	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	1	6	255	210	210	1	0
+CurseWeaken	CurseWeakenEffect	24	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	1	6	255	210	210	1	0
+CurseIronMaiden	CurseIronMaidenEffect	29	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	1	6	255	0	0	1	0
+CurseTerror	CurseTerrorEffect	20	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+CurseAttract	CurseAttractHarmEffect	24	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	1	6	255	0	0	1	0
+CurseReverseVampire	CurseReverseVampireEffect	24	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	0	0	0	0	0	1	0
+CurseConfuse	CurseConfuseEffect	24	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	1	6	0	255	0	1	0
+CurseDecrpify	CurseDecrepifyEffect	24	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	1	6	0	0	255	1	0
+CurseLowerResistance	CurseLowerResistEffect	29	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	1	6	0	0	255	1	0
+HitIronMaiden	AuraThornsHit	10	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+HitReverseVampire	CurseRevVampireHit	13	all	0	1	0	0	0	0	0	14	0	-14	-60	16	0	3	0	0	255	255	255	1	0
+BoneArmorCast	BoneShieldEmerge	12	Necro	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+BoneArmorFront	BoneShieldFront	24	Necro	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+BoneArmorBack	BoneShieldBack	24	Necro	1	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+BoneArmorNull1	null	2	Necro	0	1	0	1	1	0	0	0	0	0	0	4	0	3	0	0	0	0	0	1	0
+BoneArmorNull2	null	2	Necro	0	1	0	1	1	0	0	0	0	0	0	2	0	3	0	0	0	0	0	1	0
+DiabloLightning	RedShockEffectSmall	20	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+VultureDemonFeathers	vdfeathers	26	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	5	2	2	255	255	255	4	0
+Bash	BABash	9	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	0	0	0	1	0
+Stun	Stun	12	all	0	1	0	1	1	0	0	14	0	-14	-60	16	0	3	0	0	0	0	0	1	0
+BattleCry	BattleCry	15	all	0	1	0	0	0	0	0	14	0	-14	-60	8	0	3	0	0	0	0	0	1	0
+SRIceHit	SRIceHit	16	Monster	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	103	193	255	1	0
+StealLife	CurseRevVampireHit	13	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+StealMana	VampiricHitMana	13	all	0	1	0	1	1	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Enchant	FireEnchant	17	Sorceress	0	1	0	0	0	0	0	0	0	0	0	16	0	3	1	9	255	178	64	1	0
+BattleOrdersCast	BattleOrdersStart	11	all	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+BattleOrders	BattleOrders	20	all	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+DurielDeadRear	DurielBloodsplatOverlayRear	26	?	1	1	0	0	0	0	0	0	0	0	0	8	0	5	0	0	255	255	255	1	1
+TentacleBloodRipple	BloodRipple	16	Monster	0	1	0	0	0	0	0	0	0	0	0	8	0	8	2	2	0	0	0	1	1
+HandOfGod	HolyShockHit	21	all	0	1	0	0	0	0	0	0	0	0	0	16	0	3	2	2	255	255	255	1	0
+BattleCommandCast	BattleCommandStart	20	all	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+BattleCommand	BattleCommand	20	all	0	1	0	0	0	0	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+BerserkFront	BerserkOverlay	24	Bar	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+BerserkBack	null	2	Bar	1	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Frenzy	Frenzy	25	Bar	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+FireGolemRise	FireGolemOverlay	16	all	0	1	0	0	0	0	0	0	0	0	0	10	0	3	2	5	255	0	0	1	0
+ValkyrieStart	ValkarieEmerge	16	all	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Valkyrie	ValkarieGlow	20	all	1	1	0	0	0	5	0	0	0	0	0	8	0	3	0	0	255	255	255	1	0
+Whirlwind	BAWhirlwind01	8	Bar	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	0	0	0	1	0
+VampireSteal	VampiricHitHealth	8	all	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+FingerMageSpiderFlames	FingerMageFlames	14	Monster	0	1	0	1	1	0	0	0	0	0	0	16	0	3	2	2	255	64	64	1	0
+WarcryHit	WarcryHit	16	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+DopplezonAppear	DopplezonAppear	19	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	1	4	255	255	255	1	0
+HydraStart1	HydraGroundFireStart	16	Monster	0	1	0	0	0	-6	-11	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraStart2	HydraGroundFireStart	16	Monster	0	1	0	0	0	0	-7	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraStart3	HydraGroundFireStart	16	Monster	0	1	0	0	0	4	-15	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraLoop1	HydraGroundFire	20	Monster	0	1	0	0	0	-6	-11	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraLoop2	HydraGroundFire	20	Monster	0	1	0	0	0	0	-7	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraLoop3	HydraGroundFire	20	Monster	0	1	0	0	0	4	-15	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraEnd1	HydraGroundFireEnd	16	Monster	0	1	0	0	0	-6	-11	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraEnd2	HydraGroundFireEnd	16	Monster	0	1	0	0	0	0	-7	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+HydraEnd3	HydraGroundFireEnd	16	Monster	0	1	0	0	0	4	-15	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+LightJet	LIGHTJET	13	object	0	1	0	0	0	0	0	0	0	0	0	4	0	3	0	0	255	255	255	1	0
+HoradricLight	HoradricLightBeam	21	object	0	1	0	0	0	0	0	0	0	0	0	5	0	3	0	0	255	255	255	1	0
+MonFrenzy	FrenzyThornhulk	25	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0
+Willowispdeath	willodeathoverlay	20	Monster	0	1	0	0	0	0	0	0	0	0	0	20	0	3	1	4	178	178	178	1	0
+MegaDemonDeath	firedeath	20	Monster	0	1	0	0	0	0	0	0	0	0	0	8	0	3	2	2	255	64	64	1	0
+LightCast2	LightningCastRunesFront	10	Sorceress	0	1	0	1	1	0	0	0	0	0	0	16	0	3	1	9	255	255	255	1	0
+UndeadHorrorDeath	UMFire	20	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	2	2	255	255	255	1	0
+FetishDeath1	BoneFetishDeathBones	11	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	5	0	0	255	255	255	1	0
+FetishDeath2	BoneFetishDeathCloud	10	Monster	0	1	0	0	0	0	0	0	0	0	0	16	0	3	0	0	255	255	255	1	0

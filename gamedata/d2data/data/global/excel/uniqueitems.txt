@@ -1,0 +1,130 @@
+name	completed	beta	code	type	transform	invtransform	transformcolor	NumMods	ItemMod1Code	ItemMod1Offset	ItemMod1Min	ItemMod1Max	ItemMod2Code	ItemMod2Offset	ItemMod2Min	ItemMod2Max	ItemMod3Code	ItemMod3Offset	ItemMod3Min	ItemMod3Max	ItemMod4Code	ItemMod4Offset	ItemMod4Min	ItemMod4Max	ItemMod5Code	ItemMod5Offset	ItemMod5Min	ItemMod5Max	ItemMod6Code	ItemMod6Offset	ItemMod6Min	ItemMod6Max	ItemMod7Code	ItemMod7Offset	ItemMod7Min	ItemMod7Max	ItemMod8Code	ItemMod8Offset	ItemMod8Min	ItemMod8Max	ItemMod9Code	ItemMod9Offset	ItemMod9Min	ItemMod9Max	ItemMod10Code	ItemMod10Offset	ItemMod10Min	ItemMod10Max
+The Gnasher	1	1	hax	Hand Axe	1	0	14	10	ht00	0	30	30	sp02	0	50	50	sp03	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Deathspade	1	1	axe	Axe	1	0	16	10	hw01	0	1	1	dm01	0	8	8	ht01	0	15	15	sp05	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bladebone	1	1	2ax	Double Axe	1	1	1	10	md01	0	100	100	md03	0	40	40	at02	0	20	20	ar00	0	20	20	df00	0	4	4	df01	0	7	7																
+Mindrend	1	1	mpi	Military Pick	1	0	10	10	hw01	0	60	60	hl11	0	20	20	dl00	0	1	1	dl01	0	12	12	ht00	0	50	50																				
+Rakescar	1	1	wax	War Axe	1	1	2	10	dp00	0	64	64	dp01	0	96	96	dp02	0	75	75	ht00	0	50	50	rp00	0	50	50																				
+Fechmars Axe	1	1	lax	Large Axe	1	1	17	10	dm02	0	50	50	sp01	0	1	1	rc00	0	30	30	lt00	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Goreshovel	1	1	bax	Broad Axe	1	1	18	10	at03	0	1	1	st00	0	25	25	sp02	0	60	60		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Chieftan	1	1	btx	Battle Axe	1	0	19	10	dm02	0	100	100	ra00	0	10	10	rp00	0	20	20	at01	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Brainhew	1	1	gax	Great Axe	1	0	0	10	dm01	0	14	14	mm00	0	25	25	lt00	0	4	4	mm03	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Humongous	1	1	gix	Giant Axe	1	1	3	10	st00	0	10	10	dm01	0	8	8	dm00	0	15	15	sp03	0	33	33	rq00	0	20	20																				
+Iros Torch	1	1	wnd	Wand	1	0	9	10	sk02	0	1	1	mh03	0	6	6	df00	0	5	5	df01	0	9	9		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Maelstromwrath	1	1	ywn	Yew Wand	1	1	5	10	dl00	0	1	1	dl01	0	9	9	rl00	0	40	40	dc02	0	1	1	ca01	0	20	20	mm00	0	13	13																
+Gravenspine	1	1	bwn	Bone Wand	1	0	12	10	st00	0	10	10	dx00	0	10	10	dc00	0	4	4	dc01	0	8	8	dc03	0	75	75	mm03	0	5	5																
+Umes Lament	1	1	gwn	Grim Wand	1	1	4	10	sk02	0	2	2	mm00	0	40	40	ca01	0	20	20	hw00	0	50	50																								
+Felloak	1	1	clb	Club	1	0	1	10	rl00	0	60	60	rf00	0	20	20	ko00	0	1	1	df00	0	6	6	df01	0	8	8		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Knell Striker	1	1	scp	Scepter	1	1	8	10	sp03	0	25	25	rf00	0	20	20	rp00	0	20	20	mm00	0	15	15	ht00	0	35	35		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Rusthandle	1	1	gsc	Grand Scepter	1	1	15	10	sk01	0	1	1	dm01	0	3	3	dm00	0	7	7	ar03	0	1	1	mh03	0	8	8																				
+Stormeye	1	1	wsp	War Scepter	1	1	9	10	dl00	0	1	1	dl01	0	6	6	dc00	0	3	3	dc01	0	5	5	dc03	0	75	75	lf00	0	10	10																
+Stoutnail	1	1	spc	Spiked Club	1	0	2	10	at00	0	1	10	dm02	0	100	100	mh00	0	15	15	ar03	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Crushflange	1	1	mac	Mace	1	1	3	10	st00	0	15	15	ko00	0	1	1	lt00	0	2	2	rf00	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bloodrise	1	1	mst	Morning Star	1	0	4	10	dm02	0	100	100	ht01	0	50	50	sp06	0	3	5	lt00	0	2	2	at01	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Generals Tan Do Li Ga	1	1	fla	Flail	1	1	5	10	dm01	0	1	1	dm00	0	20	20	sp07	0	50	50	ar00	0	25	25	mm03	0	5	5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Ironstone	1	1	whm	War Hammer	1	1	6	10	ht00	0	80	80	dm02	0	60	60	dl00	0	1	1	dl01	0	10	10	dx00	0	-5	-5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bonesob	1	1	mau	Maul	1	0	7	10	dm02	0	200	200	sp03	0	40	40	rf00	0	30	30	rc00	0	30	30		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Steeldriver	1	1	gma	Great Maul	1	1	12	10	rq00	0	-50	-50	at03	0	30	30	hl08	0	25	25																												
+Rixots Keen	1	1	ssd	Short Sword	1	1	3	10	dm01	0	5	5	ht01	0	20	20	lt00	0	2	2	sp03	0	25	25	ar00	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Blood Crescent	1	1	scm	Scimitar	1	0	4	10	ra00	0	15	15	dm02	0	25	25	mh00	0	15	15	lt00	0	4	4		0																0				0	0	0
+Krintizs Skewer	1	1	sbr	Saber	1	0	6	10	ar04	0	1	1	st00	0	10	10	dx00	0	10	10	mm03	0	3	3	dm02	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Gleamscythe	1	1	flc	Falchion	1	0	7	10	lt00	0	3	3	mm00	0	30	30	ar00	0	20	20	at02	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Azurewrath	1	1	crs	Crystal Sword	1	0	1	10	ds00	0	30	30	ib01	0	10	10	dc00	0	3	3	dc01	0	6	6	dc03	0	100	100																				
+Griswolds Edge	1	1	bsd	Broad Sword	1	0	9	10	df00	0	8	10	df01	0	12	16	ht00	0	40	40	at01	0	-10	-10	ko00	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Hellplague	1	1	lsd	Long Sword	1	0	8	10	mm03	0	5	5	mh03	0	5	5	dp00	0	48	48	dp01	0	96	96	dp02	0	150	150		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Culwens Point	1	1	wsd	War Sword	1	1	0	10	sk08	0	1	1	pd00	0	50	50	gh01	0	20	20	bl02	0	20	20	ht00	0	60	60																				
+Shadowfang	1	1	2hs	2-Handed Sword	1	0	12	10	mm03	0	5	5	rc00	0	20	20	lt00	0	-2	-2	dc00	0	5	5	dc01	0	10	10	dc03	0	75	75		0	0	0		0	0	0		0	0	0		0	0	0
+Soulflay	1	1	clm	Claymore	1	1	11	10	mm03	0	4	10	mh03	0	4	4	dm02	0	30	30	ra00	0	5	5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Kinemils Awl	1	1	gis	Giant Sword	1	0	5	10	ht00	0	45	45	mm00	0	20	20	df00	0	6	6	df01	0	12	12																								
+Blacktongue	1	1	bsw	Bastard Sword	1	0	10	10	dp00	0	48	48	hl10	0	1	1	mh00	0	-10	-10	rp00	0	50	50	dp01	0	64	64	dp02	0	75	75		0	0	0		0	0	0		0	0	0		0	0	0
+Ripsaw	1	1	flb	Flamberge	1	1	6	10	sp02	0	50	50	sp06	0	3	5	dm00	0	15	15	mm03	0	6	6																								
+The Patriarch	1	1	gsd	Great Sword	1	0	9	10	ar01	0	3	3	ar03	0	3	3	hw01	0	50	50	ib00	0	100	100																								
+Gull	1	1	dgr	Dagger	1	1	1	10	dm01	0	1	1	dm00	0	15	15	ib01	0	50	50	mm00	0	-5	-5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Diggler	1	1	dir	Dirk	1	1	2	10	dx00	0	10	10	dm02	0	50	50	at03	0	1	1	rc00	0	25	25	rf00	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Jade Tan Do	1	1	kri	Kriss	1	0	19	10	ht00	0	75	75	sp10	0	1	1	dp00	0	24	24	dp01	0	48	48	dp02	0	75	75																				
+Irices Shard	1	1	bld	Blade	1	1	5	10	ca02	0	20	20	mm00	0	50	50	ht00	0	55	55	ra00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Dragon Chang	1	1	spr	Spear	1	1	18	10	ht00	0	35	35	dm01	0	10	10	lt00	0	2	2	md01	0	100	100		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Razortine	1	1	tri	Trident	1	0	19	10	sp07	0	25	25	ar06	0	50	50	st00	0	15	15	dx00	0	8	8	at03	0	30	30		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bloodthief	1	1	brn	Brandistock	1	1	0	10	sp02	0	35	35	st00	0	10	10	mh03	0	8	8	mh00	0	26	26		0				0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Lance of Yaggai	1	1	spt	Spetum	1	1	7	10	at00	0	8	8	dl00	0	1	1	dl01	0	40	40	ra00	0	15	15																								
+The Tannr Gorerod	1	1	pik	Pike	1	1	1	10	df00	0	12	12	df01	0	18	18	rf01	0	15	15	mh00	0	30	30	ht00	0	60	60	lt00	0	3	3	rf00	0	15	15		0	0	0		0	0	0		0	0	0
+Dimoaks Hew	1	1	bar	Bardiche	1	1	3	10	dx00	0	15	15	dm02	0	100	100	at02	0	20	20	ar00	0	-8	-8		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Steelgoad	1	1	vou	Voulge	1	1	12	10	hw00	0	75	75	ds00	0	30	30	ht00	0	30	30	ra00	0	5	5																								
+Soul Harvest	1	1	scy	Scythe	1	0	2	10	sp02	0	30	30	ht00	0	45	45	ra00	0	20	20	dp00	0	32	32	dp01	0	48	48	dp02	0	125	125		0	0	0		0	0	0		0	0	0		0	0	0
+The Battlebranch	1	1	pax	Poleaxe	1	1	4	10	at03	0	30	30	dx00	0	10	10	dm02	0	50	50	ht00	0	40	40	mh03	0	7	7		0				0				0	0	0		0	0	0		0	0	0
+Woestave	1	1	hal	Halberd	1	1	5	10	dp00	0	24	24	dp01	0	96	96	sp07	0	50	50	rp01	0	15	15	rp00	0	15	15	lt00	0	2	2	dp02	0	75	75		0	0	0		0	0	0		0	0	0
+The Grim Reaper	1	1	wsc	War Scythe	1	1	17	10	ds00	0	50	50	hl10	0	1	1	mm03	0	5	5	mh00	0	-20	-20																								
+Bane Ash	1	1	sst	Short Staff	1	1	10	10	df00	0	4	4	df01	0	6	6	rf00	0	50	50	mm00	0	30	30	at02	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Serpent Lord	1	1	lst	Long Staff	1	1	12	10	dp00	0	8	8	dp01	0	128	128	rp00	0	50	50	lt00	0	-1	-1	dp02	0	75	75	mm00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0
+Lazarus Spire	1	1	cst	Gnarled Staff	1	0	1	10	ra00	0	30	30	ar03	0	3	3	mm00	0	20	20	at02	0	20	20	st00	0	9	9	df00	0	7	7	df01	0	12	12		0	0	0		0	0	0		0	0	0
+The Salamander	1	1	bst	Battle Staff	1	1	8	10	sk07	0	2	2	df00	0	1	1	df01	0	10	10	rf00	0	20	20	ht00	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Iron Jang Bong	1	1	wst	War Staff	1	1	14	10	dl00	0	1	1	ht01	0	50	50	ar00	0	25	25	sk03	0	1	1	ca01	0	20	20	dl01	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0
+Pluckeye	1	1	sbw	Short Bow	1	1	6	10	ht00	0	28	28	dm02	0	100	100	mh00	0	10	10	lt00	0	2	2	mm03	0	3	3		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Witherstring	1	1	hbw	Hunter’s Bow	1	1	7	10	at03	0	1	1	dm01	0	1	1	dm00	0	3	3	ht00	0	50	50	sp14	0	35	35		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Rimeraven	1	1	lbw	Long Bow	1	1	8	10	ht01	0	50	50	dx00	0	3	3	sp15	0	30	30	st00	0	3	3		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Piercerib	1	1	cbw	Composite Bow	1	0	9	10	ra00	0	10	10	ds00	0	30	30	ht00	0	60	60	md01	0	100	100		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Pullspite	1	1	sbb	Short Battle Bow	1	0	10	10	dl00	0	1	1	st00	0	8	8	ht00	0	28	28	sp13	0	10	10	dl01	0	10	10	rl00	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0
+Wizendraw	1	1	lbb	Long Battle Bow	1	1	11	10	sp14	0	1	1	mm00	0	30	30	at02	0	20	20	rc00	0	26	26	ht00	0	36	36		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Hellclap	1	1	swb	Short War Bow	1	0	12	10	at01	0	10	10	df00	0	6	6	df01	0	9	9	ht00	0	20	20	rf00	0	40	40	dx00	0	12	12		0	0	0		0	0	0		0	0	0		0	0	0
+Blastbark	1	1	lwb	Long War Bow	1	1	13	10	dm02	0	50	50	st00	0	5	5	sk00	0	1	1	mm03	0	3	3		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Leadcrow	1	1	lxb	Light Crossbow	1	0	14	10	dx00	0	10	10	mh00	0	10	10	dm02	0	50	50	rp00	0	30	30	ds00	0	25	25	ht00	0	40	40		0	0	0		0	0	0		0	0	0		0	0	0
+Ichorsting	1	1	mxb	Crossbow	1	0	15	10	dp00	0	24	24	dp01	0	32	32	dx00	0	20	20	sp13	0	50	50	ht00	0	50	50	dp02	0	75	75		0	0	0		0	0	0		0	0	0		0	0	0
+Hellcast	1	1	hxb	Heavy Crossbow	1	0	16	10	sp15	0	1	1	rf01	0	15	15	rf00	0	15	15	ht00	0	70	70	at02	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Doomspittle	1	1	rxb	Repeating Crossbow	1	0	17	10	sk00	0	1	1	sp13	0	35	35	at03	0	30	30	mh00	0	15	15		0				0				0	0	0		0	0	0		0	0	0		0	0	0
+War Bonnet	1	1	cap	Cap	1	0	18	10	mh00	0	15	15	ht00	0	30	30	dm02	0	40	40	mm00	0	15	15		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Tarnhelm	1	1	skp	Skull Cap	1	1	19	10	ib00	0	75	75	ib01	0	25	50	sk08	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Coif of Glory	1	1	hlm	Helm	1	0	0	10	at04	0	4	4	hw01	0	1	1	rl00	0	15	15	ar08	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Duskdeep	1	1	fhl	Full Helm	1	0	1	10	lt00	0	-2	-2	ra00	0	5	5	ar01	0	3	3	dm00	0	8	8		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Wormskull	1	1	bhm	Bone Helm	1	0	10	10	sk02	0	1	1	mh03	0	5	5	mm00	0	10	10	rp00	0	25	25																								
+Howltusk	1	1	ghm	Great Helm	1	1	2	10	ar03	0	2	2	at00	0	3	3	ar02	0	40	40	dm03	0	35	35		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Undead Crown	1	1	crn	Crown	1	1	3	10	mh03	0	4	4	ar00	0	8	8	rp00	0	50	50	dc02	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Face of Horror	1	1	msk	Mask	1	1	4	10	hw00	0	1	1	st00	0	20	20	ra00	0	5	5	md01	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Greyform	1	1	qui	Quilted Armor	1	1	1	10	ar03	0	3	3	rc00	0	20	20	rf00	0	20	20	dx00	0	10	10	mh03	0	5	5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Blinkbats Form	1	1	lea	Leather Armor	1	1	8	10	ar08	0	16	16	ve00	0	1	1	ar00	0	25	25	df00	0	3	3	df01	0	6	6		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Centurion	1	1	hla	Hard Leather	1	1	9	10	ar00	0	30	30	ht00	0	25	25	ar01	0	2	2	mh00	0	15	15	mm00	0	15	15	hl12	0	15	15	lf00	0	3	3		0	0	0		0	0	0		0	0	0
+Twitchthroe	1	1	stu	Studded Leather	1	1	10	10	at01	0	1	1	dx00	0	10	10	bl00	0	25	25	ar00	0	15	15	st00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Darkglow	1	1	rng	Ring Mail	1	1	11	10	ht00	0	20	20	ra01	0	5	5	lt00	0	3	3	ar09	0	25	25	ra00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Hawkmail	1	1	scl	Scale Mail	1	1	12	10	ar00	0	12	12	rc01	0	15	15	rc00	0	15	15	sp10	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Sparking Mail	1	1	chn	Chain Mail	1	1	13	10	ar00	0	40	40	dl00	0	1	1	dl01	0	10	10	at04	0	1	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Venomsward	1	1	brs	Breast Plate	1	1	14	10	dp00	0	24	24	dp01	0	32	32	dm02	0	50	50	rp01	0	15	15	lt00	0	2	2	dp02	0	75	75	rp00	0	15	15		0	0	0		0	0	0		0	0	0
+Iceblink	1	1	spl	Splint Mail	1	1	15	10	sp01	0	1	1	rc00	0	30	30	lt00	0	4	4	ar03	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Boneflesh	1	1	plt	Plate Mail	1	1	16	10	mh03	0	5	5	ar00	0	35	35	ht00	0	35	35		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Rockfleece	1	1	fld	Field Plate	1	1	17	10	rq00	0	-10	-10	ar00	0	25	25	rp00	0	50	50	ar01	0	3	3	st00	0	5	5		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Rattlecage	1	1	gth	Gothic Plate	1	1	18	10	hw00	0	1	1	ht00	0	45	45	sp03	0	25	25	ar00	0	45	45		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Goldskin	1	1	ful	Full Plate Mail	1	0	19	10	ar00	0	75	75	ra00	0	30	30	at00	0	1	10	lt00	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Victors Silk	1	1	aar	AncientArmor	1	0	5	10	mm03	0	5	5	sk08	0	1	1	lt00	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Heavenly Garb	1	1	ltp	LightPlate	1	1	6	10	ar02	0	100	100	ra00	0	10	10	hl11	0	25	25		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Pelta Lunata	1	1	buc	Buckler	1	0	0	10	ar00	0	40	40	mh00	0	10	10	st00	0	2	2	mm00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Umbral Disk	1	1	sml	Small Shield	1	0	1	10	hw01	0	1	1	dx00	0	10	10	ar00	0	18	18	mh00	0	20	20	lt00	0	-2	-2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Stormguild	1	1	lrg	Large Shield	1	0	2	10	ar03	0	1	1	rl00	0	25	25	ar00	0	15	15	dl00	0	1	1	dl01	0	6	6		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Wall of the Eyeless	1	1	bsh	Bone Shield	1	0	15	10	sp05	0	5	5	mm03	0	3	3	ca01	0	20	20	rp00	0	20	20																								
+Swordback Hold	1	1	spk	Spiked Shield	1	0	7	10	at00	0	5	5	bl00	0	20	20	sp02	0	50	50	sp06	0	3	5																								
+Steelclash	1	1	kit	Kite Shield	1	0	3	10	bl00	0	25	25	sk01	0	1	1	ar01	0	3	3	lt00	0	3	3		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bverrit Keep	1	1	tow	Tower Shield	1	0	4	10	ar00	0	20	20	rf00	0	25	25	st00	0	5	5	ar03	0	4	4		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Ward	1	1	gts	Gothic Shield	1	0	5	10	ar00	0	40	40	ar03	0	2	2	st00	0	10	10	bl00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Hand of Broc	1	1	lgl	Gloves	1	1	6	10	mm03	0	3	3	mh03	0	3	3	rp00	0	10	10	mm00	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Bloodfist	1	1	vgl	Heavy Gloves	1	1	19	10	dm01	0	5	5	mh00	0	40	40	gh02	0	30	30																												
+Chance Guards	1	1	mgl	Bracers	1	1	7	10	ib00	0	200	200	ib01	0	24	24	ht00	0	25	25	ar00	0	15	15	lt00	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Magefist	1	1	tgl	Light Gauntlets	1	1	1	10	ca01	0	20	20	hl11	0	25	25	sk07	0	1	1	df00	0	1	1	df01	0	5	5																				
+Frostburn	1	1	hgl	Gauntlets	1	1	8	10	ar00	0	30	30	dm02	0	85	85	mm01	0	40	40	dc00	0	1	1	dc01	0	6	6	dc03	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0
+Hotspur	1	1	lbt	Leather Boots	1	1	9	10	rf01	0	15	15	mh00	0	15	15	df00	0	3	3	df01	0	6	6		0	0	0	rf00	0	15	15		0	0	0		0	0	0		0	0	0		0	0	0
+Gorefoot	1	1	vbt	Heavy Boots	1	1	5	10	sp06	0	3	5	ve01	0	10	10	mm03	0	2	2	at00	0	2	2																								
+Treads of Cthon	1	1	mbt	Chain Boots	1	1	10	10	ve02	0	1	1	ar08	0	50	50	hl13	0	50	50	mh00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Goblin Toe	1	1	tbt	Light Plate Boots	1	1	2	10	sp03	0	25	25	ar01	0	1	1	ar03	0	1	1	ar00	0	5	5	lt00	0	-1	-1																				
+Tearhaunch	1	1	hbt	Plate Boots	1	1	11	10	ar00	0	10	10	st00	0	5	5	dx00	0	5	5	ve01	0	1	1	ra00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Lenyms Cord	1	1	lbl	Sash	1	1	12	10	mm00	0	15	15	hl11	0	30	30	ra00	0	5	5	lt00	0	1	1		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Snakecord	1	1	vbl	Light Belt	1	1	3	10	dp00	0	16	16	dp01	0	24	32	dp02	0	75	75	rp00	0	25	25	ar00	0	11	11	lf00	0	5	5																
+Nightsmoke	1	1	mbl	Belt	1	1	13	10	ra00	0	10	10	dm03	0	50	50	mm00	0	20	20	ar01	0	2	2		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Goldwrap	1	1	tbl	Heavy Belt	1	1	4	10	ib01	0	30	30	lt00	0	2	2	ar00	0	40	40	at01	0	10	10																								
+Bladebuckle	1	1	hbl	Girdle	1	1	14	10	at00	0	8	8	ar00	0	20	20	ar01	0	3	3	st00	0	5	5	dx00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Nokozan Relic	1	1	amu	Amulet	1	0	15	10	df00	0	3	3	rf01	0	10	10	rf00	0	10	10	lt00	0	3	3	df01	0	6	6		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Eye of Etlich	1	1	amu	Amulet	1	0	16	10	ar08	0	10	40	lt00	0	1	5	sk08	0	1	1	mh03	0	3	7	dc00	0	1	2	dc01	0	3	5	dc03	0	50	300		0	0	0		0	0	0		0	0	0
+The Mahim-Oak Curio	1	1	amu	Amulet	1	0	17	10	dx00	0	5	5	mm00	0	20	20	st00	0	5	5	mh00	0	20	20	ar00	0	10	10	ht00	0	40	40		0				0	0	0		0	0	0		0	0	0
+Nagelring	1	1	rin	Ring	1	0	18	10	ar03	0	2	2	at00	0	3	3	ht00	0	18	18	ib01	0	15	15		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Manald Heal	1	1	rin	Ring	1	0	19	10	mm03	0	4	4	lf00	0	5	5	mh00	0	20	20		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+The Stone of Jordan	1	1	rin	Ring	1	0	0	10	mm00	0	20	20	mm01	0	25	25	dl00	0	1	1	sk08	0	1	1	dl01	0	12	12		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Amulet of the Viper	1	0	vip	Amulet	1	0	1	3	mm00	0	10	10	rp00	0	25	25	mh00	0	10	10		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Staff of Kings	1	0	msf	Staff	1	0	2	2	ra00	0	10	10	at03	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Horadric Staff	1	0	hst	Staff	1	0	3	5	mm00	0	10	10	rp00	0	25	25	mh00	0	10	10	ra00	0	10	10	at03	0	50	50		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+Hell Forge Hammer	1	0	hfh	Hammer	1	0	9	5	df00	0	5	5	df01	0	20	20	rf00	0	40	40	ar00	0	35	35		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+KhalimFlail	1	1	qf1	Flail	1	0	5	5	dl00	0	1	1	dl01	0	20	20	at03	0	50	50	ht00	0	40	40		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0		0	0	0
+SuperKhalimFlail	1	1	qf2	Flail	1	0	5	5	dl00	0	1	1	dl01	0	40	40	at03	0	50	50	ht00	0	40	40	mm03	0	6	6	mh03	0	6	6		0	0	0		0	0	0		0	0	0		0	0	0

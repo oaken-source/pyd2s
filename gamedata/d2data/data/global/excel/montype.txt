@@ -1,0 +1,411 @@
+Name	Token	DT_Dir	NU_Dir	WL_Dir	GH_Dir	A1_Dir	A2_Dir	BL_Dir	SC_Dir	S1_Dir	S2_Dir	S3_Dir	S4_Dir	DD_Dir	KB_Dir	SQ_Dir	RN_Dir
+Skeleton	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Corpse	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bone Warrior	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Burning Dead	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Horror	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Frozen Dead	ZM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Carcass	ZM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Ghoul	ZM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Drowned	ZM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Plague Bearer	ZM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bighead 1	BH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bighead 2	BH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bighead 3	BH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bighead 4	BH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bighead 5	BH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Foul Crow	BK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blood Hawk	BK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Black Vulture	BK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Cloud Stalker	BK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Enraged Fallen	FA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Demented Fallen	FA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Deranged Fallen	FA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Depraved Fallen	FA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Warped Fallen	FA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Brute	YE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Crusher	YE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Yeti	YE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Wailing Beast	YE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Gargantuan Beast	YE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Raider	SR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Marauder	SR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Invader	SR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Infidel	SR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Assailant	SR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Gorgon	GO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Stone Stalker	GO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Serpent Queen	GO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Stygian Watcher	GO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Ghost	WR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Wraith	WR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Specter	WR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Apparition	WR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Shape	WR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Vile Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Stalker	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Black Rogue	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flesh Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dune Beast	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rock Dweller	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Jungle Hunter	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Doom Ape	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Temple Guard	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Ice Clan	GM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rock Clan	GM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Night Clan	GM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Moon Clan	GM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hell Clan	GM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Enraged Shaman	FS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Demented Shaman	FS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Deranged Shaman	FS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Depraved Shaman	FS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Warped Shaman	FS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Ice Rat	SI	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Spike Fiend	SI	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Thorn Beast	SI	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Razor Spine	SI	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Jungle Urchin	SI	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Maggot	SM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rock Worm	SM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Devourer	SM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Giant Lamprey	SM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Eater of Worlds	SM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Tomb Viper	SD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Claw Viper	SD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Salamander	SD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Poison Spitter	SD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Serpent Magi	SD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Leaper	SL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Cave Leaper	SL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fire Burst	SL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Tree Lurker	SL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Razor Pit Demon	SL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Huntress	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Saber Cat	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Panthress	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hell Cat	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Itchies	SW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Balack Locusts	SW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Plague Bugs	SW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hell Swarm	SW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dung Soldier	SC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Warrior	SC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Scarab	SC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Steel Weevil	SC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Albino Roach	SC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+mummy1	MM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+mummy2	MM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+mummy3	MM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+mummy4	MM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+mummy5	MM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hollow One	GY	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Guardian	GY	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Unraveler	GY	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Horadrim Ancient	GY	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Cursed Horde	CH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Damned Horde	CH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Warped Horde	CH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Wicked Horde	CH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Unholy Horde	CH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Carrion Bird	VD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Undead Scavenger	VD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hell Buzzard	VD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Winged Nightmare	VD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sucker	MO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Feeder	MO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blood Hook	MO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blood Wing	MO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Gloam Wisp	WW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Swamp Wisp	WW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fire Spark	WW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hell Spark	WW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Arach	SP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Fisher	SP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Poison Spinner	SP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flame Spider	SP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Spider Magi	SP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Thorned Hulk	TH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bramble Hulk	TH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Thrasher	TH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Spikefist	TH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Ghoul Lord	VA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Night Lord	VA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Lord	VA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blood Lord	VA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+The Banished	VA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Desert Wing	BT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fiend	BT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Gloombat	BT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blood Diver	BT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Familiar	BT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rat Man	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fetish	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flayer	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Soul Killer	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Stygian Doll	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+deckardcain	DC	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+gheed	GH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+akara	PS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+chicken	CK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+kashya	RC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+rat	RT	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+rogue	RG	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+hellmeteor	K9	1	1	8	8	1	8	8	8	1	8	8	8	1	8	8	8
+charsi	CI	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+warriv	WA	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+andariel	AN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+smallbird	BS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+largebird	BL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bat	B9	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Vile Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Stalker	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Black Rogue	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flesh Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Vile Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Dark Stalker	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Black Rogue	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flesh Hunter	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Skeleton	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Corpse	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bone Warrior	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Burning Dead	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Horror	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+warriv	WX	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+asthih	AS	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+drognan	DR	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+olfar	OF	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+cow	CW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Sand Maggot	SB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rock Worm	SB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Devourer	SB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Giant Lamprey	SB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Eater of Worlds	SB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Camel	CM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+PinHead1	PN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+PinHead2	PN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+PinHead3	PN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+PinHead4	PN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+MaggotEgg1	SE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+MaggotEgg2	SE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+MaggotEgg3	SE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+MaggotEgg4	SE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+MaggotEgg5	SE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Act2Male	2M	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Act2Female	2F	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Act2Child	2C	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+greiz	GR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+elzix	EL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+geglash	GE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+jerhyn	JE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+lysander	LY	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+guard act 2	GU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Act2Vendor1	M1	8	1	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+Act2Vendor2	M2	8	1	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+FoulCrowNest	BN	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+BloodhawkNest	BN	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+BlackVultureNest	BN	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+CloudStalkerNest	BN	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+meshif	MS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Duriel	DU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rat Man	FK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fetish	FK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flayer	FK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Soul Killer	FK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Stygian Doll	FK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Darkguard	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Darkknight	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bloodguard	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bloodknight	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Darkpaladin	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Cantor	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Demonist	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Blackmagus	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Diabolist	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Hellmagus	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Maggot	MA	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Mummy Sarcophagus	MG	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+Radament	RD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+FireBeast	FM	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+IceBeast	IM	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+SparkBeast	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+PoisonOrb	PM	1	1	1	8	8	8	8	8	1	8	8	8	1	8	8	8
+FlyingScimitar	ST	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumZealot1	ZZ	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumZealot2	ZZ	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumZealot3	ZZ	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumPriest1	ZP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumPriest2	ZP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumPriest3	ZP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ZakarumPriest4	ZP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Mephisto	MP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Diablo	DI	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+deckardcain	2D	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+deckardcain	3D	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+deckardcain	4D	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Amphibian	FD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Amphibian	FD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Amphibian	FD	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Summoner	SU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tyrael	TX	1	1	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+asheara	AH	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+hratli	HR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+alkor	AL	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+ormus	OR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+izual	22	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+halbu	20	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+tentacle1	TN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tentacle2	TN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tentacle3	TN	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tentaclehead1	TE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tentaclehead2	TE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+tentaclehead3	TE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+meshif	M3	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+deckardcain	1D	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+forestfairy	RG	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+bloodraven	CR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Bug	BG	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+Scorpion	DS	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+RogueWander	RG	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+RogueHireable	RG	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+RogueTownShoot	RG	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+GargoyleTrap	GT	1	4	4	4	4	4	4	4	4	4	4	4	1	4	4	4
+CorpseMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BoneMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BurningDeadMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HorrorMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+RatManShaman	FW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+FetishShaman	FW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+FlayerShaman	FW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+SoulKillerShaman	FW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+StygianDollShaman	FW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Larva	LV	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+sandmaggot queen	MQ	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+sandmaggot queen	MQ	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+sandmaggot queen	MQ	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+sandmaggot queen	MQ	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+sandmaggot queen	MQ	1	1	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+ClayGolum	G1	1	8	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+BloodGolum	G2	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+IronGolum	G4	8	8	8	8	8	8	8	8	1	8	8	8	8	8	8	8
+FireGolum	G3	1	8	8	8	8	8	8	8	1	8	8	8	1	8	8	8
+familiar	FI	8	16	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+act3npc	N4	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+NightMarauder	BB	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+act3npc	N3	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+taintedsunaltar	TZ	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+vilemother	VM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+vilemother	VM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+vilemother	VM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+viledog	VC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+viledog	VC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+viledog	VC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+fingermage	FR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+fingermage	FR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+fingermage	FR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+regurgitator	CS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+regurgitator	CS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+regurgitator	CS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+undeadhorror	UM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+undeadhorror	UM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+undeadhorror	UM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+quillbear	S7	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+spikegiant	S7	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+thornbrute	S7	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+razorbeast	S7	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+gianturchin	S7	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+snake	CO	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+parrot	PR	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+fish	FJ	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Evil Hole	EH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Evil Hole	EH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Evil Hole	EH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Evil Hole	EH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Evil Hole	EH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+trapfirebolt	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+trapchargedbolt	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+traparrow	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+trappoisonnova	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+trapchainlightning	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+xxx	GU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+InvisoSpawner	K9	1	1	8	8	1	8	8	8	1	8	8	8	1	8	8	8
+DiabloClone	xx	1	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+suckernest	DH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+suckernest	DH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+suckernest	DH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+suckernest	DH	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+guard	GU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+spider	LS	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+prison	67	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+prison	66	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+prison	69	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+prison	68	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Bonewall	BW	4	4	1	4	1	1	1	1	4	1	1	1	4	1	1	1
+HighPriest1	HP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HighPriest1	HP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HighPriest1	HP	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Turret	PB	16	16	8	8	16	8	8	8	8	8	8	8	16	8	8	8
+Turret	PB	16	16	8	8	16	8	8	8	8	8	8	8	16	8	8	8
+Turret	PB	16	16	8	8	16	8	8	8	8	8	8	8	16	8	8	8
+Hydra	HX	8	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+Hydra	21	8	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+Hydra	HZ	8	8	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+Column	M4	1	1	8	8	1	8	8	8	8	8	8	8	1	8	8	8
+seven tombs illusion	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Dopplezon	VK	4	1	8	1	1	8	8	8	8	8	8	8	4	8	8	1
+Valkyrie	VK	4	1	8	1	1	8	8	8	8	8	8	8	4	8	8	1
+Act2Hireling	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Act3Hireling	IW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Megademon1	DM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Megademon2	DM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Megademon3	DM	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+NecroSkeleton	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+NecroMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Griswold	GZ	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+compelling orb	9a	1	1	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+tyrael act 4	TY	1	1	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+dark wanderer	1Z	1	8	1	8	8	8	8	8	8	8	8	8	1	8	8	8
+trap nova	9A	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+mummy spirit	xx	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+arcane column thing	AE	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+desert turret 2	PB	16	16	8	8	16	8	8	8	8	8	8	8	16	8	8	8
+Panther Jav	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Panther Jav	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Panther Jav	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Panther Jav	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+boba fett	GU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+darth maul	GU	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+CorpseMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BoneMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BurningDeadMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HorrorMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+CorpseMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BoneMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BurningDeadMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HorrorMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+CorpseMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BoneMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+BurningDeadMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+HorrorMage	SK	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Moo	EC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+window right	VH	1	1	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+window left	VJ	1	1	8	8	8	8	8	8	8	8	8	8	1	8	8	8
+OrangePotPanther	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+GreenPotPanther	PW	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Rat Man	FC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Fetish	FC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Flayer	FC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Soul Killer	FC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Stygian Doll	FC	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+Mephisto Spirit	M6	16	16	8	8	16	8	8	8	8	8	8	8	16	8	8	8
+Smith	5P	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+trapped soul	10	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+trapped soul	13	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+jamella	ja	8	8	8	8	8	8	8	8	1	1	8	8	8	8	8	8
+Izual Spirit	17	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+fetish special	FE	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8
+malachai	36	8	8	8	8	8	8	8	8	1	1	8	8	8	8	8	8
+Smith	5P	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8	8

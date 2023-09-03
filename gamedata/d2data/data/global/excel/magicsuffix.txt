@@ -1,0 +1,116 @@
+Name	spawnable	level	group	nummods	mod1code	mod1offset	mod1min	mod1max	mod2code	mod2offset	mod2min	mod2max	mod3code	mod3offset	mod3min	mod3max	effect1	effect2	transform	transformcolor	armor	weapon	shield	thrown	scepter	wand	staff	bow	boots	gloves	belt	ring	amulet	charm	orb	divide	multiply	add
+of Health	1	7	1	2	ar01	0	1	1		0				0			htaken -1 -1		0	5	1	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Protection	1	18	1	2	ar01	0	2	2		0				0			htaken -2 -2		0	5	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Absorption	1	26	1	2	ar01	0	3	3		0				0			htaken -3 -3		0	5	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+of Life	1	35	1	2	ar01	0	4	4		0				0			htaken -5 -6		1	5	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0
+of Life	1	35	1	2	ar01	0	4	4		0				0			htaken -4 -4		1	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Warding	1	7	2	2	ar03	0	1	1		0				0			mtaken -1 -1		0	5	1	0	1	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0
+of the Sentinel	1	18	2	2	ar03	0	2	2		0				0			mtaken -2 -2		0	5	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Guarding	1	26	2	2	ar03	0	3	3		0				0			mtaken -3 -3		0	5	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+of Negation	1	35	2	2	ar03	0	4	4		0				0			mtaken -4 -4		0	5	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+unused	1	35	2	2	ar03	0	5	6		0				0			mtaken -5 -6		1	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Piercing	1	25	3	2	ar04	0	1	1		0				0			ignores target AC		0	19	0	0	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+of Bashing	1	16	4	2	ar05	0	-25	-40		0				0			acdam 8 24		0	19	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Puncturing	1	6	4	2	ar05	0	-10	-20		0				0			acdam 4 12		0	19	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Thorns	1	14	5	2	at00	0	1	3		0				0			attackertakes 1 6		0	19	1	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+of Spikes	1	21	5	2	at00	0	2	6		0				0			attackertakes 2 10		1	19	1	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+of Readiness	1	1	6	2	at01	0	10	10		0				0			aspeed -1		0	14	0	1	0	0	1	1	1	1	0	1	0	0	0	0	0	0	0	0
+of Alacrity	1	8	6	2	at02	0	20	20		0				0			aspeed -2		0	14	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Swiftness	1	19	6	2	at02	0	30	30		0				0			aspeed -3		0	14	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Quickness	1	25	6	2	at03	0	40	40		0				0			aspeed -4		1	14	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Blocking	1	1	7	2	bl00	0	10	10		0				0			bspeed -1		0	14	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Deflecting	1	11	7	2	bl00	0	20	20		0				0			bspeed -1		0	14	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of the Apprentice	1	5	8	2	ca00	0	10	10		0				0			cspeed -1		0	14	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+of the Magus	1	17	8	2	ca02	0	20	20		0				0			faster cast rate		0	14	0	0	0	0	1	1	1	0	0	0	0	0	0	0	1	0	0	0
+of Frost	1	4	9	3	dc00	0	1	1	dc01	0	1	4	dc03	0	125	125	cdam 1 4	freeze for 2 frames	0	5	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of the Glacier	1	18	9	3	dc00	0	4	4	dc01	0	4	12	dc03	0	150	150	cdam 4 12	freeze for 8 frames	0	5	0	1	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+of Frost	1	55	9	3	dc00	0	1	1	dc01	0	1	4	dc03	0	125	125	cdam 1 4	freeze for 2 frames	0	5	0	0	0	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0
+of Warmth	1	10	10	2	dc02	0	1	1		0				0			cuts freeze duration in half (not cumulative)		0	4	0	0	1	0	0	0	0	0	1	1	0	1	1	0	1	0	0	0
+of Flame	1	4	11	2	df00	0	1	1	df01	0	2	6		0			fdam 1 6		0	8	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Fire	1	15	11	2	df00	0	2	2	df01	0	6	11		0			fdam 2 12		0	8	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Burning	1	25	11	2	df00	0	10	10	df01	0	10	20		0			fdam 10 20		1	8	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Flame	1	40	11	2	df00	0	1	1	df01	0	2	6		0			fdam 1 6		0	8	0	0	0	0	0	0	0	0	0	1	0	1	1	0	0	0	0	0
+of Shock	1	4	12	2	dl00	0	1	1	dl01	0	8	8		0			ldam 1 8		0	14	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Lightning	1	15	12	2	dl00	0	1	1	dl01	0	16	16		0			ldam 1 16		0	14	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Thunder	1	25	12	2	dl00	0	1	1	dl01	0	32	32		0			ldam 1 40		1	14	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Shock	1	50	12	2	dl00	0	1	1	dl01	0	8	8		0			ldam 1 8		0	14	0	1	0	0	0	0	0	0	1	0	0	1	1	0	0	0	0	0
+of Craftsmanship	1	1	13	2	dm00	0	1	2		0				0			damax 1 1		0	3	0	1	0	0	1	1	1	1	0	0	0	1	1	0	0	0	0	0
+of Quality	1	4	13	2	dm00	0	2	2		0				0			damax 2 2		0	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Maiming	1	7	13	2	dm00	0	3	4		0				0			damax 3 4		0	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Slaying	1	11	13	2	dm00	0	5	7		0				0			damax 5 7		0	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Gore	1	14	13	2	dm00	0	8	10		0				0			damax 8 10		0	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Carnage	1	19	13	2	dm00	0	11	14		0				0			damax 11 14		1	3	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+of Slaughter	1	25	13	2	dm00	0	15	20		0				0			damax 15 20		1	3	0	1	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0
+of Maiming	1	42	13	2	dm00	0	3	4		0				0			damax 3 4		0	3	0	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Worth	1	2	14	2	dm01	0	1	1		0				0			damin 2 2		0	3	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0
+of Measure	1	6	14	2	dm01	0	2	2		0				0			damin 1 1		0	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Excellence	1	12	14	2	dm01	0	3	3		0				0			damin 3 3		0	3	0	1	0	0	1	1	1	1	0	0	0	1	1	0	0	0	0	0
+of Performance	1	18	14	2	dm01	0	4	5		0				0			damin 4 5		1	3	0	1	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Measure	1	37	14	2	dm01	0	2	2		0				0			damin 1 1		0	3	1	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Blight	1	5	15	3	dp00	0	8	8	dp01	0	24	24	dp02	0	75	75	poisonstr 1		0	11	0	1	0	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Venom	1	15	15	3	dp00	0	16	16	dp01	0	48	48	dp02	0	75	75	poisonstr 2		0	11	0	1	0	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Pestilence	1	25	15	3	dp00	0	32	32	dp01	0	72	72	dp02	0	100	100	poisonstr 4		1	11	0	1	0	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0
+of Blight	1	45	15	3	dp00	0	8	8	dp01	0	24	24	dp02	0	75	75	poisonstr 1		0	11	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Dexterity	1	4	16	2	dx00	0	1	1		0				0			dex 1		0	16	0	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0
+of Dexterity	1	5	16	2	dx00	0	1	3		0				0			dex 1 5		0	16	0	0	0	0	1	0	0	1	1	1	0	1	1	0	0	0	0	0
+of Skill	1	10	16	2	dx00	0	4	6		0				0			dex 6 10		0	16	0	0	0	0	1	0	0	1	1	1	0	1	1	0	0	0	0	0
+of Skill	1	45	16	2	dx00	0	4	6		0				0			dex 6 10		0	16	1	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+of Accuracy	1	18	16	2	dx00	0	7	10		0				0			dex 11 15		0	16	0	0	0	0	1	0	0	1	1	1	0	1	1	0	0	0	0	0
+of Precision	1	22	16	2	dx00	0	11	15		0				0			dex 16 20		0	16	0	0	0	0	1	0	0	1	0	0	0	0	1	0	0	0	0	0
+of Precision	1	60	16	2	dx00	0	11	15		0				0			dex 16 20		0	16	1	0	1	0	0	0	0	0	1	1	1	1	0	0	0	0	0	0
+of Perfection	1	30	16	2	dx00	0	16	20		0				0			dex 21 30		1	16	0	0	0	0	0	0	0	1	0	1	0	0	1	0	0	0	0	0
+of Balance	1	5	17	2	gh00	0	10	10		0				0			ghspeed - 1		0	14	1	0	1	0	0	0	0	0	1	0	1	0	0	1	0	0	0	0
+of Stability	1	9	17	2	gh02	0	20	20		0				0			ghspeed - 2		1	14	1	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0
+of the Horse	1	1	18	2	hl08	0	50	50		0				0			staminaheal% 150		0	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+of Regeneration	1	10	19	2	lf00	0	3	3		0				0			lifeheal% 125		0	9	0	0	0	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0
+of Regeneration	1	40	19	2	lf00	0	3	3		0				0			lifeheal% 125		0	9	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0
+of Regeneration	1	70	19	2	lf00	0	3	3		0				0			lifeheal% 125		0	9	1	1	0	0	0	1	1	1	1	0	0	0	0	0	0	0	0	0
+of Regrowth	1	17	19	2	lf00	0	5	5		0				0			lifeheal% 150		1	9	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0
+of Regrowth	1	55	19	2	lf00	0	5	5		0				0			lifeheal% 150		1	9	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0
+of Vileness	1	9	20	2	hl10	0	1	1		0				0			hit monster doesn't heal		0	3	0	1	0	0	0	1	1	0	0	0	0	0	0	0	0	0	0	0
+of the Ox	1	1	21	2	hl12	0	3	5		0				0			staminabase 3-5		0	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Greed	1	2	22	2	ib00	0	40	60		0				0			increases gold found by 10%		0	15	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of Wealth	1	17	22	2	ib00	0	80	120		0				0			increases gold found by 25%		1	15	0	0	0	0	0	0	0	0	1	1	1	0	1	0	0	0	0	0
+of Chance	1	12	23	2	ib01	0	10	19		0				0			adds 10% chance to magic item generation		0	15	0	0	0	0	0	0	0	0	0	0	0	1	1	1	1	0	0	0
+of Fortune	1	16	23	2	ib01	0	20	35		0				0			adds 25% chance to magic item generation		1	15	0	0	0	0	0	0	0	0	1	1	0	0	1	1	0	0	0	0
+of Energy	1	4	24	2	mm00	0	1	1		0				0			int 1		0	16	0	0	0	0	0	0	0	0	0	0	0	1	1	1	1	0	0	0
+of Energy	1	5	24	2	mm00	0	1	5		0				0			int 1 5		0	16	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+of the Mind	1	10	24	2	mm00	0	6	10		0				0			int 6 10		0	16	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+of Brilliance	1	18	24	2	mm00	0	11	15		0				0			int 11 15		0	16	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+of Sorcery	1	22	24	2	mm00	0	16	20		0				0			int 16 20		1	16	0	0	0	0	1	1	1	0	0	0	0	0	1	0	1	0	0	0
+of Wizardry	1	30	24	2	mm00	0	21	30		0				0			int 21 30		1	16	0	0	0	0	1	1	1	0	0	0	0	1	1	0	1	0	0	0
+of the Bear	1	8	25	2	ko00	0	1	1		0				0			knockback		0	19	0	1	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+of Light	1	6	26	2	lt00	0	1	1		0				0			light radius +2		0	13	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1	0	0	0
+of Radiance	1	15	26	2	lt00	0	3	3		0				0			light radius +4		0	13	0	0	0	0	1	1	1	1	0	0	0	1	1	0	1	0	0	0
+of the Sun	1	17	26	2	lt00	0	5	5		0				0			light% 140		0	13	0	0	0	0	1	1	1	1	0	1	0	1	1	1	1	0	0	0
+of Life	1	23	27	2	mh00	0	5	5		0				0			life 5		0	9	1	0	1	0	0	0	0	0	0	0	1	0	1	1	0	0	0	0
+of the Jackal	1	3	27	2	mh00	0	1	5		0				0			life 1 5		0	9	1	0	1	0	1	1	1	0	1	1	1	1	1	1	0	0	0	0
+of the Fox	1	6	27	2	mh00	0	5	10		0				0			life 5 10		0	9	1	0	1	0	1	1	1	0	1	1	1	1	1	0	0	0	0	0
+of the Wolf	1	14	27	2	mh00	0	11	20		0				0			life 11 20		0	9	1	0	1	0	1	1	1	0	1	1	1	1	1	0	0	0	0	0
+of the Wolf	1	45	27	2	mh00	0	11	20		0				0			life 11 20		0	9	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+of the Tiger	1	20	27	2	mh00	0	21	30		0				0			life 21 30		0	9	1	0	1	0	0	0	0	0	1	1	1	1	1	0	0	0	0	0
+of the Mammoth	1	24	27	2	mh00	0	31	40		0				0			life 31 40		1	9	1	0	1	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0
+of the Mammoth	1	60	27	2	mh00	0	31	40		0				0			life 31 40		1	9	0	1	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	0
+of the Colosuss	1	30	27	2	mh00	0	41	60		0				0			life 41 60		1	9	1	0	1	0	0	0	0	0	0	0	1	0	1	1	0	0	0	0
+of the Leech	1	6	28	2	mh03	0	4	7		0				0			lifedrain 1-4		0	9	0	1	0	0	1	1	1	1	0	0	0	1	1	0	0	0	0	0
+of the Locust	1	20	28	2	mh03	0	8	10		0				0			lifedrain 5-8		1	9	0	1	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+of the Bat	1	6	29	2	mm03	0	4	8		0				0			manadrain 1-4		0	6	0	1	0	0	1	1	1	1	0	0	0	1	1	0	0	0	0	0
+of the Vampire	1	20	29	2	mm03	0	9	12		0				0			manadrain 5-8		1	6	0	1	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0
+of Defiance	1	25	30	2	pd00	0	75	75		0				0			reduces poison STR by 3		1	8	1	0	1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+of Amelioration	1	18	30	2	pd00	0	50	50		0				0			reduces poison STR by 2 		0	8	1	0	1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0
+of Remedy	1	7	30	2	pd00	0	25	25		0				0			reduces poison STR by 1		0	8	1	0	1	0	0	0	0	0	1	1	1	1	1	0	0	0	0	0
+of Ice	1	9	31	2	rc00	0	2	2		0				0			rcold 2		0	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Simplicity	1	25	32	2	rq00	0	-40	-40		0				0			-25% on skill req. to use		0	0	1	1	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+of Ease	1	15	32	2	rq00	0	-20	-20		0				0			-10% on skill req. to use		0	0	1	1	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0
+of the Mule	1	3	33	2	sp04	0	1	3		0				0			kickdam 1 3		0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+of Strength	1	5	34	2	st00	0	1	3		0				0			str 1		0	16	0	0	0	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0
+of Might	1	10	34	2	st00	0	4	6		0				0			str 1 5		0	16	0	1	1	0	1	0	0	0	0	0	0	1	1	1	0	0	0	0
+of the Ox	1	18	34	2	st00	0	7	10		0				0			str 6 10		0	16	0	1	0	0	1	0	0	0	0	0	1	1	1	0	0	0	0	0
+of the Ox	1	47	34	2	st00	0	7	10		0				0			str 6 10		0	16	0	0	1	0	0	0	0	0	1	1	0	0	0	0	0	0	0	0
+of the Giant	1	22	34	2	st00	0	11	15		0				0			str 16 20		1	16	0	1	0	0	1	0	0	0	0	0	1	0	1	0	0	0	0	0
+of the Giant	1	62	34	2	st00	0	11	15		0				0			str 16 20		1	16	0	0	1	0	0	0	0	0	1	1	0	1	0	0	0	0	0	0
+of the Titan	1	30	34	2	st00	0	16	20		0				0			str 21 30		1	16	0	0	0	0	0	0	0	0	1	0	1	0	1	0	0	0	0	0
+of Pacing	1	2	35	2	ve00	0	10	10		0				0			wspeed -1		0	14	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
+of Haste	1	12	35	2	ve01	0	20	20		0				0			wspeed -2		0	14	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
+of Speed	1	22	35	2	ve02	0	30	30		0				0			wspeed -1		0	14	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
+																																						

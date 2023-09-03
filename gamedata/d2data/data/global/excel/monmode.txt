@@ -1,0 +1,17 @@
+Name	Token
+Death	DT
+Neutral	NU
+Walk	WL
+Get Hit	GH
+Attack1	A1
+Attack2	A2
+Block	BL
+Cast	SC
+Skill1	S1
+Skill2	S2
+Skill3	S3
+Skill4	S4
+Dead	DD
+Knockback	GH
+Sequence	xx
+Run	RN

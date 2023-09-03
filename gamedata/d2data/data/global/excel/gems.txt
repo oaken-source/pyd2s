@@ -1,0 +1,36 @@
+name	transform	code	nummods	weaponMod1Code	weaponMod1Offset	weaponMod1Min	weaponMod1Max	weaponMod2Code	weaponMod2Offset	weaponMod2Min	weaponMod2Max	weaponMod3Code	weaponMod3Offset	weaponMod3Min	weaponMod3Max	helmMod1Code	helmMod1Offset	helmMod1Min	helmMod1Max	helmMod2Code	helmMod2Offset	helmMod2Min	helmMod2Max	helmMod3Code	helmMod3Offset	helmMod3Min	helmMod3Max	shieldMod1Code	shieldMod1Offset	shieldMod1Min	shieldMod1Max	shieldMod2Code	shieldMod2Offset	shieldMod2Min	shieldMod2Max	shieldMod3Code	shieldMod3Offset	shieldMod3Min	shieldMod3Max
+Chipped Amethyst	18	gcv	3	ht00	0	15	19						0	0	0	st00	0	3	3		0	0	0		0	0	0	ar00	0	5	6		0	0	0		0	0	0
+Flawed Amethyst	18	gfv	3	ht00	0	20	29						0	0	0	st00	0	4	4		0	0	0		0	0	0	ar00	0	7	8		0	0	0		0	0	0
+Amethyst	18	gsv	3	ht00	0	30	39						0	0	0	st00	0	5	6		0	0	0		0	0	0	ar00	0	9	10		0	0	0		0	0	0
+Flawless Amethyst	18	gzv	3	ht00	0	40	49						0	0	0	st00	0	7	8		0	0	0		0	0	0	ar00	0	11	13		0	0	0		0	0	0
+Perfect Amethyst	17	gpv	3	ht00	0	50	60						0	0	0	st00	0	9	10		0	0	0		0	0	0	ar00	0	15	17		0	0	0		0	0	0
+Chipped Saphire	5	gcb	3	dc00	0	1	1	dc01	0	3	3	dc03	0	25	25	mm00	0	6	8		0	0	0		0	0	0	rc00	0	10	12		0	0	0		0	0	0
+Flawed Saphire	5	gfb	3	dc00	0	2	2	dc01	0	3	3	dc03	0	35	35	mm00	0	9	11		0	0	0		0	0	0	rc00	0	13	16		0	0	0		0	0	0
+Saphire	5	gsb	3	dc00	0	2	2	dc01	0	4	4	dc03	0	50	50	mm00	0	12	15		0	0	0		0	0	0	rc00	0	17	20		0	0	0		0	0	0
+Flwless Saphire	5	glb	3	dc00	0	3	3	dc01	0	5	5	dc03	0	60	60	mm00	0	16	20		0	0	0		0	0	0	rc00	0	21	25		0	0	0		0	0	0
+Perfect Saphire	6	gpb	3	dc00	0	3	3	dc01	0	6	7	dc03	0	75	75	mm00	0	21	25		0	0	0		0	0	0	rc00	0	26	30		0	0	0		0	0	0
+Chipped Emerald	11	gcg	3	dp00	0	8	8	dp01	0	8	8	dp02	0	75	75	dx00	0	3	3		0	0	0		0	0	0	rp00	0	10	12		0	0	0		0	0	0
+Flawed Emerald	11	gfg	3	dp00	0	11	11	dp01	0	11	11	dp02	0	75	75	dx00	0	4	4		0	0	0		0	0	0	rp00	0	13	16		0	0	0		0	0	0
+Emerald	11	gsg	3	dp00	0	14	14	dp01	0	14	14	dp02	0	75	75	dx00	0	5	6		0	0	0		0	0	0	rp00	0	17	20		0	0	0		0	0	0
+Flawless Emerald	11	glg	3	dp00	0	17	17	dp01	0	17	17	dp02	0	75	75	dx00	0	7	8		0	0	0		0	0	0	rp00	0	21	25		0	0	0		0	0	0
+Perfect Emerald	12	gpg	3	dp00	0	20	20	dp01	0	20	20	dp02	0	75	75	dx00	0	9	10		0	0	0		0	0	0	rp00	0	26	30		0	0	0		0	0	0
+Chipped Ruby	8	gcr	3	df00	0	3	3	df01	0	4	4		0	0	0	mh00	0	6	8		0	0	0		0	0	0	rf00	0	10	12		0	0	0		0	0	0
+Flawed Ruby	8	gfr	3	df00	0	3	3	df01	0	5	5		0	0	0	mh00	0	9	11		0	0	0		0	0	0	rf00	0	13	16		0	0	0		0	0	0
+Ruby	8	gsr	3	df00	0	4	4	df01	0	5	5		0	0	0	mh00	0	12	15		0	0	0		0	0	0	rf00	0	17	20		0	0	0		0	0	0
+Flawless Ruby	8	glr	3	df00	0	5	5	df01	0	6	6		0	0	0	mh00	0	16	20		0	0	0		0	0	0	rf00	0	21	25		0	0	0		0	0	0
+Perfect Ruby	9	gpr	3	df00	0	6	6	df01	0	7	10		0	0	0	mh00	0	21	25		0	0	0		0	0	0	rf00	0	26	30		0	0	0		0	0	0
+Chipped Diamond	1	gcw	3	md01	0	25	29						0	0	0	ht00	0	10	10		0	0	0		0	0	0	ra00	0	5	6		0	0	0		0	0	0
+Flawed Diamond	1	gfw	3	md01	0	30	35						0	0	0	ht00	0	15	15		0	0	0		0	0	0	ra00	0	7	8		0	0	0		0	0	0
+Diamond	1	gsw	3	md01	0	36	45						0	0	0	ht00	0	20	20		0	0	0		0	0	0	ra00	0	9	11		0	0	0		0	0	0
+Flawless Diamond	1	glw	3	md01	0	46	55						0	0	0	ht00	0	25	25		0	0	0		0	0	0	ra00	0	12	15		0	0	0		0	0	0
+Perfect Diamond	0	gpw	3	md01	0	56	70						0	0	0	ht00	0	30	30		0	0	0		0	0	0	ra00	0	16	20		0	0	0		0	0	0
+Chipped Topaz	14	gcy	3	dl00	0	1	1	dl01	0	6	6		0	0	0	ib01	0	7	9		0	0	0		0	0	0	rl00	0	10	12		0	0	0		0	0	0
+Flawed Topaz	14	gfy	3	dl00	0	1	1	dl01	0	7	7		0	0	0	ib01	0	11	13		0	0	0		0	0	0	rl00	0	13	16		0	0	0		0	0	0
+Topaz	14	gsy	3	dl00	0	1	1	dl01	0	8	8		0	0	0	ib01	0	14	17		0	0	0		0	0	0	rl00	0	17	20		0	0	0		0	0	0
+Flawless Topaz	14	gly	3	dl00	0	1	1	dl01	0	10	10		0	0	0	ib01	0	18	20		0	0	0		0	0	0	rl00	0	21	25		0	0	0		0	0	0
+Perfect Topaz	13	gpy	3	dl00	0	1	1	dl01	0	12	15		0	0	0	ib01	0	21	25		0	0	0		0	0	0	rl00	0	26	30		0	0	0		0	0	0
+Chipped Skull	2	skc	3	mm03	0	1	1	mh03	0	2	2					lf00	0	2	2	hl11	0	8	8		0	0	0	at00	0	2	2		0	0	0		0	0	0
+Flawed Skull	2	skf	3	mm03	0	2	2	mh03	0	2	2					lf00	0	3	3	hl11	0	8	8		0	0	0	at00	0	3	3		0	0	0		0	0	0
+Skull	2	sku	3	mm03	0	2	2	mh03	0	3	3					lf00	0	3	3	hl11	0	12	12		0	0	0	at00	0	4	4		0	0	0		0	0	0
+Flawless Skull	2	skl	3	mm03	0	3	3	mh03	0	3	3					lf00	0	4	4	hl11	0	12	12		0	0	0	at00	0	5	5		0	0	0		0	0	0
+Perfect Skull	3	skz	3	mm03	0	3	3	mh03	0	4	4					lf00	0	4	5	hl11	0	16	20		0	0	0	at00	0	6	7		0	0	0		0	0	0

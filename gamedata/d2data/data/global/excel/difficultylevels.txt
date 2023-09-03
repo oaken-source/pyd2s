@@ -1,0 +1,4 @@
+Name	ResistPenalty	DeathExpPenalty	UberCodeOddsNormal	UberCodeOddsGood	MonsterSkillBonus	MonsterFreezeDivisor	MonsterColdDivisor	AiCurseDivisor
+Normal	0	0	0	0	0	1	1	1
+Nightmare	-20	5	10	20	3	2	2	2
+Hell	-50	10	20	40	7	4	4	4
