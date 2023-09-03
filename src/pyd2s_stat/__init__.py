@@ -9,7 +9,7 @@ import datetime
 import pyd2s
 from pyd2s.questdata import Quest
 from pyd2s.character import Character
-from pyd2s.item import ExtendedItem
+from pyd2s.item import ItemQuality, ExtendedItem
 
 parser_config = [
     (['filename'], {
@@ -187,6 +187,7 @@ def print_item_data(d2s):
 Count       : { len(d2s_item.pdata) }''')
 
     for (i, item) in enumerate(d2s_item.pdata):
+        item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
@@ -194,6 +195,7 @@ Count       : { len(d2s_item.pdata) }''')
 Count       : { len(d2s_item.cdata) }''')
 
     for (i, item) in enumerate(d2s_item.cdata):
+        item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
@@ -201,6 +203,7 @@ Count       : { len(d2s_item.cdata) }''')
 Count       : { len(d2s_item.mdata) }''')
 
     for (i, item) in enumerate(d2s_item.mdata):
+        item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
     print(f'''
@@ -208,6 +211,7 @@ Count       : { len(d2s_item.mdata) }''')
 Count       : { len(d2s_item.gdata) }''')
 
     for (i, item) in enumerate(d2s_item.gdata):
+        item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
 
@@ -216,6 +220,9 @@ def make_testdata_entries(itemdata):
     write test data files for creating test cases with real data
     '''
     for item in itemdata.pdata + itemdata.cdata + itemdata.mdata + itemdata.gdata:
+        if item.quality >= ItemQuality.MAGICAL:
+            item.is_identified = True
+
         raw_data = item.rawdata
 
         key = item.name

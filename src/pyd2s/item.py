@@ -84,6 +84,13 @@ class Item:
         '''
         return bool(self._buffer.getbits(self._offset * 8 + 20, 1))
 
+    @is_identified.setter
+    def is_identified(self, value):
+        '''
+        set whether the item is identified
+        '''
+        self._buffer.setbits(self._offset * 8 + 20, True, 1)
+
     @property
     def is_socketed(self):
         '''
@@ -137,6 +144,13 @@ class Item:
         the length of the item in bytes (to be overwritten by subclass)
         '''
         raise NotImplementedError()
+
+    @property
+    def quality(self):
+        '''
+        the item quality. This is always Normal, unless specified in extended item data
+        '''
+        return ItemQuality.NORMAL
 
     @property
     def rawdata(self):
@@ -199,11 +213,15 @@ class SimpleItem(Item):
         '''
         block = [self.name]
 
-        if 'spelldescstr' in self._itemdata and self._itemdata['spelldescstr'] and self._itemdata['spelldesc'] == '1':
+        if ('pSpell' in self._itemdata
+            and self._itemdata['pSpell']
+            and self._itemdata['spelldesc'] != '2'):
             block.append('Item Level: 1')
+
+        if 'spelldescstr' in self._itemdata and self._itemdata['spelldesc'] == '1':
             block.append(GameData.get_string(self._itemdata['spelldescstr']))
 
-        if self._itemdata['type'] in ['rune', 'gema', 'gemt', 'gems', 'geme', 'gemr', 'gemd', 'gemz']:
+        if self._itemdata['code'] in GameData.gems:
             block.append('Item Level 1')
             block.append('Can be Inserted into Socketed Items')
 
@@ -673,7 +691,7 @@ class ExtendedItem(SimpleItem):
 
         if 'defense' in self._attributes:
             defense = self._attributes['defense']
-            if 'item_armor_percent' in self._immediate_mods:
+            if 'item_armor_percent' in self._immediate_mods and self.is_identified:
                 new_defense = (defense * (100 + self._immediate_mods['item_armor_percent'])) // 100
                 if new_defense > defense:
                     block.append(f'Defense: {colorama.Fore.BLUE}{new_defense}{colorama.Fore.RESET}')
@@ -683,13 +701,13 @@ class ExtendedItem(SimpleItem):
                 block.append(f'Defense: {defense}')
         if self._itemdata['type'] in ['shie', 'head']:
             chance = int(self._itemdata['block']) + 20  # assuming a non-proficient class
-            if 'toblock' in self._immediate_mods:
+            if 'toblock' in self._immediate_mods and self.is_identified:
                 chance += int(self._immediate_mods['toblock'])
             block.append(f'Chance to Block: {colorama.Fore.BLUE}{chance}%{colorama.Fore.RESET}')
         if 'minmisdam' in self._itemdata and self._itemdata['minmisdam'] and int(self._itemdata['minmisdam']):
             block.append(f'Throw Damage: {self._itemdata["minmisdam"]} to {self._itemdata["maxmisdam"]}')
         if 'mindam' in self._itemdata and self._itemdata['mindam'] and int(self._itemdata['mindam']):
-            if 'maxdamage' in self._immediate_mods:
+            if 'maxdamage' in self._immediate_mods and self.is_identified:
                 maxdamage = int(self._itemdata['maxdam']) + self._immediate_mods['maxdamage']
                 block.append(f'One-Hand Damage: {colorama.Fore.BLUE}{self._itemdata["mindam"]} to {maxdamage}{colorama.Fore.RESET}')
             else:
@@ -702,7 +720,7 @@ class ExtendedItem(SimpleItem):
         elif 'durability' in self._attributes:
             durability = self._attributes['durability']
             max_durability = self._attributes['max_durability']
-            if 'item_maxdurability_percent' in self._immediate_mods:
+            if 'item_maxdurability_percent' in self._immediate_mods and self.is_identified:
                 max_durability = (max_durability * (100 + int(self._immediate_mods['item_maxdurability_percent']))) // 100
             block.append(f'Durability: {durability} of {max_durability}')
         if 'type' in self._itemdata and self._itemdata['type']:
@@ -713,7 +731,7 @@ class ExtendedItem(SimpleItem):
             block.append(f'Required Dexterity: {self._itemdata["reqdex"]}')
         if 'reqstr' in self._itemdata and self._itemdata['reqstr'] and int(self._itemdata['reqstr']):
             block.append(f'Required Strength: {self._itemdata["reqstr"]}')
-        if 'levelreq' in self._immediate_mods and int(self._immediate_mods['levelreq']) > 1:
+        if 'levelreq' in self._immediate_mods and int(self._immediate_mods['levelreq']) > 1 and self.is_identified:
             block.append(f'Required Level: {self._immediate_mods["levelreq"]}')
 
         weapon_classes = {
@@ -808,6 +826,14 @@ class ExtendedItem(SimpleItem):
                             line = f'+{value["v"]}% {line}'
                         elif desc_val == 2:
                             line = f'{line} +{value["v"]}%'
+                    elif desc_func == 5:
+                        str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
+                        line = f'{GameData.get_string(item_stat_cost[str1_key])}'
+                        if desc_val == 1:
+                            line = f'{int(value["v"] * 100 / 128)}% {line}'
+                        elif desc_val == 2:
+                            line = f'{line} {int(value["v"] * 100 / 128)}%'
+                        # 5   '{value*100/128}% {string1}'
                     elif desc_func == 11:
                         str1_key = 'descstrpos' if value['v'] >= 0 else 'descstrneg'
                         line = GameData.get_string(item_stat_cost[str1_key]) % (1, 100 // value['v'])
@@ -846,7 +872,7 @@ class ExtendedItem(SimpleItem):
                         # 26   "not used by vanilla, present in the code but I didn't test it yet"
                         # 28   '+{value} to {skill}'
                     else:
-                        line = f'[{desc_func}]{(key, value)}: {GameData.itemstatcost[key]["Stat"]}'
+                        line = f'{self.name} [{desc_func}]{(key, value)}: {GameData.itemstatcost[key]["Stat"]}'
                         raise NotImplementedError(line)
                     block.append(f'{colorama.Fore.BLUE}{line}{colorama.Fore.RESET}')
                 if block[-1] == block[-2]:
