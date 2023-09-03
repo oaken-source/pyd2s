@@ -213,16 +213,10 @@ class SimpleItem(Item):
         '''
         block = [self.name]
 
-        if ('pSpell' in self._itemdata
-            and self._itemdata['pSpell']
-            and self._itemdata['spelldesc'] != '2'):
-            block.append('Item Level: 1')
-
         if 'spelldescstr' in self._itemdata and self._itemdata['spelldesc'] == '1':
             block.append(GameData.get_string(self._itemdata['spelldescstr']))
 
         if self._itemdata['code'] in GameData.gems:
-            block.append('Item Level 1')
             block.append('Can be Inserted into Socketed Items')
 
             gem = GameData.gems[self._itemdata["code"]]
@@ -675,17 +669,11 @@ class ExtendedItem(SimpleItem):
 
         block = [name]
 
-        # tomes are weird
-        if self._itemdata['type'] == 'book':
-            block.append('Insert Scrolls\nRight Click to Use')
-        else:
-            block.append(f'Item Level: {self.ilvl}')
-
-        # charms are also weird
+        # charms are special
         if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
             block.append('Keep in Inventory to Gain Bonus')
 
-        # jewels are special
+        # socketables are special
         if self._itemdata['code'] == 'jew':
             block.append('Can be Inserted into Socketed Items')
 
