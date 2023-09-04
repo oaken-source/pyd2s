@@ -12,7 +12,8 @@ def item_source():
         if file.endswith('.data'):
             data = f'tests/itemdata/{file}'
             desc = f'tests/itemdata/{file.removesuffix(".data")}.desc'
-            yield {'data': data, 'desc': desc}
+            yield pytest.param({'data': data, 'desc': desc}, id=os.path.basename(file))
+
 
 @pytest.mark.parametrize('item', item_source())
 def test_item(item):
