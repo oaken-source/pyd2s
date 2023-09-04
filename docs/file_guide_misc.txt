@@ -1,0 +1,364 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+https://d2mods.info/forum/kb/viewarticle?a=317
+-------------------------------------------------------------------------------
+
+
+                              The Phrozen Keep's
+                              Misc.txt File Guide
+
+                        Written by Kingpin & Ric Faith
+                 Expanded and Restyled by Lord Drekas & Ogodei
+
+                   for Diablo II Expansion Set v1.10 - 1.114
+
+                           Updated October 24, 2018
+
+This document was created based on the excellent guides on the Phrozen Keep
+forums regarding the columns in the Diablo II Data files.
+
+Introduction
+
+Armor.txt, Misc.txt and Weapons.txt have many identical columns. That's because
+in fact these 3 text files are, in truth, three parts of a single big file:
+when the game reads these 3 tables, it merges them all, one after another, into
+one and unique table. These 3 text files contain all the base items of the
+game: normal / exceptional / elite versions of the in-game items. Incidently,
+that means you can add columns to any one of these 3 files. For instance if you
+add the columns Transmogrify, TMogType, TMogMin and TMogMax to Armor.txt and
+use them for an Helm, then this Helm will be able to be Transmute into another
+item, something that doesn't look possible at first glance since the 4 columns
+are not originally in Armor.txt.
+
+NOTE: to add columns in a .txt, don't use D2Excel, as this program can't do the
+job. Instead, use MS Excel or another spreadsheet that can import and export
+tab-delimited .txt files.
+
+Armor.txt is used in pair with:
+ - AutoMagic.txt
+ - Belt.txt
+ - Composit.txt
+ - ItemTypes.txt
+ - Missiles.txt
+ - Sound.txt
+
+And is used by:
+ - CharStats.txt
+ - CompCode.txt
+ - CubeMain.txt
+ - SetItems.txt
+ - UniqueItems.txt
+
+Column Descriptions
+
+name: Reference only, its a comment field.
+
+szFlavorText: unknown if used
+
+compactsave: Boolean which ranges from 0 to 1. This is used to get a smaller
+filesize but will NOT save any stats to the item, this means it will not save
+any quantity, automagic, affixes, damage, armor, durability e.tc. This is often
+used by items that don't need any stats stored like Healing potions, gems.
+
+version: If you set it to 0, then your misc item will only be available in
+Classic. A value of 100, instead, makes it available in Expansion.
+
+level: base item level.
+Example: a monster with a mlvl of 20 cannot drop a lvl30 item.
+
+levelreq: the minimum level the players need to have to use that item
+
+rarity: Rarity, if set to 0, excludes the item(s) to be dropped from the armor
+racks. If set to something bigger than 0, then it sets the rarity for this item
+to drop from any armor rack. The higher, the rarer. NOTE: You need at least 1
+armor with rarity 0 or 1, otherwise the game will crash when you use an armor
+rack, simply because it won't find any armor available.
+
+spawnable: if set to 0 , this field tells the game that the item cannot be
+found for sale when you interact with NPC's. Setting it to 1 has the opposite
+effect.
+
+speed: If set to a positive value, then it slows down your character when worn.
+Negative values, instead, will render the character faster.
+
+durability - nodurability - durwarning: Durability sets the base durability,
+and ranges from 0 to 255(if set higher or lower than these two caps, you'll
+have a rollover). NoDurability means the item has not any durability.
+DurWarning displays the warning icon on the right part of your screen when the
+Durability of the item hits the amount set here.
+
+gamble cost:: Overrides the default Gamble Cost, but it only works for Rings
+and Amulets
+
+code: This is a 3 or 4 alphanumeric code which identifies the item for certain
+purposes.
+
+alternategfx: it's the code of the DCC used by the Player animation while
+equipping the item.
+
+namestr: It is the name string of the item.
+NOTE: If this string is NOT present in a TBL, it will be considered directly as
+the name of the item, but if this code IS present in a TBL then it'll be that
+TBL record that will be used as the name of the item instead. Also, keep in
+mind that if you want a string name with at least 1 space, then you'll have to
+create a record in a TBL.
+
+component: Layer of the Player Animation used by the item, taken from
+Composit.txt The Composit table is indexed as follows:
+
+    1 - Head        HD
+    2 - Torso       TR
+    3 - Legs        LG
+    4 - RightArm    RA
+    5 - LeftArm     LA
+    6 - RightHand   RH
+    7 - LeftHand    LH
+    8 - Shield      SH
+    9 - Special1    S1   (shoulder #1)
+    10 - Special2   S2   (shoulder #2)
+    11 - Special3   S3
+    12 - Special4   S4
+    13 - Special5   S5
+    14 - Special6   S6
+    15 - Special7   S7
+    16 - Special8   S8
+
+invwidth- invheight: width and heght of the item, in terms of inventory cells.
+
+hasinv: 1 can be socketed,0 cannot be socketed (You need to set MaxSock 1/25/40
+in itemtypes.txt to at least 1 to have sockets in the item)
+
+Socketing Parameters
+
+hasinv: hasinv states if the item has an "inventory", meaning it's able to
+store gems or runes within. ( 1 : yes ; 0 : no).
+
+gemsockets: determines the potential maximum amount of sockets, capped to width
+* height. In addition, there are three fields in ItemTypes.txt that limit the
+number of sockets, based on the level of the monster that drops the item. These
+columns are MaxSock1, MaxSock25 and MaxSock40.
+
+gemapplytype: determines which kind of effect the gem will apply to the item
+it's inserted within:
+
+    0 = weapon
+    1 = armor / helm
+    2 = shield
+
+If you use other values, your item won't be able to have sockets.
+
+Display and Animation Parameters
+
+These columns contain DC6 filenames to use for various cases.
+
+flippyfile: is the animation used when the item drops on the ground,
+
+invfile: is the item image when it's in your inventory
+
+uniqueinvfile: is used by the unique version of the item in your inventory All
+of these files are located in Data\Global\Items\
+
+special: Not used, Comment field.
+
+Transmogrification Parameters
+
+Transmogrify: It states whether the item can be turned into another one by
+right-click or not.
+
+TMogType: It states 3 character code which respresents the item that this item
+becomes when right clicked (see Transmogrify)
+
+TMogMin - TMogMax: Minimum/Maximum quantity appearing of the item in
+Transmogrify
+
+Miscellaneous Parameters I
+
+useable: It specifies whether the item can be used via right-click. ( 1 : yes ;
+0 : no). This is a column often used in Misc.txt for potions and scrolls NOTE:
+The game knows what to with the item by its code. Unless you're doing dll
+editing, don't expect an item to do something just because you have set this
+column to 1.
+
+throwable: A value of 1 renders this item throwable. 0 disables throwing.
+
+type: It tells the first Item base type taken from ItemTypes.txt
+
+type2: It tells the secondItem base type taken from ItemTypes.txt
+
+Sound Properties
+
+these columns are related to the item sound. The code is taken from the field
+"Sound" in Sounds.txt.
+
+dropsound: is used when the item drops on the ground.
+
+dropsfxframe: is the point (measured in frames) after which the sound from
+'dropsound' plays.
+
+usesound: is the sound played when the item is used or moved through the
+inventory.
+
+Miscellaneous Properties II
+
+unique: If this column is set to 1 , then the item can only spawn as unique.
+
+transparent - transtbl: Unknown. Apparently has no effect in game. TransTbl
+could be related to the item's blending mode.
+
+lightradius: Not used.
+
+belt: numberic Id from belts.txt (defines number of potion slots). It states
+whether the item can or cannot be put inside the belt cells. ( 1 : yes ; 0 :
+no). NOTE: Since Misc.txt and Armor.txt are part of the same file, it seems
+that the game looks for the type of the item first, and *then* decide how to
+understand the value in this column.
+
+autobelt: Whether or not the item appears in your belt when picked up
+
+stackable: A value of 0 means that the item cannot be stacked, while 1 means it
+can be stacked.
+
+minstack: Minimum quantity of the stack when the item is spawned.
+
+maxstack: Maximum quantity of the stack when the item is spawned.
+
+qntwarning: Quantity from which the warning message appears.
+
+spawnstack: It tells how large is the stack when the item spawns.
+
+quest: handles some hardcoded ID's for quest items. Quest items are counted as
+Uniques and cannot be sold to NPC's.
+
+questdiffcheck: indicates that the item has a difficulty check. When set to 1,
+this item will only work in the difficulty in which it's been found.
+
+missiletype: Missile gfx to load when the item is thrown, taken from
+Missiles.txt
+
+spellicon: It tells which spellicon should be used, when you use the item (eg.
+the throwing-icon for jav's )
+
+pSpell: Pspell is an index from a hardcoded table which allows several different effects for items that are meant to be used in game. All temporary potions can use pSpell = 6. This is a parameter for the function that handles the temporary items.
+
+state - cstate1 - cstate2: This parameter is for getting an Overlay effect.
+this is only a visual effect.  NOTE: state and cstate1 needs to be the same
+stat id from States.txt NOTE 2: cstate1 is used to get a state from States.txt.
+It is really important that you remember which state you have chosen when
+you're using stat1, otherwise you will get a known bug (which is actually a
+misunderstanding in regards of how temporary items work).
+
+len: This parameter is used to set the timer for the temporal items. This
+cannot be 0.
+
+stat1 - stat3 - calc1 - calc3: stat X tells which stat to add to the player
+who's using the item (this is used in conjuction with cState X) calc X
+specifies the value of the stat.
+
+spelldesc: it ranges from 0 to 3
+
+    0 = don't use any description or calculation. 
+    1 = use spelldescrtr only 
+    2 = use spelldescrtr and spelldesccalc.
+
+spelldescstr: This gives a description to your temporal item. It may come in
+handy to give players a short description about what to expect when using the
+item.
+
+spelldesccalc: This shows the total effect of all your items for this stats
+based on stat1-3.
+
+gemoffset: unknown
+
+nameable : Used by the reward of Anya's quest and tells if the item can be
+personalized or not. ( 1 : yes ; 0 : no).
+
+BetterGem: Used only by Gems. It indicates which gem code is the next in class
+when it's upgraded by a shrine or cube. You need to write "non" for non-gems or
+items you don't want to be upgraded this way, or else you just fill this field
+with the 3-4 letter code.
+
+bitfield1: Bitfield used primarily for various things, most remarkably the item
+material.
+
+    1 = Leather item
+    3 = Metal item, which allows the creation of iron golem
+
+vendorMin - vendorMax - vendorMagicMin - vendorMagicMax - vendorMagicLvl: These
+columns control what the different Vendors can sells.  "Vendors" are
+
+    Charsi
+    Gheed
+    Akara
+    Fara
+    Lysander  
+    Drognan
+    Hratli
+    Alkor
+    Ormus
+    Elzix
+    Asheara
+    Cain
+    Halbu
+    Jamella
+    Larzuk
+    Malah
+    Drehya (Anya)
+
+vendorMin - vendorMax act as minimum \ maximum amount of items of this type the
+vendor can sell. Do not increase these values too much or you will risk to
+crash the game if it spawns too many items.
+
+vendorMagicMin - vendorMagicMax have the same purposes as the ones above, but
+for the magical items
+
+vendorMagicLvl controls the mLvl of the affixes an item can get.
+
+PermStoreItem : This field is originally absent in Armor.txt, but you ought to
+add it as it's used to make Permanent items, so that vendors will always sell
+them. ( 1 : yes ; 0 : no).
+
+Source Art - Game Art: Not used.
+
+Transform - InvTrans : These fields let you mess around with colors.  Transform
+states the colormap to use for the player's gfx InvTrans states the colormap to
+use for the inventory's gfx You need to use the Code from Colors.txt
+
+    Transform Color Code
+    White   whit
+    Light Grey      lgry
+    Dark Grey       dgry
+    Black   blac
+    Light Blue      lblu
+    Dark Blue       dblu
+    Crystal Blue    cblu
+    Light Red       lred
+    Dark Red        dred
+    Crystal Red     cred
+    Light Green     lgrn
+    Dark Green      dgrn
+    Crystal Green   cgrn
+    Light Yellow    lyel
+    Dark Yellow     dyel
+    Light Gold      lgld
+    Dark Gold       dgld
+    Light Purple    lpur
+    Dark Purple     dpur
+    Orange  oran
+    Bright White    bwht
+
+SkipName : For items like the viper amulet, It makes the game skips the Base
+name in the item description.
+
+NightmareUpgrade - HellUpgrade : These columns handle the code of the item the
+Vendor will sell instead of this item in Nightmare / Hell. Set these to 'xxx'
+for not having any change
+
+mindam - maxdam: Minimum and Maximum damage that this item provide. If used on
+a shield or on a pair of boots, the damage in question will be either Smite or
+Kick damage.
+
+multibuy = A value of 0 means that Multibuy is not used, while 1 allows to
+Multibuy this item, which means that when you buy this item via right click +
+shift , you will instantly fill your belt.
+
+*eol: End of Line

@@ -749,6 +749,7 @@ class ExtendedItem(SimpleItem):
             new_mindam = mindam
             maxdam = int(self._itemdata['maxdam'])
             new_maxdam = maxdam
+
             mods = [
                 enhancement for enhancement in self._attributes['enhancements']
                 if enhancement.stat == 'item_maxdamage_percent']
@@ -757,7 +758,7 @@ class ExtendedItem(SimpleItem):
                 new_maxdam = (maxdam * (100 + mods[0].value)) // 100
             mods = [
                 enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'maxdamage']
+                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
             if mods and self.is_identified:
                 new_maxdam = new_maxdam + mods[0].value
             mods = [
@@ -768,21 +769,48 @@ class ExtendedItem(SimpleItem):
             if new_maxdam > maxdam or new_mindam > mindam:
                 block.append(
                     'One-Hand Damage: '
-                    f'{colorama.Fore.BLUE}{mindam} to {new_maxdam}{colorama.Fore.RESET}')
+                    f'{colorama.Fore.BLUE}{new_mindam} to '
+                    f'{new_maxdam}{colorama.Fore.RESET}')
             else:
                 block.append(f'One-Hand Damage: {mindam} to {maxdam}')
 
         if '2handmindam' in self._itemdata and int(self._itemdata['2handmindam'] or 0):
-            block.append(
-                'Two-Hand Damage: '
-                f'{self._itemdata["2handmindam"]} to {self._itemdata["2handmaxdam"]}')
+            mindam = int(self._itemdata['2handmindam'])
+            new_mindam = mindam
+            maxdam = int(self._itemdata['2handmaxdam'])
+            new_maxdam = maxdam
+
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat == 'item_maxdamage_percent']
+            if mods and self.is_identified:
+                new_mindam = (mindam * (100 + mods[0].value)) // 100
+                new_maxdam = (maxdam * (100 + mods[0].value)) // 100
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
+            if mods and self.is_identified:
+                new_maxdam = new_maxdam + mods[0].value
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat == 'mindamage']
+            if mods and self.is_identified:
+                new_mindam = new_mindam + mods[0].value
+            if new_maxdam > maxdam or new_mindam > mindam:
+                block.append(
+                    'Two-Hand Damage: '
+                    f'{colorama.Fore.BLUE}{new_mindam} to '
+                    f'{new_maxdam}{colorama.Fore.RESET}')
+            else:
+                block.append(f'Two-Hand Damage: {mindam} to {maxdam}')
 
         # handle quantity
         if 'quantity' in self._attributes:
             block.append(f'Quantity: {self._attributes["quantity"]}')
 
         # handle durability
-        elif 'durability' in self._attributes:
+        elif ('durability' in self._attributes
+              and not int(self._itemdata['nodurability'] or 0)):
             durability = self._attributes['durability']
             max_durability = self._attributes['max_durability']
             new_max_durability = max_durability
@@ -824,6 +852,7 @@ class ExtendedItem(SimpleItem):
 
         # handle weapon class and attack speed
         weapon_classes = {
+            'mace': 'mace',
             'club': 'mace',
             'hamm': 'mace',
             'scep': 'mace',
@@ -851,10 +880,6 @@ class ExtendedItem(SimpleItem):
                 f'weapondesc{weapon_classes[self._itemdata["type"]]}')
             speed = int(self._itemdata['speed'] or 0)
             block.append(f'{weapon_class} - [{speed}] Attack Speed')
-
-        print(self.display_name)
-        print(self._attributes)
-        print(list(stat.stat for stat in self._attributes['enhancements']))
 
         # handle magical properties
         if self.quality.value >= ItemQuality.MAGICAL.value and not self.is_identified:

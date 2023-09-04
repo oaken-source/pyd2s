@@ -1,0 +1,235 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+https://d2mods.info/forum/kb/viewarticle?a=301
+-------------------------------------------------------------------------------
+
+
+                              The Phrozen Keep's
+                             Levels.txt File Guide
+
+                         Written by Nefarius & Kingpin
+                        Expanded and Restyled by Ogodei
+
+                   for Diablo II Expansion Set v1.10 - 1.114
+
+                           Updated October 24, 2018
+
+This document was created based on the excellent guides on the Phrozen Keep
+forums regarding the columns in the Diablo II Data files.
+
+Introduction
+
+This is the file that controls how the game handles links levels, what monsters
+and object that are spawned that are placed on the level.
+
+This file is used in pair with:
+ - LvlMaze.txt
+ - LvlPrest
+ - LvlSub.txt
+ - LvlTypes.txt
+ - MonStats.txt
+ - Automap.txt
+ - LvlWarp.txt
+ - Objgroup.txt
+
+Column Descriptions
+
+Name: This column has no function, it only serves as a comment field to make it
+easier to identify the Level name
+
+Id: Level ID (used in columns like VIS0-7)
+
+Pal: Act Palette. Reference only
+
+Act: The Act the Level is located in (internal enumeration ranges from 0 to 4).
+
+QuestFlag - QuestFlagEx: Used the first one in Classic games and the latter in
+Expansion games , they set a questflag. If this flag is set, a character must
+have completed the quest associated with the flag to take a town portal to the
+area in question. A character can always use a portal to get back to town.
+
+Layer: Each layer is an unique ID. This number is used to store each automap on
+a character. This is used by the game to remember what level the automap are
+for.  NOTE: you need to use the extended levels plugin to be able to add
+additional layers.
+
+SizeX (X) - SizeY (X): sizeX - SizeY in each difficuly. If this is a preset
+area this sets the X size for the area. Othervise use the same value here that
+are used in lvlprest.txt to set the size for the .ds1 file.
+
+OffsetX - OffsetY: They set the X\Y position in the world space
+
+Depend: This set what level id's are the Depended level. Example: Monastery
+uses this field to place its entrance always at same location.
+
+Teleport: Controls if teleport is allowed in that level.
+
+    0 = Teleport not allowed
+    1 = Teleport allowed
+    2 = Teleport allowed, but not able to use teleport throu walls/objects
+        (maybe for objects this is controlled by IsDoor column in objects.txt)
+
+Rain: It sets whether rain or snow (in act 5 only) can fall . Set it to 1 in
+order to enable it, 0 to disable it.
+
+Mud: Unused setting (In pre beta D2 Blizzard planned Rain to generate Mud which
+would have slowed your character's speed down, but this never made it into the
+final game). the field is read by the code but the return value is never
+utilized.
+
+NoPer: Setting for 3D Enhanced D2 that disables Perspective Mode for a specific
+level. A value of 1 enables the users to choose between normal and Perspective
+view, while 0 disables that choice.
+
+LOSDraw: Allows you to look through objects and walls even if they are not in a
+wilderness level. 1 enables it, 0 disables it.
+
+FloorFilter: Unknown. Probably has to do with Tiles and their Placement . 1
+enables it, 0 disables it.
+
+BlankScreen: Unknown. Probably has to do with tiles and their placement. 1
+enables it, 0 disables it.
+
+DrawEdges: for levels bordered with mountains or walls, like the act 1
+wildernesses. 1 enables it, 0 disables it.
+
+IsInside: Setting it to 1 makes the level to be treated as an indoor area,
+while 0 makes this level an outdoor. Indoor areas are not affected by day-night
+cycles, because they always use the light values specified in Intensity, Red,
+Green, Blue. this field also controls whenever sounds will echo if you're
+running the game with a sound card capable of it and have enviroment sound
+effects set to true.
+
+DrlgType: Setting for Level Generation: You have 3 possibilities here:
+
+    1 = Random Maze
+    2 = Preset Area
+    3 = Wilderness level
+
+LevelType: The type of the Level (Id from lvltypes.txt)
+
+Sub Columns IDs from LvlSub.txt, which is used to randomize outdoor areas, such
+as spawning ponds in the blood moor and more stones in the Stoney Field. This
+is all changeable, the other subcolumns are explained in this post.
+
+SubType: Setting Regarding the level type.
+Example: 6=wilderness, 9=desert etc, -1=no subtype.
+
+SubTheme: Tells which subtheme a wilderness area should use. Themes ranges from
+-1 (no subtheme) to 4.
+
+SubWaypoint: Setting Regarding Waypoints
+NOTE: it does NOT control waypoint placement.
+
+SubShrine: Setting Regarding Shrines.
+NOTE: it does NOT control which Shrine will spawn.
+
+Vis0 - Vis7: These fields allow linking level serverside, allowing you to
+travel through areas. The Vis must be filled in with the LevelID your level is
+linked with, but the actuall number of Vis ( 0 - 7 ) is determined by your
+actual map (the .ds1 fle).
+Example: Normally Cave levels are only using vis 0-3 and wilderness areas 4-7.
+
+Warp0-7: This controls the visual graphics then you move the mouse pointer over
+an entrance. To show the graphics you use an ID from lvlwarp.txt and the
+behavior on the graphics is controlled by lvlwarp.txt. Your Warps must match
+your Vis.
+Example: If your level uses Vis 3-5-7, then you must also use Warp 3-5-7.
+
+Intensity - Red - Green - Blue: These settings handle the light intensity as
+well as its RGB components.
+
+Portal: This field is required for some levels, entering those levels when
+portal field isn't set will often crash the game. This also applies to
+duplicates of those levels created with both of the extended level plugins.
+
+Position: This controls if you can re-position a portal in a level or not. If
+it's set to 1 you will be able to reposition the portal by using either map
+entry#76 Tp Location #79. If both tiles are in the level it will use Tp
+Location #79. If set to 0 the map won't allow repositioning.
+
+SaveMonster: Setting this field to 1 will make the monsters status saved in the
+map. Setting it to 0 will allow some useful things like NPC refreshing their
+stores. WARNING: Do not set this to 1 for non-town areas, or the monsters
+you'll flee from will simply vanish and never reappear. They won't even be
+replaced by new ones
+
+Quest: What quest is this level related to. This is the quest id (as example
+the first quest Den of Evil are set to 1, since its the first quest).
+
+WarpDist: This sets the minimum distance from a VisX or WarpX location that a
+monster, object or tile can be spawned at. (also applies to waypoints and some
+preset portals).
+
+MonLvl1 - 3 MonLvl1Ex - MonLvl3-Ex: Area Level on Normal-Nightmare-Hell in
+Classic and Expansion . It controls the item level of items that drop from
+chests etc.
+
+MonDen (X): This is a chance in 100000ths that a monster pack will spawn on a
+tile. The maximum chance the game allows is 10% (aka 10000) in v1.10+,
+
+MonUMin - MonUMax: Minimum - Maximum Unique and Champion Monsters Spawned in
+this Level. Whenever any spawn at all however is bound to MonDen.
+
+MonWndr: [To be updated]
+
+MonSpcWalk: This setting is hardcoded to certain level Ids, like the River Of
+Flame, enabling it in other places can glitch up the game, so leave it alone.
+It is not known what exactly it does however.
+
+NumMon: Number of different Monster Types that will be present in this area,
+the maximum is 13. You can have up to 13 different monster types at a time in
+Nightmare and Hell difficulties, selected randomly from nmon1-nmon25. In Normal
+difficulty you can have up to 13 normal monster types selected randomly from
+mon1-mon25, and the same number of champion and unique types selected randomly
+from umon1-umon25.
+
+mon1-mon25, nmon1-nmon25: mon1-mon25 work in Normal difficulty, while
+nmon1-nmon25 in Nightmare and Hell. They tell the game which monster ID taken
+from MonStats.txt. NOTE: you need to manually add from mon11 to mon25 and from
+nmon11 to nmon25 !
+
+rangedspawn: Give preference to monsters set to ranged=1 in MonStats.txt on
+Nightmare and Hell difficulties when picking something to spawn.
+
+umon1-umon25: Works only in normal and it tells which ID will be used for
+Champion and Random Uniques. The ID is taken from MonStats.txtOnly the first
+ten columns appear in the unmodded file. In 1.10 final, beta 1.10s and v1.11+
+you can add the missing umon11-umon25 columns.  NOTE: you can allow umon1-25 to
+also work in Nightmare and Hell by following this simple ASM edit
+
+cmon11-4: Critter Species 1-4. Uses the Id from monstats2.txt and only monsters
+with critter column set to 1 can spawn here. critter column is also found in
+monstats2.txt. Critters are in reality only present clientside.
+
+cpct1-cpct4: Controls the chance for a critter to spawn.
+
+camt1-camt4: Unknown. These columns are bugged, as the game overrides the
+contents of columns 3-4 with the value from column 1 when it compiles the bin
+files.
+
+Themes: Unknown. It states which theme is used by the area and this field is
+accessed by the code but it is not exactly known what it does.
+
+SoundEnv: Referes to a entry in SoundEnviron.txt (for the Levels Music)
+
+Waypoint: 255 means no Waipoint for this level, while others state the
+Waypoint' ID for the level. NOTE: you can switch waypoint destinations between
+areas this way, not between acts however so don't even bother to try.
+
+LevelName: String Code for the Display name of the Level
+
+LevelWarp: String Code for the Display name of a entrance to this Level
+
+EntryFile: Which *.DC6 Title Image is loaded when you enter this area. this
+file MUST exist, otherwise you will crash with an exception when you enter the
+level (for all levels below the expansion row, the files must be present in the
+expension folders)
+
+ObjGrp0-7: this field uses the ID of the ObjectGroup you want to Spawn in this
+Area, taken from Objgroup.txt.
+
+ObjPrb0-7: These fields indicates the chance for each object group to spawn (if
+you use ObjGrp0 then set ObjPrb0 to a value below 100)
+
+Beta: Reference Only (can be used for comments) 
