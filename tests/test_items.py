@@ -1,17 +1,16 @@
 
 import os
 
-from pyd2s.item import Item
-from pyd2s.savebuffer import SaveBuffer
+from pyd2s import SaveFile
 
 import pytest
 
 
 def item_source():
     for file in os.listdir('tests/itemdata'):
-        if file.endswith('.data'):
+        if file.endswith('.d2i'):
             data = f'tests/itemdata/{file}'
-            desc = f'tests/itemdata/{file.removesuffix(".data")}.desc'
+            desc = f'tests/itemdata/{file.removesuffix(".d2i")}.desc'
             yield pytest.param({'data': data, 'desc': desc}, id=os.path.basename(file))
 
 
@@ -20,8 +19,7 @@ def test_item(item):
     with open(item['desc'], 'r', encoding='ascii') as descfile:
         desc = descfile.read().strip()
 
-    data = SaveBuffer(item['data'])
-    item = Item.from_data(data, 0)
+    item = SaveFile.open(item['data']).item
 
     assert str(item) == desc
     assert str(item) == desc

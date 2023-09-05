@@ -7,6 +7,7 @@ import argparse
 import datetime
 
 import pyd2s
+from pyd2s import SaveFile
 from pyd2s.questdata import Quest
 from pyd2s.character import Character
 from pyd2s.item import ItemQuality, ExtendedItem
@@ -57,16 +58,32 @@ def print_savefile_data(d2s, path):
     '''
     print(f'''\
 [[ Savefile Information ]]
-Path        : {path}
+Path        : {path}''')
+
+    if d2s.type == SaveFile.Type.D2S:
+        print(f'''\
 MagicNumber : {d2s.magic:#08x}
 Version     : {d2s.version:#02x}
 Timestamp   : {d2s.timestamp} ({datetime.datetime.fromtimestamp(d2s.timestamp)})''')
+    else:
+        print(f'''\
+Header      : {d2s.header}
+Version     : {d2s.version:#02x}''')
+
+    if d2s.type == SaveFile.Type.SSS:
+        print(f'''\
+Shared Gald : {d2s.stored_gold}''')
+
+    return True
 
 
 def print_character_data(d2s):
     '''
     print character savefile information
     '''
+    if d2s.type != SaveFile.Type.D2S:
+        return False
+
     d2s_char = d2s.character
 
     skill_tree = d2s_char.character_class.skilltree
@@ -100,11 +117,16 @@ GoldBank    : {d2s_char.stats[Character.StatData.CharacterStat.GOLDBANK]:7} / 25
 
 Skill Tree  : {GLUE.join(skills)}''')
 
+    return True
+
 
 def print_mercenary_data(d2s):
     '''
     print mercenary savefile information
     '''
+    if d2s.type != SaveFile.Type.D2S:
+        return False
+
     d2s_merc = d2s.mercenary
 
     print(f'''\
@@ -114,6 +136,8 @@ ControlSeed : {d2s_merc.control_seed:#x}
 Name        : {d2s_merc.name} ({d2s_merc.name_id:#04x})
 Type        : {d2s_merc.type} ({d2s_merc.type_id:#04x})
 Experience  : {d2s_merc.experience}''')
+
+    return True
 
 
 def print_quest_act_data(act, d2s_qdata):
@@ -139,6 +163,9 @@ def print_quest_data(d2s):
     '''
     print quest savefile information
     '''
+    if d2s.type != SaveFile.Type.D2S:
+        return False
+
     d2s_qdata = d2s.questdata
 
     print('''\
@@ -147,6 +174,8 @@ def print_quest_data(d2s):
     print_quest_act_data('Normal', d2s_qdata.normal)
     print_quest_act_data('Nightmare', d2s_qdata.nightmare)
     print_quest_act_data('Hell', d2s_qdata.hell)
+
+    return True
 
 
 def print_waypoint_act_data(act, d2s_wayp):
@@ -166,6 +195,9 @@ def print_waypoint_data(d2s):
     '''
     print waypoint savefile information
     '''
+    if d2s.type != SaveFile.Type.D2S:
+        return False
+
     d2s_wayp = d2s.waypointdata
 
     print('''\
@@ -175,11 +207,33 @@ def print_waypoint_data(d2s):
     print_waypoint_act_data('Nightmare', d2s_wayp.nightmare)
     print_waypoint_act_data('Hell', d2s_wayp.hell)
 
+    return True
+
 
 def print_item_data(d2s):
     '''
     print item savefile information
     '''
+    if d2s.type == SaveFile.Type.D2I:
+        print('''\
+[[ Item Information ]]''')
+        item = d2s.item
+        item.is_identified = True
+        print(str(item))
+        return True
+
+    if d2s.type in [SaveFile.Type.SSS, SaveFile.Type.D2X]:
+        print(f'''\
+[[ PlugY Stash Information ]]
+Pages       : { len(d2s.pages) }''')
+        for (i, page) in enumerate(d2s.pages):
+            print(f'''\
+  - Page #{i} - '{page.name}' ''')
+            for (j, item) in enumerate(page.idata):
+                item.is_identified = True
+                print(f'  {j:3} ' + '\n      '.join(str(item).splitlines()))
+        return True
+
     d2s_item = d2s.itemdata
 
     print(f'''\
@@ -214,6 +268,8 @@ Count       : { len(d2s_item.gdata) }''')
         item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
 
+    return True
+
 
 def make_testdata_entries(itemdata):
     '''
@@ -234,7 +290,7 @@ def make_testdata_entries(itemdata):
             continue
 
         print(f'writing testdata for item {key}')
-        staging_path = f'tests/itemdata/new/{key}.data'
+        staging_path = f'tests/itemdata/new/{key}.d2i'
         with open(staging_path, 'wb') as itemfile:
             itemfile.write(raw_data)
 
@@ -252,42 +308,36 @@ def pyd2s_stat(argv=None):
 
     needs_newline = False
 
-    d2s = pyd2s.D2SaveFile(path)
+    d2s = pyd2s.SaveFile.open(path)
 
     if args.t:
         make_testdata_entries(d2s.itemdata)
         return
 
     if args.a or args.s:
-        needs_newline = True
-        print_savefile_data(d2s, path)
+        needs_newline = print_savefile_data(d2s, path)
 
     if args.a or args.c:
         if needs_newline:
             print('')
-        needs_newline = True
-        print_character_data(d2s)
+        needs_newline = print_character_data(d2s)
 
     if args.a or args.m:
         if needs_newline:
             print('')
-        needs_newline = True
-        print_mercenary_data(d2s)
+        needs_newline = print_mercenary_data(d2s)
 
     if args.a or args.q:
         if needs_newline:
             print('')
-        needs_newline = True
-        print_quest_data(d2s)
+        needs_newline = print_quest_data(d2s)
 
     if args.a or args.w:
         if needs_newline:
             print('')
-        needs_newline = True
-        print_waypoint_data(d2s)
+        needs_newline = print_waypoint_data(d2s)
 
     if args.a or args.i:
         if needs_newline:
             print('')
-        needs_newline = True
-        print_item_data(d2s)
+        needs_newline = print_item_data(d2s)
