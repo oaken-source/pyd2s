@@ -14,6 +14,44 @@ class SaveBuffer(bytearray):
     '''
     manage the buffer of a save file and maintain its checksum
     '''
+    class BitReadPointer:
+        '''
+        a self-advancing bit-wise read pointer
+        '''
+        def __init__(self, buffer, offset):
+            '''
+            constructor
+            '''
+            self._buffer = buffer
+            self._start = offset
+            self._pos = offset
+
+        def read_bits(self, length):
+            '''
+            read the next length bits and return as integer, advancing the pointer
+            '''
+            res = self._buffer.getbits(self._pos, length)
+            self._pos += length
+            return res
+
+        def read_string(self):
+            '''
+            read a 7-bit ascii null-terminated string from the buffer
+            '''
+            res = ''
+            while True:
+                next_char = self.read_bits(7)
+                if next_char == 0:
+                    break
+                res += chr(next_char)
+            return res
+
+        @property
+        def distance(self):
+            '''
+            the distance the pointer has travelled in bits
+            '''
+            return self._pos - self._start
 
     def __init__(self, path):
         '''

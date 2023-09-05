@@ -21,6 +21,7 @@ STAT_GROUPS = [
         stat['dgrp'] for stat in GameData.itemstatcost if stat['dgrp'])
 ]
 
+# extend with more groups hard-coded in the game
 STAT_GROUPS.extend([
     {
         'dgrp': ['firemindam', 'firemaxdam'],
@@ -65,6 +66,56 @@ class ItemStat:
     '''
     a magical item enhancement
     '''
+    @classmethod
+    def read_list(cls, ptr):
+        '''
+        read a list of ItemStat instances from a SaveBuffer pointer
+        '''
+        res = []
+
+        while True:
+            eid = ptr.read_bits(9)
+            if eid == 0x1FF:
+                break
+
+            # some item stats expect more data blocks without explicit eid's
+            consecutive = GameData.get_consecutive_item_stat_blocks(eid)
+
+            group = []
+            for _eid in range(eid, eid + consecutive):
+                item_stat_cost = GameData.itemstatcost[_eid]
+
+                field_width = int(item_stat_cost['Save Param Bits'] or 0)
+                param = ptr.read_bits(field_width)
+
+                field_width = int(item_stat_cost['Save Bits'] or 0)
+                value = ptr.read_bits(field_width)
+                value -= int(item_stat_cost['Save Add'] or 0)
+
+                group.append(ItemStat(_eid, param, value))
+
+            for child in group[1:]:
+                group[0].add_child(child)
+
+            res.append(group[0])
+
+        return list(cls.group_reduce(res))
+
+    @classmethod
+    def group_reduce(cls, iterable):
+        '''
+        reduce the property list into groups
+        '''
+        elements = list(iterable)
+        res = []
+        i = 0
+        while i < len(elements):
+            element = elements[i]
+            i += 1
+            i += element.group_with(elements[i:])
+            res.append(element)
+        return res
+
     def __init__(self, code, param, value):
         '''
         constructor
@@ -74,7 +125,10 @@ class ItemStat:
         else:
             self._itemstat = GameData.itemstatcost[code]
 
-        self._param = param
+        # if we don't have a param, use the value instead. this is useful in cases
+        # where mods and properties follow differnt conventions for encoding values
+        # for example with poisonlength.
+        self._param = param if param else value
         self._value = value
 
         self._children = []
@@ -346,7 +400,7 @@ class ItemStat:
         '''
         mindam = self.value
         maxdam = self._children[0].value
-        length = self._children[1].value
+        length = self._children[1].param
 
         args = (
             round(mindam / 256 * length),
@@ -382,7 +436,8 @@ class ItemProperty:
         self._itemstat = ItemStat(self._property['stat1'], param, min_value)
         for i in range(2, 8):
             if self._property[f'stat{i}']:
-                self._itemstat.add_child(ItemStat(self._property[f'stat{i}'], param, max_value))
+                self._itemstat.add_child(
+                    ItemStat(self._property[f'stat{i}'], param, max_value))
 
     @property
     def itemstat(self):

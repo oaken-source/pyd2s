@@ -37,19 +37,13 @@ class ItemQuality(Enum):
         return NotImplemented
 
 
-def group_reduce(iterable):
+class GemApplyType(Enum):
     '''
-    reduce the property list into groups
+    an enum listing all possible gem apply types
     '''
-    elements = list(iterable)
-    res = []
-    i = 0
-    while i < len(elements):
-        element = elements[i]
-        i += 1
-        i += element.group_with(elements[i:])
-        res.append(element)
-    return res
+    WEAPON = 0
+    HELM = 1
+    SHIELD = 2
 
 
 class Item:
@@ -209,6 +203,28 @@ class SimpleItem(Item):
     '''
     save data related to a simple item that is not an ear
     '''
+    def __init__(self, buffer, offset):
+        '''
+        constructor
+        '''
+        super().__init__(buffer, offset)
+
+        self._properties = []
+        if self._itemdata['code'] in GameData.gems:
+            gem = GameData.gems[self._itemdata["code"]]
+
+            self._properties = {
+                mod_type: list(ItemStat.group_reduce(
+                    ItemProperty(
+                        code=gem[f'{mod_type.name.lower()}Mod{i}Code'],
+                        param=int(gem[f'{mod_type.name.lower()}Mod{i}Param'] or 0),
+                        min_value=int(gem[f'{mod_type.name.lower()}Mod{i}Min'] or 0),
+                        max_value=int(gem[f'{mod_type.name.lower()}Mod{i}Max'] or 0),
+                    ) for i in range(1, 4) if gem[f'{mod_type.name.lower()}Mod{i}Code']
+                ))[::-1]
+                for mod_type in GemApplyType
+            }
+
     @property
     def type(self):
         '''
@@ -231,6 +247,21 @@ class SimpleItem(Item):
         '''
         return 14
 
+    @property
+    def required_level(self):
+        '''
+        the required level of this item. used for socketables like gems and runes
+        '''
+        return int(self._itemdata['levelreq'] or 1)
+
+    def modifiers(self, gem_type):
+        '''
+        a list of modifiers applied by this item to its parent socketable
+        '''
+        if not isinstance(gem_type, GemApplyType):
+            gem_type = GemApplyType(gem_type)
+        return [prop.itemstat for prop in self._properties[gem_type]]
+
     def __str__(self):
         '''
         a string representation of the item
@@ -243,27 +274,13 @@ class SimpleItem(Item):
         if self._itemdata['code'] in GameData.gems:
             block.append('Can be Inserted into Socketed Items')
 
-            gem = GameData.gems[self._itemdata["code"]]
+            block.append(f'\nWeapons: {", ".join(map(str, self.modifiers(0)))}')
+            block.append(f'Armor: {", ".join(map(str, self.modifiers(1)))}')
+            block.append(f'Helms: {", ".join(map(str, self.modifiers(1)))}')
+            block.append(f'Shields: {", ".join(map(str, self.modifiers(2)))}')
 
-            props = {
-                mod_type: list(group_reduce(
-                    ItemProperty(
-                        code=gem[f'{mod_type}Mod{i}Code'],
-                        param=int(gem[f'{mod_type}Mod{i}Param'] or 0),
-                        min_value=int(gem[f'{mod_type}Mod{i}Min'] or 0),
-                        max_value=int(gem[f'{mod_type}Mod{i}Max'] or 0),
-                    ) for i in range(1, 4) if gem[f'{mod_type}Mod{i}Code']
-                ))[::-1]
-                for mod_type in ['weapon', 'helm', 'shield']
-            }
-
-            block.append(f'\nWeapons: {", ".join(map(str, props["weapon"]))}')
-            block.append(f'Armor: {", ".join(map(str, props["helm"]))}')
-            block.append(f'Helms: {", ".join(map(str, props["helm"]))}')
-            block.append(f'Shields: {", ".join(map(str, props["shield"]))}')
-
-        if int(self._itemdata['levelreq'] or 0) > 1:
-            block.append(f'\nRequired Level: {self._itemdata["levelreq"]}')
+        if self.required_level > 1:
+            block.append(f'\nRequired Level: {self.required_level}')
 
         return '\n'.join(block)
 
@@ -319,15 +336,8 @@ class EarItem(Item):
         '''
         the name of the character who used to own this ear
         '''
-        name = ""
-        pos = 86
-        while True:
-            next_char = self._buffer.getbits(self._offset * 8 + pos, 7)
-            pos += 7
-            if next_char == 0:
-                break
-            name += chr(next_char)
-        return name
+        ptr = self._buffer.BitReadPointer(self._buffer, self._offset * 8 + 86)
+        return ptr.read_string()
 
     @property
     def length(self):
@@ -362,176 +372,127 @@ class ExtendedItem(SimpleItem):
 
         self._attributes = {}
 
-        def advance_bits(pos, length):
-            '''
-            advance the buffer by length bits and return the value and new pos
-            '''
-            return (self._buffer.getbits(self._offset * 8 + pos, length), pos + length)
-
-        # extended item data starts at bit offset 154
-        pos = 154
+        ptr = buffer.BitReadPointer(buffer, self._offset * 8 + 154)
 
         # icon select
-        flag, pos = advance_bits(pos, 1)
-        if flag:
-            self._attributes['icon_id'], pos = advance_bits(pos, 3)
+        if ptr.read_bits(1):
+            self._attributes['icon_id'] = ptr.read_bits(3)
 
         # class item affix
-        flag, pos = advance_bits(pos, 1)
-        if flag:
-            self._attributes['class_affix'], pos = advance_bits(pos, 11)
+        if ptr.read_bits(1):
+            self._attributes['class_affix'] = ptr.read_bits(11)
 
         # low quality details
         if self.quality == ItemQuality.LOW_QUALITY:
-            self._attributes['lq_affix'], pos = advance_bits(pos, 3)
+            self._attributes['lq_affix'] = ptr.read_bits(3)
 
         # high quality details
         if self.quality == ItemQuality.HIGH_QUALITY:
-            self._attributes['hq_affix'], pos = advance_bits(pos, 3)
+            self._attributes['hq_affix'] = ptr.read_bits(3)
 
         # magic item details
         if self.quality == ItemQuality.MAGICAL:
-            self._attributes['magic_prefix'], pos = advance_bits(pos, 11)
-            self._attributes['magic_suffix'], pos = advance_bits(pos, 11)
+            self._attributes['magic_prefix'] = ptr.read_bits(11)
+            self._attributes['magic_suffix'] = ptr.read_bits(11)
 
         # set item details part 1
         if self.quality == ItemQuality.SET:
-            self._attributes['set_id'], pos = advance_bits(pos, 12)
+            self._attributes['set_id'] = ptr.read_bits(12)
 
         # rare item details
         if self.quality == ItemQuality.RARE:
-            self._attributes['rare_name_1'], pos = advance_bits(pos, 8)
-            self._attributes['rare_name_2'], pos = advance_bits(pos, 8)
+            self._attributes['rare_name_1'] = ptr.read_bits(8)
+            self._attributes['rare_name_2'] = ptr.read_bits(8)
 
             for i in range(1, 4):
-                flag, pos = advance_bits(pos, 1)
-                if flag:
-                    self._attributes[f'rare_prefix_{i}'], pos = advance_bits(pos, 11)
-                flag, pos = advance_bits(pos, 1)
-                if flag:
-                    self._attributes[f'rare_suffix_{i}'], pos = advance_bits(pos, 11)
+                if ptr.read_bits(1):
+                    self._attributes[f'rare_prefix_{i}'] = ptr.read_bits(11)
+                if ptr.read_bits(1):
+                    self._attributes[f'rare_suffix_{i}'] = ptr.read_bits(11)
 
         # unique item details
         if self.quality == ItemQuality.UNIQUE:
-            self._attributes['unique_id'], pos = advance_bits(pos, 12)
+            self._attributes['unique_id'] = ptr.read_bits(12)
 
         # crafted item details
         if self.quality == ItemQuality.CRAFTED:
-            self._attributes['crafted_name_1'], pos = advance_bits(pos, 8)
-            self._attributes['crafted_name_2'], pos = advance_bits(pos, 8)
+            self._attributes['crafted_name_1'] = ptr.read_bits(8)
+            self._attributes['crafted_name_2'] = ptr.read_bits(8)
 
             for i in range(1, 4):
-                flag, pos = advance_bits(pos, 1)
-                if flag:
-                    self._attributes[f'crafted_prefix_{i}'], pos = advance_bits(pos, 11)
-                flag, pos = advance_bits(pos, 1)
-                if flag:
-                    self._attributes[f'crafted_suffix_{i}'], pos = advance_bits(pos, 11)
+                if ptr.read_bits(1):
+                    self._attributes[f'crafted_prefix_{i}'] = ptr.read_bits(11)
+                if ptr.read_bits(1):
+                    self._attributes[f'crafted_suffix_{i}'] = ptr.read_bits(11)
 
         # rune word details
         if self.is_runeword:
-            self._attributes['runeword_id'], pos = advance_bits(pos, 12)
-            pos += 4
-            pos -= 16
-            self._attributes['runeword_decode'], pos = advance_bits(pos, 16)
+            self._attributes['runeword_id'] = ptr.read_bits(12)
+            ptr.read_bits(4)
 
         # personalization details
         if self.is_personalized:
-            name = ''
-            while True:
-                next_char, pos = advance_bits(pos, 7)
-                if next_char == 0:
-                    break
-                name += chr(next_char)
-            self._attributes['personalized_name'] = name
+            self._attributes['personalized_name'] = ptr.read_string()
 
         # tomes
         if self._itemdata['type'] == 'book':
-            pos += 5
+            ptr.read_bits(5)
 
         # skip one unknown bit
-        pos += 1
+        ptr.read_bits(1)
 
         # armor details
         if self._itemdata['kind'] == 'armor':
-            self._attributes['defense'], pos = advance_bits(pos, 11)
-            self._attributes['defense'] -= 10
+            self._attributes['defense'] = ptr.read_bits(11) - 10
 
         # durability
         if self._itemdata['kind'] in ['armor', 'weapons']:
-            max_durability, pos = advance_bits(pos, 8)
+            max_durability = ptr.read_bits(8)
             if max_durability > 0:
                 self._attributes['max_durability'] = max_durability
-                self._attributes['durability'], pos = advance_bits(pos, 8)
-                pos += 1
+                self._attributes['durability'] = ptr.read_bits(8)
+                ptr.read_bits(1)
 
         # stackables
         if self._itemdata.get('stackable', 0) == '1':
-            self._attributes['quantity'], pos = advance_bits(pos, 9)
+            self._attributes['quantity'] = ptr.read_bits(9)
 
         # socketed items
         if self.is_socketed:
-            self._attributes['socket_count'], pos = advance_bits(pos, 4)
+            self._attributes['socket_count'] = ptr.read_bits(4)
 
         # set details part 2
         if self.quality == ItemQuality.SET:
-            set_properties, pos = advance_bits(pos, 5)
+            set_properties = ptr.read_bits(5)
 
-        def read_mod_list(pos):
-            '''
-            read a list of modifiers from the buffer
-            '''
-            res = []
-            while True:
-                eid, pos = advance_bits(pos, 9)
-                if eid == 0x1FF:
-                    break
+        # the first attribute list are regular affixes and modifiers
+        self._attributes['enhancements'] = ItemStat.read_list(ptr)
 
-                consecutive = GameData.get_consecutive_item_stat_blocks(eid)
-                group = []
-                for _eid in range(eid, eid + consecutive):
-                    item_stat_cost = GameData.itemstatcost[_eid]
-                    value = 0
-                    param = 0
-                    if item_stat_cost['Save Param Bits'] and int(item_stat_cost['Save Param Bits']):
-                        field_width = int(item_stat_cost['Save Param Bits'])
-                        param, pos = advance_bits(pos, field_width)
-                    if item_stat_cost['Save Bits'] and int(item_stat_cost['Save Bits']):
-                        field_width = int(item_stat_cost['Save Bits'])
-                        value, pos = advance_bits(pos, field_width)
-                        if item_stat_cost['Save Add'] and int(item_stat_cost['Save Add']):
-                            value -= int(item_stat_cost['Save Add'])
-                    group.append(ItemStat(_eid, param, value))
-
-                for child in group[1:]:
-                    group[0].add_child(child)
-
-                res.append(group[0])
-
-            return (sorted(group_reduce(res), reverse=True), pos)
-
-        self._attributes['enhancements'], pos = read_mod_list(pos)
-
+        # set items have one or two extra modifier lists
         if self.quality == ItemQuality.SET:
-            self._attributes['set_enhancements_1'], pos = read_mod_list(pos)
+            self._attributes['set_enhancements_1'] = ItemStat.read_list(ptr)
             if set_properties == 3:
-                self._attributes['set_enhancements_3'], pos = read_mod_list(pos)
+                self._attributes['set_enhancements_3'] = ItemStat.read_list(ptr)
 
+        # rune words have their own modifier list
         if self.is_runeword:
-            enhancements, pos = read_mod_list(pos)
-            self._attributes['enhancements'].extend(enhancements)
+            self._attributes['enhancements'].extend(ItemStat.read_list(ptr))
 
-        # round the item length up to the neearest byte
-        length = math.ceil(pos / 8)
+        # round the item length up to the nearest byte
+        length = (ptr.distance + 154 - 1) // 8 + 1
 
         # handle items placed in sockets
         self._socketed = []
         start = offset + length
+        gemapplytype = int(self._itemdata['gemapplytype'] or 0)
         for i in range(self.num_socketed):
             item = Item.from_data(self._buffer, start)
             start += item.length
             length += item.length
             self._socketed.append(item)
+            self._attributes['enhancements'].extend(item.modifiers(gemapplytype))
+
+        self._attributes['enhancements'].sort(reverse=True)
 
         # mark the length of the item in bytes
         self._length = length
@@ -541,26 +502,35 @@ class ExtendedItem(SimpleItem):
         '''
         produce the required level of the item
         '''
+        # base required level
         res = int(self._itemdata['levelreq'] or 1)
 
-        prefix = int(self._attributes.get('magic_prefix', 0))
-        if prefix:
-            res = max(res, int(GameData.magicprefix[prefix]['levelreq']))
-        suffix = int(self._attributes.get('magic_suffix', 0))
-        if suffix:
-            res = max(res, int(GameData.magicsuffix[suffix]['levelreq']))
-
-        for i in range(1, 4):
-            prefix = int(self._attributes.get(f'rare_prefix_{i}', 0))
+        # magic and rare prefix required levels
+        for key in ['magic_prefix', *[f'rare_prefix_{i}' for i in range(1, 4)]]:
+            prefix = int(self._attributes.get(key, 0))
             if prefix:
                 res = max(res, int(GameData.magicprefix[prefix]['levelreq']))
-            suffix = int(self._attributes.get(f'rare_suffix_{i}', 0))
+        for key in ['magic_suffix', *[f'rare_suffix_{i}' for i in range(1, 4)]]:
+            suffix = int(self._attributes.get(key, 0))
             if suffix:
                 res = max(res, int(GameData.magicsuffix[suffix]['levelreq']))
 
+        # to-skill modifiers required levels
+        mods = [
+            enhancement for enhancement in self._attributes['enhancements']
+            if enhancement.stat == 'item_singleskill']
+        for mod in mods:
+            skill_data = GameData.skills[mod.param]
+            res = max(res, int(skill_data['reqlevel'] or 1))
+
+        # set item required level
         if 'set_id' in self._attributes:
             set_data = GameData.setitems[int(self._attributes['set_id'])]
             res = max(res, int(set_data['lvl req'] or 1))
+
+        # socketables required levels
+        for item in self._socketed:
+            res = max(res, item.required_level)
 
         return res
 
@@ -571,6 +541,7 @@ class ExtendedItem(SimpleItem):
         '''
         name = self.name
 
+        # different names by item quality
         if self.quality == ItemQuality.LOW_QUALITY:
             prefix = GameData.lowqualityitems[self._attributes['lq_affix']]['Name']
             name = f'{prefix} {name}'
@@ -578,14 +549,14 @@ class ExtendedItem(SimpleItem):
             name = f'Superior {name}'
         if self.quality == ItemQuality.MAGICAL:
             if self._attributes['magic_prefix']:
-                affix = GameData.magicprefix[self._attributes["magic_prefix"]]
+                affix = GameData.magicprefix[self._attributes['magic_prefix']]
                 name = f'{GameData.get_string(affix["Name"])} {name}'
             if self._attributes['magic_suffix']:
-                affix = GameData.magicsuffix[self._attributes["magic_suffix"]]
+                affix = GameData.magicsuffix[self._attributes['magic_suffix']]
                 name = f'{name} {GameData.get_string(affix["Name"])}'
         if self.quality == ItemQuality.SET:
             name = GameData.setitems[self._attributes['set_id']]['index']
-        if self.quality == ItemQuality.RARE:
+        if self.quality in [ItemQuality.RARE, ItemQuality.CRAFTED]:
             name_1 = GameData.get_string(
                 GameData.rareaffix[self._attributes['rare_name_1']]['name'])
             name_2 = GameData.get_string(
@@ -594,19 +565,16 @@ class ExtendedItem(SimpleItem):
         if self.quality == ItemQuality.UNIQUE:
             if self._attributes['unique_id'] != 0xfff:
                 raise NotImplementedError()
-        if self.quality == ItemQuality.CRAFTED:
-            raise NotImplementedError()
 
+        # runewords are treated differently
         if self.is_runeword:
-            runes = [item.type for item in self._socketed]
-
-            # pad with empty strings
-            runes.extend([''] * (6 - len(runes)))
-
+            runes = [item.type for item in self._socketed] + [''] * (6 - len(self._socketed))
             runeword = next(rune for rune in GameData.runes.values() if all(
                 rune[f'Rune{i + 1}'] == runes[i] for i in range(6)))
             name = GameData.get_string(runeword['Name'])
-        elif self.num_socketed:
+
+        # gemmed, but no runeword gets a prefix
+        if self.num_socketed and not self.is_runeword:
             name = f'Gemmed {name}'
 
         return name
@@ -691,8 +659,12 @@ class ExtendedItem(SimpleItem):
             block.append(f'{self.name_color}{self.name}{colorama.Style.RESET_ALL}')
         elif self.is_runeword:
             block.append(f'{colorama.Fore.LIGHTBLACK_EX}{self.name}{colorama.Fore.RESET}')
+
+        # show the rune letters
+        if self._socketed:
             runes = [GameData.gems[item.type]['letter'] for item in self._socketed]
-            block.append(f"{self.name_color}'{''.join(runes)}'{colorama.Style.RESET_ALL}")
+            block.append(f"{colorama.Fore.YELLOW}{colorama.Style.DIM}"
+                         f"'{''.join(runes)}'{colorama.Style.RESET_ALL}")
 
         # handle charms
         if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
@@ -740,8 +712,12 @@ class ExtendedItem(SimpleItem):
 
         if 'mindam' in self._itemdata and int(self._itemdata['mindam'] or 0):
             mindam = int(self._itemdata['mindam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                mindam = mindam * 75 // 100
             new_mindam = mindam
             maxdam = int(self._itemdata['maxdam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                maxdam = maxdam * 75 // 100
             new_maxdam = maxdam
 
             mods = [
@@ -770,8 +746,12 @@ class ExtendedItem(SimpleItem):
 
         if '2handmindam' in self._itemdata and int(self._itemdata['2handmindam'] or 0):
             mindam = int(self._itemdata['2handmindam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                mindam = mindam * 75 // 100
             new_mindam = mindam
             maxdam = int(self._itemdata['2handmaxdam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                maxdam = maxdam * 75 // 100
             new_maxdam = maxdam
 
             mods = [
@@ -840,19 +820,9 @@ class ExtendedItem(SimpleItem):
             if reqstr > 0:
                 block.append(f'Required Strength: {reqstr}')
 
-        levelreq = self.required_level
-
-        mods = [
-            enhancement for enhancement in self._attributes['enhancements']
-            if enhancement.stat == 'item_singleskill']
-        if mods and self.is_identified:
-            for mod in mods:
-                skill_data = GameData.skills[mod.param]
-                levelreq = max(levelreq, int(skill_data['reqlevel'] or 1))
-
         # handle level requirement
         if self.required_level > 1 and self.is_identified:
-            block.append(f'Required Level: {levelreq}')
+            block.append(f'Required Level: {self.required_level}')
 
         # handle weapon class and attack speed
         weapon_classes = {
