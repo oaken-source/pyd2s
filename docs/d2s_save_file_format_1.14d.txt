@@ -6,18 +6,22 @@ http://www.coreyh.org/diablo-2-files/documentation/d2s_save_file_format_1.13d.ht
 
                         Diablo II Save Game File Format
 
-                      for Diablo II Expansion Set v1.13d
+                           Written by Trevin Beattie
+                        Revised by Yuri Sakhno (George1)
+                          Updated by Andreas Grapentin
 
-                             Updated July 1, 2012
+            for Diablo II v1.14d Expansion Set: Lord of Destruction
 
-This page was originally written by Trevin Beattie, whose site is no more (his
-latest version of this page is available here though).
-Now this page is maintained by me, Yuri Sakhno (George1).
+                           Updated September 5, 2023
+
+This page was originally written by Trevin Beattie and maintained until Version
+1.09, and later updated by Yury Sakhno To Version 1.13d. This is the latest
+version of the document updated by to incorporate changes made in 1.14d.
 
 Introduction
 
 This page describes the format of saved game files for the game Diablo II
-Expansion Set v1.13d. While the information presented here is mostly aplicable
+Expansion Set v1.14d. While the information presented here is mostly aplicable
 to earlier versions of the game, there were some drastic changes in version
 1.10 (particularly, in how character stats are saved), so if you intend to read
 files of the versions of the game erlier than that, you would probably be
@@ -52,7 +56,7 @@ may be the only section present in saved game file.
 ├────────┼──────┼─────────────────────────────────────────────────────────────────┤
 │8       │long  │Size of the file, in bytes.                                      │
 ├────────┼──────┼─────────────────────────────────────────────────────────────────┤
-│        │      │Checksum of the netire save file. If you attempt to hack the     │
+│        │      │Checksum of the entire save file. If you attempt to hack the     │
 │        │      │file without storing the correct checksum afterwards, your       │
 │        │      │game will fail to load. Fortunately, the checksum algorithm is   │
 │12      │long  │very simple. After clearing the checksum field, you add up the   │
@@ -190,13 +194,13 @@ may be the only section present in saved game file.
 │        │      │This is a numerical index into the game's language-dependent     │
 │        │      │string table for mercenary names. There is a separate list for   │
 │183     │short │each type of mercenary (Rogue Scout, Desert Mercenary, Eastern   │
-│        │      │Sorceror, and Barbarian). Trevin wrote a list of mercenary       │
-│        │      │names for the English 1.09 patch.                                │
+│        │      │Sorceror, and Barbarian). The name ranges for the mercenary are  │
+│        │      │defined in Hirelings.txt in the games data files.                │
 ├────────┼──────┼─────────────────────────────────────────────────────────────────┤
 │        │      │This code determines the difficulty level and act where your     │
 │185     │short │mercenary was found, as well as the attribute of your            │
-│        │      │mercenary (i.e. Cold, Fire, Lightning). Trevin wrote a list of   │
-│        │      │the mercenary codes appended to the end of the mercenary name.   │
+│        │      │mercenary (i.e. Cold, Fire, Lightning). This value is an index   │
+│        │      │into the Hirelings.txt file of the games data files.             │
 ├────────┼──────┼─────────────────────────────────────────────────────────────────┤
 │187     │long  │Your mercenary's experience points.                              │
 ├────────┼──────┼─────────────────────────────────────────────────────────────────┤
@@ -650,11 +654,6 @@ specific purpose is named ItemStatCost.txt, which is a kind of CSV file, but
 with tabulation characters used as separators instead of commas. The game
 actually uses the ItemStatCost.bin one, which is sort of a compiled version of
 the corresponding text file.
-
-Here is an Excel-formatted ItemStatCost.xlsx file that contains the data for
-1.13d patch with some nice formatting and extra comments. This file actually
-contains data from two tables, the one needed for the purpose of reading
-character stats is given on the ItemStatCost sheet.
 
 The column ID specifies the Id of the stat, as stored in the 9-bit field of the
 two-value pair. The row containing that Id describes the stat. There is a

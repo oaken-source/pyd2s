@@ -4,14 +4,19 @@ http://www.coreyh.org/diablo-2-files/documentation/d2s_save_item_format_1.13d.ht
 -------------------------------------------------------------------------------
 
 
-                             Diablo II Item Format
+                     Diablo II Save Game File Item Format
+
+                           Written by Trevin Beattie
+                        Revised by Yuri Sakhno (George1)
+                          Updated by Andreas Grapentin
 
             for Diablo II v1.13d Expansion Set: Lord of Destruction
 
-                             Updated June 23, 2012
+                          Updated September 23, 2023
 
-This file was originally written by Trevin Beattie, whose site is no more (his
-latest version of this file is available here though).
+This page was originally written by Trevin Beattie and maintained until Version
+1.09, and later updated by Yury Sakhno To Version 1.13d. This is the latest
+version of the document updated by to incorporate changes made in 1.14d.
 
 Welcome!
 
@@ -52,16 +57,69 @@ An item list begins with the following simple header:
 │        │       │The number of items your character has. This does not       │
 │2       │16 bits│include gems or jewels which have been glued into socketed  │
 │        │       │items.                                                      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│4       │varies │List of Items                                               │
 └────────┴───────┴────────────────────────────────────────────────────────────┘
 
-Your item list ends with another 4-byte structure similar to the above, except
-the second field is zero (i.e., { 0x4A, 0x4D, 0x00, 0x00 }).
+After the list of items, you will find another item list header similar to the
+one shown above; only this time the item count will be either 0 or 1. The value
+0 means that your character is currently alive. If the value is 1, then that
+means your character is dead (if you load this save, a corpse will be lying at
+your feet in town), in which case 12 bytes of (unknown) data will follow, after
+which there will be another items list header (the one with the identifier "JM"
+and item count) and item list for items on your corpse. Sadly, the meaning of
+the 12 bytes is unknown.
 
-In the Expansion Set, your hireling has his/her own item list. This list is
-separated from yours by the 2-character identifier "jf". This is followed by an
-item list header for the hireling, and then his/her items. The second item list
-is not terminated with the same 4-byte structure as the first; instead, it is
-followed by the 2-character identifier "kf".
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │2 chars│Identifier string "JM" { 0x4A, 0x4D }                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│2       │16 bits│Whether your Character is currently dead and has a corpse   │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│4       │12 Byte│Unknown. Optional; only present if the previous field is 1  │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+If you have an Expansion character, then the corpse item list (if there is one)
+will be followed by the 2-character identifier "jf". If and only if you have a
+mercenary (alive or dead), this header is followed by an item list header and
+(possibly empty) item list containing items equipped on the mercenary. This
+item list is followed by the 2-character trailer "kf".
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │2 chars│Identifier string "jf" { 0x6A, 0x66 }                       │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│2       │2 chars│Identifier string "JM" { 0x4A, 0x4D }. Optional, only       │
+│        │       │present if you have a mercenary.                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │The number of items your mercenary has. This does not       │
+│2       │16 bits│include gems or jewels which have been glued into socketed  │
+│        │       │items. Optional; only present if you have a mercenary.      │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│        │       │Item data                                                   │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│varies  │2 chars│Identifier string "kf" { 0x6B, 0x66 }                       │
+└────────┴───────┴────────────────────────────────────────────────────────────┘
+
+If you have a necromancer, it is possible for you to have an Iron Golem that is
+preserved when your game is saved and restored. The Iron Golem is based on an
+item. Following the mercenary item list, there will be a single byte that is
+0x00 if there is no golem, or 0x01 if there is. If there is a golem, this byte
+is followed by a single item.
+
+┌────────┬───────┬────────────────────────────────────────────────────────────┐
+│  Byte  │ Size  │                          Contents                          │
+│Position│       │                                                            │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│0       │1 Byte │1 if you have an iron golem, 0 otherwise. Optional; only    │
+│        │       │present on Nercomancers                                     │
+├────────┼───────┼────────────────────────────────────────────────────────────┤
+│1       │varies │Item data. Optional, only present if the previous field is 1│
+└────────┴───────┴────────────────────────────────────────────────────────────┘
 
 Item Structure part 1: Simple Items
 
@@ -211,10 +269,9 @@ the future. All sizes are in bits unless otherwise specified.
 ├────────┼───────┼────────────────────────────────────────────────────────────┤
 │        │       │Item's type. The type is 3 lower-case letters or numbers    │
 │        │       │followed by a space; e.g., "amu " (Amulet) or "2hs "        │
-│        │4 chars│(Two-Handed Sword). I have started a list of item           │
-│76      │(8 bits│identifiers (not posted; sorry), but it is by no means      │
-│        │ea.)   │complete; I'm sure I don't even have half of what's out     │
-│        │       │there!                                                      │
+│        │4 chars│(Two-Handed Sword)                                          │
+│76      │(8 bits│This value is an index into the Misc.txt, Weapons.txt and   │
+│        │ea.)   │Armor.txt files located in the games data files.            │
 │        │       │Warning: This field is not byte-aligned! It starts in the   │
 │        │       │middle of byte 9 and runs to the middle of byte 13.         │
 ├────────┼───────┼────────────────────────────────────────────────────────────┤
@@ -371,24 +428,17 @@ details:
 ┌───────────────┬─────────────────────────────────────────────────────────────┐
 │     Size      │                          Contents                           │
 ├───────────────┼────────────────────────────────────┬────────────────────────┤
-│               │Quality:                            │                        │
-│               │┌──────┬───────────────────┐        │                        │
-│               ││0     │Crude              │        │                        │
-│               │├──────┼───────────────────┤        │                        │
-│               ││1     │Cracked            │        │                        │
-│               │├──────┼───────────────────┤        │                        │
-│               ││2     │Damaged            │        │                        │
-│               │├──────┼───────────────────┤        │                        │
-│3              ││3     │Low Quality        │        │[Crude_Heavy_Boots]     │
-│               │└──────┴───────────────────┘        │                        │
-│               │I haven't recorded any instances of │                        │
-│               │other values, but that doesn't mean │                        │
-│               │there won't be any. Also, I'm       │                        │
-│               │certain the value has something to  │                        │
-│               │do with mods on an item's inherent  │                        │
-│               │(non-recorded) properties, such as  │                        │
-│               │weapon damage, but I haven't figured│                        │
-│               │out yet what the correlation is.    │                        │
+│               │This value is an index into the     │                        │
+│               │lowqualityitems.txt file in the     │                        │
+│               │games data files, indicating the    │                        │
+│               │name prefix of the low quality item.│                        │
+│3              │                                    │[Crude_Heavy_Boots]     │
+│               │Also, I'm certain the value ha      │                        │
+│               │something to do with mods on an     │                        │
+│               │item's inherent (non-recorded)      │                        │
+│               │properties, such as weapon damage,  │                        │
+│               │but I haven't figured out yet what  │                        │
+│               │the correlation is.                 │                        │
 └───────────────┴────────────────────────────────────┴────────────────────────┘
 
 Normal Item Data
@@ -420,58 +470,27 @@ level required to use them item and affect the item's color.
 ┌───────────────┬─────────────────────────────────────────────────────────────┐
 │     Size      │                          Contents                           │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
-│               │Item prefix (i.e., "Gold" or "Tangerine"). I've started a    │
-│11             │list of prefix identifiers, but it is very sparse at this    │
-│               │time. If this field is 0, the item has no prefix.            │
+│               │Item prefix (i.e., "Gold" or "Tangerine"). This is an index  │
+│11             │into the MagicPrefix.txt file in the games data files.       │
+│               │If this field is 0, the item has no prefix.                  │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
-│               │Item suffix (i.e., "of Greed" or "of Life"). I've started a  │
-│11             │list of suffix identifiers, but it is very sparse at this    │
-│               │time. If this field is 0, the item has no suffix.            │
+│               │Item suffix (i.e., "of Greed" or "of Life"). This is an index│
+│11             │into the MagicSuffix.txt file in the games data files.       │
+│               │If this field is 0, the item has no suffix.                  │
 └───────────────┴─────────────────────────────────────────────────────────────┘
 
 Set Item Data
 
-Set items have a 12-bit field containing the ID of the set. (Not the set
-member, but the whole set.) The set member is identified by cross-referencing
-the item type with the set Id. Also note that set items have an extra field
-following the item-specific data.
+Set items have a 12-bit field containing the ID of the set item. Also note
+that set items have an extra field following the item-specific data.
 
 ┌───────────────┬─────────────────────────────────────────────────────────────┐
 │     Size      │                          Contents                           │
 ├───────────────┼─────────────────────────┬───────────────────────────────────┤
-│               │Set identifier; i.e., all│                                   │
-│               │items which are part of  │                                   │
-│               │the set will have the    │                                   │
-│               │same value in this field.│                                   │
-│               │Since I've only          │                                   │
-│               │identified a few set     │                                   │
-│               │items, I'll give their   │                                   │
-│               │ID's here:               │                                   │
-│               │┌────┬─────────────┐     │                                   │
-│               ││2   │Cleglaw's    │     │                                   │
-│               ││    │Brace        │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││3   │Iratha's     │     │                                   │
-│               ││    │Finery       │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││4   │Isenhart's   │     │                                   │
-│12             ││    │Armory       │     │[Deaths_Hand_Leather_Gloves]       │
-│               │├────┼─────────────┤     │                                   │
-│               ││6   │Milabrega's  │     │                                   │
-│               ││    │Regalia      │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││7   │Cathan's     │     │                                   │
-│               ││    │Traps        │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││11  │Berserker's  │     │                                   │
-│               ││    │Arsenal      │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││12  │Death's      │     │                                   │
-│               ││    │Disguise     │     │                                   │
-│               │├────┼─────────────┤     │                                   │
-│               ││13  │Angelic      │     │                                   │
-│               ││    │Raiment      │     │                                   │
-│               │└────┴─────────────┘     │                                   │
+│               │Set item identifier. This│                                   │
+│12             │value is an index into   │[Deaths_Hand_Leather_Gloves]       │
+│               │the SetItems.txt file of │                                   │
+│               │the games data files.    │                                   │
 └───────────────┴─────────────────────────┴───────────────────────────────────┘
 
 Rare Item Data
@@ -487,10 +506,12 @@ variable fields!; See the table below.
 │     Size      │                          Contents                           │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │8              │This is the Id for the first word of the item's name (i.e.,  │
-│               │"Stone" or "Doom").                                          │
+│               │"Stone" or "Doom"). This value is an index into the          │
+│               │RarePrefix.txt file of the games data files.                 │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │8              │This is the ID for the second word of the item's name (i.e., │
-│               │"Finger" or "Shroud").                                       │
+│               │"Finger" or "Shroud"). This value is an index into the       │
+│               │RareSuffix.txt file of the games data files.                 │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │
@@ -498,7 +519,8 @@ variable fields!; See the table below.
 │               │First magic prefix (optional). Although this "prefix" isn't  │
 │11             │actually shown in the item name, it is used in determining   │
 │               │the magical properties, required level, coloring, and other  │
-│               │attributes of the rare item.                                 │
+│               │attributes of the rare item. This value is an index into the │
+│               │MagicPrefix.txt file of the games data files.                │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │
@@ -506,7 +528,8 @@ variable fields!; See the table below.
 │               │First magic suffix (optional). Although this "suffix" isn't  │
 │11             │actually shown in the item name, it is used in determining   │
 │               │the magical properties, required level, coloring, and other  │
-│               │attributes of the rare item.                                 │
+│               │attributes of the rare item. This value is an index into the │
+│               │MagicSuffix.txt file of the games data files.                │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │
@@ -594,10 +617,12 @@ Crafted items appear to be coded exactly like rare items, having a rare name
 │     Size      │                          Contents                           │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │8              │This is the Id for the first word of the item's name (i.e.,  │
-│               │"Stone" or "Doom").                                          │
+│               │"Stone" or "Doom"). This value is an index into the          │
+│               │RarePrefix.txt file of the games data files.                 │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │8              │This is the Id for the second word of the item's name (i.e., │
-│               │"Finger" or "Shroud").                                       │
+│               │"Finger" or "Shroud"). This value is an index into the       │
+│               │RareSuffix.txt file of the games data files.                 │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │
@@ -605,7 +630,8 @@ Crafted items appear to be coded exactly like rare items, having a rare name
 │               │First magic prefix (optional). Although this "prefix" isn't  │
 │11             │actually shown in the item name, it is used in determining   │
 │               │the magical properties, required level, coloring, and other  │
-│               │attributes of the crafted item.                              │
+│               │attributes of the rare item. This value is an index into the │
+│               │MagicPrefix.txt file of the games data files.                │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │
@@ -613,7 +639,8 @@ Crafted items appear to be coded exactly like rare items, having a rare name
 │               │First magic suffix (optional). Although this "suffix" isn't  │
 │11             │actually shown in the item name, it is used in determining   │
 │               │the magical properties, required level, coloring, and other  │
-│               │attributes of the crafted item.                              │
+│               │attributes of the rare item. This value is an index into the │
+│               │MagicSuffix.txt file of the games data files.                │
 ├───────────────┼─────────────────────────────────────────────────────────────┤
 │1              │If this field is 1, the next 11-bit field is present. If 0,  │
 │               │the next field is absent.                                    │

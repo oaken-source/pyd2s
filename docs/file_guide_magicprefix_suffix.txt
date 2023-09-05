@@ -1,0 +1,164 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+https://d2mods.info/forum/kb/viewarticle?a=445
+-------------------------------------------------------------------------------
+
+
+                              The Phrozen Keep's
+                  MagicPrefix.txt / MagicSuffix.txt File Guide
+
+                              Written by Nefarius
+                              Restyled by Ogodei
+
+                   for Diablo II Expansion Set v1.10 - 1.14d
+
+                           Updated October 22, 2018
+
+This document was created based on the excellent guides on the Phrozen Keep
+forums regarding the columns in the Diablo II Data files.
+
+Introduction
+
+These two files contain all the magic affixes available in the game and their
+respective names and effects.
+
+Column Descriptions
+
+Name - This field controls what string will be displayed in-game for this affix
+(in the case of AutoMagic.txt this field is unused).
+
+Version - This field controls whenever this affix can appear in classic games.
+
+    0   - pre v08 affixes (needed so characters from those versions can be
+          imported to current ones).
+    1   - post v08 affixes (affixes available in classic and LoD).
+    100 - LoD-only affixes (affixes available only in LoD).
+
+Spawnable - A boolean that controls whenever or not this affix can be picked by
+the randomizer that assigns affixes to magic and rare items. 0 means it cannot
+be picked, while 1 that it can be picked. NOTE: Untested: You should be able to
+use unspawnable affixes via cube recipes however, similar to the way the game
+handles unspawnable items.
+
+Rare - A boolean that controls whenever or not this affix can be picked by the
+randomizer when assigning affixes to a rare item. 0 means it cannot appear on
+rare items (magic only), 1 that can appear on rare and magic items.
+
+Level - The quality level (qLvl) of this affix, for this affix to be available
+on an item, that item must have an item level (iLvl) of at least this amount.
+The iLvl is equal to the level of the monster that drops the item, or the
+generation level (for vendors). The iLvl of an item is further influenced by
+the magic lvl field in Weapons.txt,Armor.txt and Misc.txt.
+
+MaxLevel - An extremely powerful but badly underused field. This controls the
+point at which this affix will no longer appear on items. Say we have a Level
+of 10 and a MaxLevel of 15, then the affix will only appear on items with a
+iLvl of 10-15, whereas it will never appear on items with iLvls 1-9 and 16-99.
+This is the easiest way to get those crappy low-level affixes of higher level
+drops to ensure that those are useful.
+
+LevelReq - The general level requirement that your character must meet before
+he can use an item that has this affix.
+
+ClassSpecific - This does not work the way RicFaith suggested in his 1.09
+guides. As you can see, it appears on +skilltab items, and we all know that you
+can find skiller grand charms for every class irregardless of what class you
+are. I assume that this is a bug fix to the problem that appeared during the
+early expansion beta, there +skilltab items effected all classes that used the
+item and not only the class that they were supposed to effect.
+
+Class - This field controls the character class for whom the class specific
+level requirement appears.
+
+ClassLevelReq - The level requirement your character must meet before he can
+use an item with this affix if his class is the class specified in the Class
+column. So lets say Class is Ama and normal LevelReq is 20 while ClassLevelReq
+is 25. Then an Amazon will be able to use this item at cLvl 20 while all other
+classes would need to be cLvl 25.
+
+Frequency - This works the same way rarity works in all other files. It
+controls the probability of this affix being picked by the randomizer within
+this affix group. In classic days, the game simply rolled a random on all
+available affixes, ever since v08 they are using this field (badly), which
+leads to the crappy rare items we see today. Lets say we have 5 affixes inside
+a group with Frequencies of 1, 5, 10, 50 and 100, then the chance for each of
+these to appear in case the game selects an affix from this group is: 1/166,
+5/166, 10/166, 50/166 and 100/166 (~1%, 3%, 6%, 30% and 60%). In short, the
+chance for an affix to appear is frequency/total_frequency. This field can hold
+values from 0 to 255. 0 will effectivelt make the affix never appear (unless
+accessed by a cube recipe, but see under Spawnable).
+
+Group - The group an affix is assigned to. The game cannot pick more then one
+affix from each group, this is used to prevent an item from spawning say with
+Ferocious and Cruel at the same time. (be aware that you can put affixes in
+MagicSuffix, MagicPrefix and AutoMagic in the same group, thus having prefix A
+never spawn together with suffix B). A blank field obviously puts the affix in
+group 0, this is not a bug.
+
+Mod1Code to Mod3Code - The modifier(s) granted by this affix. This is an ID
+pointer from PROPERTIES.txt.
+
+Mod1Param to Mod3Param - The parameter passed to the associated modifier.
+Whenever a modifier uses the parameter or not depends on the modifier, see
+Properties.txt.
+
+Mod1Min to Mod3Min - The minimum value passed to the associated modifier.
+Whenever, and if so how, the modifier uses this value depends on the modifier,
+see Properties.txt.
+
+Mod1Max to Mod3Max - The maximum value passed to the associated modifier.
+Whenever, and if so how, the modifier uses this value depends on the modifier,
+see Properties.txt.
+
+Transform - A boolean that controls whenever or not this affix will alter the
+color of the item it appears on. 0 for not changing color, 1 for doing it .
+
+TransformColor - An ID pointer from Colors.txt, this determines what color the
+modifier will give this item when the Transform boolean is true.
+
+    Transform Color     Code
+    White               whit
+    Light Grey          lgry
+    Dark Grey           dgry
+    Black               blac
+    Light Blue          lblu
+    Dark Blue           dblu
+    Crystal Blue        cblu
+    Light Red           lred
+    Dark Red            dred
+    Crystal Red         cred
+    Light Green         lgrn
+    Dark Green          dgrn
+    Crystal Green       cgrn
+    Light Yellow        lyel
+    Dark Yellow         dyel
+    Light Gold          lgld
+    Dark Gold           dgld
+    Light Purple        lpur
+    Dark Purple         dpur
+    Orange              oran
+    Bright White        bwht
+
+iType1 to iType7 - These fields are ID pointers to ItemTypes.txt that control
+what item types this affix can appear on. The affix can appear on all item
+types that inherit the item type in this field. So putting 'armo' in here will
+make it appear on all armor (etc).
+
+eType1 to eType5 - These fields are ID pointers to ItemTypes.txt that control
+what item types this affix will never appear on. The affix will not appear on
+any item type that inherits this item type. So putting 'armo' here would
+prevent it from showing up on all armor (etc).
+
+Divide - This does not work the way the name suggests (the fields are all
+filled with 0), if it works at all that is, it doesn't appear to work in
+ItemStatCost so it probably doesn't here either. But if it did work like that
+other column is supposed to work, this controls the percentage the price is
+reduced by in 1024th. Where 1024 equals 100%.
+
+Multiply - The price of the item is multiplied by this value when this affix is
+present on it (keep away from this field unless you want to make something
+extremely expensive without editing ItemStatCost or the base prices). In
+1024ths.
+
+Add - The hard amount that is added to the price of this item when this affix
+is present on it. 

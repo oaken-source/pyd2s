@@ -3,17 +3,32 @@ originally extracted from here:
 http://www.coreyh.org/diablo-2-files/documentation/d2s_save_skills_format_1.13d.html
 -------------------------------------------------------------------------------
 
+                     Diablo II Save Game File Skills Format
 
-                          Diablo II Character Skills
+                           Written by Trevin Beattie
+                        Revised by Yuri Sakhno (George1)
+                          Updated by Andreas Grapentin
+
+            for Diablo II v1.14d Expansion Set: Lord of Destruction
+
+                           Updated September 5, 2023
+
+This page was originally written by Trevin Beattie and maintained until Version
+1.09, and later updated by Yury Sakhno To Version 1.13d. This is the latest
+version of the document updated by to incorporate changes made in 1.14d.
+
+Introduction
 
 Well, I did say I would list the character skills in a separate table, and I
-guess I've put it off long enough.  So here it is!
+guess I've put it off long enough. So here it is!
 
 There are two numbers shown for each character skill.  One is the offset into
 the character skills section of the saved character file.  The other is the
 skill ID used in some of the magical properties (i.e., "+2 to Bash (Barbarian
 Only)", "level 3 Fire Bolt (33/33 Charges)", etc.), and in the button actions.
 The common skill ID's are only used in button actions.
+
+The skill ID is an index into the Skills.txt file of the games data files.
 
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                               Common Skills                                │

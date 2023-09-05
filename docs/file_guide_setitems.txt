@@ -1,0 +1,240 @@
+-------------------------------------------------------------------------------
+originally extracted from here:
+https://d2mods.info/forum/kb/viewarticle?a=348
+-------------------------------------------------------------------------------
+
+
+                              The Phrozen Keep's
+                            SetItems.txt File Guide
+
+                          Written by Alkalund & Char
+                             Revised by Myhrginoc
+                           Restyled by HarvestWombs
+
+                   for Diablo II Expansion Set v1.10 - 1.14d
+
+                           Updated February 17, 2020
+
+This document was created based on the excellent guides on the Phrozen Keep
+forums regarding the columns in the Diablo II Data files.
+
+Introduction
+
+This file contains data for all set items that can appear in the game.
+
+Column Descriptions
+
+index: string key to item's name in a .tbl file
+
+set: string key to the index field in Sets.txt - the set the item is a part of.
+
+item: base item code of this set item (matches code field in Weapons.txt,
+Armor.txt or Misc.txt files).
+
+*item: name of the base item of this set item (reference only, not loaded into
+game).
+
+Rarity: Chance to pick this set item if more then one set item of the same base
+item exist, this uses the common rarity/total_rarity formula, so if you have
+two set rings, one with a rarity of 100 the other with a rarity of 1, then the
+first will drop 100/101 percent of the time (99%) and the other will drop 1/101
+percent of the time (1%), rarity can be anything between 0 and 255.
+
+lvl: The quality level of this set item, monsters, cube recipes, vendors,
+objects and the like most be at least this level or higher to be able to drop
+this item, otherwise they would drop a magical item with twice normal
+durability.
+
+lvl req: The character level required to use this set item.
+
+chrtransform: Palette shift to apply to the the DCC component-file and the DC6
+flippy-file (whenever or not the color shift will apply is determined by
+Weapons.txt, Armor.txt or Misc.txt). This is an ID pointer from Colors.txt.
+
+invtransform: Palette shift to apply to the the DC6 inventory-file (whenever or
+not the color shift will apply is determined by Weapons.txt, Armor.txt or
+Misc.txt). This is an ID pointer from Colors.txt.
+
+invfile: Overrides the invfile and setinvfile specified in Weapons.txt,
+Armor.txt or Misc.txt for the base item. This field contains the file name of
+the DC6 inventory graphic (without the .dc6 extension).
+
+flippyfile: Overrides the flippyfile specified in Weapons.txt, Armor.txt or
+Misc.txt for the base item. This field contains the file name of the DC6 flippy
+animation (without the .dc6 extension).
+
+dropsound: Overrides the dropsound (the sound played when the item hits the
+ground) specified in Weapons.txt, Armor.txt or Misc.txt for the base item. This
+field contains an ID pointer from Sounds.txt.
+
+dropsfxframe: How many frames after the flippy animation starts playing will
+the associated drop sound start to play. This overrides the values in
+Weapons.txt, Armor.txt or Misc.txt.
+
+usesound: Overrides the usesound (the sound played when the item is consumed by
+the player) specified in Weapons.txt, Armor.txt or Misc.txt for the base item.
+This field contains an ID pointer from Sounds.txt.
+
+cost mult: The base item's price is multiplied by this value when sold,
+repaired or bought from a vendor.
+
+cost add: After the price has been multiplied, this amount of gold is added to
+the price on top.
+
+add func: a property mode field that controls how the variable attributes will
+appear and be functional on a set item. See the appendix for further details
+about this field's effects.
+
+    0 -> no green properties on item (apropxx will appear as a blue attribute
+         on the list instead).
+    1 -> green properties (apropxx) depend on which other items from the set 
+         are equipped.
+    2 -> green properties (apropxx) depend on how many other items from the 
+         set are equipped.
+
+Blue Attributes
+
+prop1 to prop9: An ID pointer of a property from Properties.txt, these columns
+control each of the nine different fixed (blue) modifiers a set item can grant
+you at most.
+
+par1 to par9: The parameter passed on to the associated property, this is used
+to pass skill IDs, state IDs, monster IDs, montype IDs and the like on to the
+properties that require them, these fields support calculations.
+
+min1 to min9: Minimum value to assign to the associated property. Certain
+properties have special interpretations based on stat encoding (e.g.
+chance-to-cast and charged skills). See the File Guide for Properties.txt and
+ItemStatCost.txt for further details.
+
+max1 to max9: Maximum value to assign to the associated property. Certain
+properties have special interpretations based on stat encoding (e.g.
+chance-to-cast and charged skills). See the File Guide for Properties.txt and
+ItemStatCost.txt for further details.
+
+Green Attributes
+
+aprop1a,aprop1b to aprop5a,aprop5b: An ID pointer of a property from
+Properties.txt, these columns control each of the five pairs of different
+variable (green) modifiers a set item can grant you at most.
+
+apar1a,apar1b to apar5a,apar5b: The parameter passed on to the associated
+property, this is used to pass skill IDs, state IDs, monster IDs, montype IDs
+and the like on to the properties that require them, these fields support
+calculations.
+
+amin1a,amin1b to amin5a,amin5b: Minimum value to assign to the associated
+property. Certain properties have special interpretations based on stat
+encoding (e.g. chance-to-cast and charged skills). See the File Guide for
+Properties.txt and ItemStatCost.txt for further details.
+
+amax1a,amax1b to amax5a,amax5b: Maximum value to assign to the associated
+property. Certain properties have special interpretations based on stat
+encoding (e.g. chance-to-cast and charged skills). See the File Guide for
+Properties.txt and ItemStatCost.txt for further details.
+
+*eol: terminator field, not used in game, primary purpose is to keep Microsoft
+Excel from misbehaving.
+
+APPENDIX
+
+Green attributes will appear depending on how many set items are equipped, if
+the add func field is either 1 or 2. If the add func field is 1, in addition to
+how many items, the green attributes are controlled by which other items you
+have equipped as well. If a set has X number of items, at most there will be
+X-1 green attributes on any item.
+
+If add func = 2, these properties will appear as below. Many of the 'classic'
+sets in the unmodded game have this configuration.
+
+    aprop1a, aprop1b -> when any second set item is also equipped.
+    aprop2a, aprop2b -> when any third set item is also equipped.
+    aprop3a, aprop3b -> when any fourth set item is also equipped.
+    aprop4a, aprop4b -> when any fifth set item is also equipped.
+    aprop5a, aprop5b -> when any sixth set item is also equipped.
+
+The fun really begins when add func = 1. Different properties can emerge as
+different items are equipped in combination from the same set. The attributes
+appear for specific item pairs regardless of whether or how many other items
+from the set are also equipped. Civerb's Ward (shield) is the one and only
+example of this configuration in the unmodded game.
+
+If the first item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the second item listed in the set definition is
+                        also equipped.
+    aprop2a, aprop2b -> when the third item listed in the set definition is
+                        also equipped.
+    aprop3a, aprop3b -> when the fourth item listed in the set definition is
+                        also equipped.
+    aprop4a, aprop4b -> when the fifth item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the sixth item listed in the set definition is
+                        also equipped.
+
+If the second item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the first item listed in the set definition is 
+                        also equipped.
+    aprop2a, aprop2b -> when the third item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the sixth item listed in the set definition is 
+                        also equipped.
+
+If the third item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the first item listed in the set definition is
+                        also equipped.
+    aprop2a, aprop2b -> when the second item listed in the set definition is
+                        also equipped.
+    aprop3a, aprop3b -> when the fourth item listed in the set definition is
+                        also equipped.
+    aprop4a, aprop4b -> when the fifth item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the sixth item listed in the set definition is
+                        also equipped.
+
+If the fourth item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the first item listed in the set definition is
+                        also equipped.
+    aprop2a, aprop2b -> when the second item listed in the set definition is
+                        also equipped.
+    aprop3a, aprop3b -> when the third item listed in the set definition is
+                        also equipped.
+    aprop4a, aprop4b -> when the fifth item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the sixth item listed in the set definition is
+                        also equipped.
+
+If the fifth item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the first item listed in the set definition is
+                        also equipped.
+    aprop2a, aprop2b -> when the second item listed in the set definition is
+                        also equipped.
+    aprop3a, aprop3b -> when the third item listed in the set definition is
+                        also equipped.
+    aprop4a, aprop4b -> when the fourth item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the sixth item listed in the set definition is
+                        also equipped.
+
+If the sixth item listed in the set definition is equipped, it will get the
+green property:
+
+    aprop1a, aprop1b -> when the first item listed in the set definition is
+                        also equipped.
+    aprop2a, aprop2b -> when the second item listed in the set definition is
+                        also equipped.
+    aprop3a, aprop3b -> when the third item listed in the set definition is
+                        also equipped.
+    aprop4a, aprop4b -> when the fourth item listed in the set definition is
+                        also equipped.
+    aprop5a, aprop5b -> when the fifth item listed in the set definition is
+                        also equipped.

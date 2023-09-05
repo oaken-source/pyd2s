@@ -1,25 +1,25 @@
 -------------------------------------------------------------------------------
 originally extracted from here:
-https://d2mods.info/forum/kb/viewarticle?a=317
+https://d2mods.info/forum/kb/viewarticle?a=2
 -------------------------------------------------------------------------------
 
 
                               The Phrozen Keep's
-                              Misc.txt File Guide
+                             Armor.txt File Guide
 
-                        Written by Kingpin & Ric Faith
-                 Expanded and Restyled by Lord Drekas & Ogodei
+             Written by Nefarius, Kingpin, Ric Faith & Paul Siramy
+                       Expanded and Restyled by Ogodei
 
                    for Diablo II Expansion Set v1.10 - 1.14d
 
-                           Updated October 24, 2018
+                           Updated May 25, 2022
 
 This document was created based on the excellent guides on the Phrozen Keep
 forums regarding the columns in the Diablo II Data files.
 
 Introduction
 
-This guide contains all the information you need concerning Misc.txt. Before
+This guide contains all the information you need concerning Armor.txt. Before
 you start reading what each column does, please take note of the following:
 
 Armor.txt, Misc.txt and Weapons.txt have many identical columns. That's because
@@ -41,20 +41,13 @@ Column Descriptions
 
 name: Reference only, its a comment field.
 
-szFlavorText: unknown if used
+version: A value of 0 means the item will only spawn in classic. A value of 100
+makes it available in Expansion.
 
 compactsave: Boolean which ranges from 0 to 1. This is used to get a smaller
 filesize but will NOT save any stats to the item, this means it will not save
 any quantity, automagic, affixes, damage, armor, durability e.tc. This is often
 used by items that don't need any stats stored like Healing potions, gems.
-
-version: If you set it to 0, then your misc item will only be available in
-Classic. A value of 100, instead, makes it available in Expansion.
-
-level: base item level.
-Example: a monster with a mlvl of 20 cannot drop a lvl30 item.
-
-levelreq: the minimum level the players need to have to use that item
 
 rarity: Rarity, if set to 0, excludes the item(s) to be dropped from the armor
 racks. If set to something bigger than 0, then it sets the rarity for this item
@@ -66,8 +59,20 @@ spawnable: if set to 0 , this field tells the game that the item cannot be
 found for sale when you interact with NPC's. Setting it to 1 has the opposite
 effect.
 
+minAC - maxAC: The minimum and maximum Armor Class (AC) this item can have.
+Take note that ItemStatCost.txt sets the limit to how high Defense can be.
+
+Absorbs: Unused. It is a leftover field.
+
 speed: If set to a positive value, then it slows down your character when worn.
 Negative values, instead, will render the character faster.
+
+reqstr: Strength required to wear this armor. it ranges from 0 to 65535.
+NOTE: If you set values exceeding the caps, you will get a rollover.
+
+levelreq: the minimum level the players need to have to use that item
+
+block: Chance to block. Block chances are capped at 75%
 
 durability - nodurability - durwarning: Durability sets the base durability,
 and ranges from 0 to 255(if set higher or lower than these two caps, you'll
@@ -75,20 +80,60 @@ have a rollover). NoDurability means the item has not any durability.
 DurWarning displays the warning icon on the right part of your screen when the
 Durability of the item hits the amount set here.
 
-gamble cost: Overrides the default Gamble Cost, but it only works for Rings
-and Amulets
+indestructible: If set to 0 , then the item will be indestructible. If set to
+1, then the item will be subject to durability and can get broken.
+Indestructible items DO NOT read any of the durability related fields.
+
+cost: Base cost of the item.
+
+gamble: Overrides the default Gamble Cost, but it only works for Rings and
+Amulets in Misc.txt
 
 code: This is a 3 or 4 alphanumeric code which identifies the item for certain
 purposes.
-
-alternategfx: it's the code of the DCC used by the Player animation while
-equipping the item.
 
 namestr: It is the name string of the item. NOTE: If this string is NOT present
 in a TBL, it will be considered directly as the name of the item, but if this
 code IS present in a TBL then it'll be that TBL record that will be used as the
 name of the item instead. Also, keep in mind that if you want a string name
 with at least 1 space, then you'll have to create a record in a TBL.
+
+normcode - ubercode - ultracode: There are the "code" strings referring to the
+normal, exceptional and èlite version of the item. These codes are used to know
+the version of an item in certain situation, like when generating the outputs
+set in CubeMain.txt
+
+    Lion Helm has a code of ba7, and it's classified as Exceptional, because:
+
+    normcode = ba2
+    ubercode = ba7
+    ultracode = bac
+
+    So, the Lion helm is an exceptional item, and cube recipes which require
+    normal or ultra items won't work
+
+level: Base item level, also known as "Quality Level" or "qLvl".  NOTE: this
+is NOT the iLvl of the item. ILvl indicates which affixes can appear on the
+item. QLvl is, instead, used when the game creates the treasure class and
+preventing chests and monsters from dropping items of every posible level. A
+Level 20 monster will never drop a Level 30 armor used by the "armo30" preset
+row in TreasureClassEx
+
+magic lvl: it is the Additional magic level a.k.a mLvl (do not confuse mLvl
+with other similar names like mLvl intended as Monster Level or cLvl, intended
+as Character Level). If mLvl is set to 5 and a level 10 player gambles an item,
+you get cLvl + mLvl affixes, so Level 15 affixes
+
+auto prefix: it is a prefix automatically spawned on the item, taken from the
+column "group" of Automagic.txt.
+
+alternategfx: it's the code of the DCC used by the Player animation while
+equipping the item.
+
+OpenBetaGfx: Unused. Reference to which alternategfx was used in the Beta
+version.
+
+spelloffset: Unknown. Only present in Armor.txt
 
 component: Layer of the Player Animation used by the item, taken from
 Composit.txt. The Composit table is indexed as follows:
@@ -109,6 +154,26 @@ Composit.txt. The Composit table is indexed as follows:
     14 - Special6     S6
     15 - Special7     S7
     16 - Special8     S8
+
+rArm - lArm - Torso - Legs - rSPad - lSPad: These columns indicates how the
+character graphics and animations will be altered by wearing the item. It
+ranges from -1 (remove even the light\naked version) to 2 (heavy version).
+These indexes are taken from the table indexes located in ArmType.txt which is
+hardcoded.
+
+    0 - Light           lit
+    1 - Medium          med
+    2 - Heavy           hvy
+
+If you'd ever wish to extend this table, follow this simple ASM code edit:
+https://d2mods.info/forum/viewtopic.php?f=8&t=65261&hilit=ArmType
+
+flippyfile - invfile - uniqueinvfile - setinvfile: These four columns contain
+DC6 filenames to use for various cases: flippyfile is the animation used when
+the item drops on the ground, invfile is the item image when it's in your
+inventory, uniqueinvfile is used by the unique version of the item in your
+inventory and setinvfile is used by the set version of the item in your
+inventory. All of these files are located in Data\Global\Items\
 
 invwidth- invheight: width and heght of the item, in terms of inventory cells.
 
@@ -132,38 +197,28 @@ it's inserted within:
 
 If you use other values, your item won't be able to have sockets.
 
-flippyfile - invfile - uniqueinvfile: These four columns contain DC6 filenames
-to use for various cases: flippyfile is the animation used when the item drops
-on the ground, invfile is the item image when it's in your inventory and
-uniqueinvfile is used by the unique version of the item in your inventory. All
-of these files are located in Data\Global\Items\
-
-special: Not used, Comment field.
-
-Transmogrification Parameters
-
-Transmogrify: It states whether the item can be turned into another one by
-right-click or not.
-
-TMogType: It states 3 character code which respresents the item that this item
-becomes when right clicked (see Transmogrify)
-
-TMogMin - TMogMax: Minimum/Maximum quantity appearing of the item in
-Transmogrify
-
-Miscellaneous Parameters I
-
 useable: It specifies whether the item can be used via right-click. ( 1 : yes ;
 0 : no). This is a column often used in Misc.txt for potions and scrolls NOTE:
 The game knows what to with the item by its code. Unless you're doing dll
 editing, don't expect an item to do something just because you have set this
 column to 1.
 
-throwable: A value of 1 renders this item throwable. 0 disables throwing.
+Throwable: Not used here.
 
-type: It tells the first Item base type taken from ItemTypes.txt
+missiletype: Missile gfx to load when the item is thrown, taken from
+Missiles.txt
 
-type2: It tells the secondItem base type taken from ItemTypes.txt
+stackable - minstack - maxstack - qntwarning: These four columns handle the
+possibilty, for the item, to be stacked. stackable decides if the item can be
+stacked or not. ( 1 : yes ; 0 : no). minstack is the Minimum quantity of the
+stack when the item is spawned. maxstack is the Maximum quantity of the stack
+when the item is spawned. qntwarning is the Quantity from which the warning
+message appears. NOTE: These columns are not used in Armor.txt, but only in
+Misc.txt (Keys, Books) and Weapons.txt (Javelins, Arrows ...)
+
+type - type2: Base types of the item. Types are used in various instances like
+when messing with Cube Recipe and Socketing. They're taken from the field named
+"code" in ItemTypes.txt.
 
 dropsound - dropsfxframe - usesound: these three columns are related to the
 item sound. The code is taken from the field "Sound" in Sounds.txt.  dropsound
@@ -171,82 +226,71 @@ is used when the item drops on the ground, dropsfxframe is the point (measured
 in frames) after which the sound from 'dropsound' plays and usesound is the
 sound played when the item is used or moved through the inventory.
 
+quest - questdiffcheck: these two columns are related to quests: quest handles
+some hardcoded ID's for quest items. Quest items are counted as Uniques and
+cannot be sold to NPC's. questdiffcheck indicates that the item has a
+difficulty check. When set to 1, this item will only work in the difficulty in
+which it's been found. NOTE: This column is originally only present in Misc.txt
+and Weapons.txt.
+
 unique: If this column is set to 1 , then the item can only spawn as unique.
 
 transparent - transtbl: Unknown. Apparently has no effect in game. TransTbl
 could be related to the item's blending mode.
 
+quivered: It tells if the item needs ammunitions to work or not. ( 1 : yes ; 0
+: no).
+
 lightradius: Not used.
 
-belt: numberic Id from belts.txt (defines number of potion slots). It states
-whether the item can or cannot be put inside the belt cells. ( 1 : yes ; 0 :
-no). NOTE: Since Misc.txt and Armor.txt are part of the same file, it seems
-that the game looks for the type of the item first, and *then* decide how to
-understand the value in this column.
+Belt: This column has two different meanings. In Armor.txt it works as an index
+telling which type of belt the item is:
 
-autobelt: Whether or not the item appears in your belt when picked up
+    0: no belt (1 potion row only)
+    1: Sash (2 potion rows)
+    2: not used
+    3: Girdles (4 potion rows)
+    4: light belts (2 potion rows)
+    5: heavy belts (3 potion rows)
+    6: uber belts (4 potion rows)
 
-stackable: A value of 0 means that the item cannot be stacked, while 1 means it
-can be stacked.
+while in Misc.txt the column has another meaning, which states whether the item
+can or cannot be put inside the belt cells. ( 1 : yes ; 0 : no).  NOTE: Since
+Misc.txt and Armor.txt are part of the same file, it seems that the game looks
+for the type of the item first, and *then* decide how to understand the value
+in this column.
 
-minstack: Minimum quantity of the stack when the item is spawned.
+mindam - maxdam: Minimum and Maximum damage that this item provide. If used on
+a shield or on a pair of boots, the damage in question will be either Smite or
+Kick damage.
 
-maxstack: Maximum quantity of the stack when the item is spawned.
+StrBonus- DexBonus: The amount of Strength and \ or Dexterity required to
+double the damage output while wearing this item. In Armor.txt it is important
+to note that only boots are using this column.  However, here is an example
+that will clarify any doubt in regard.
 
-qntwarning: Quantity from which the warning message appears.
+    We have a Maiden spear, which has a StrBonus of 80, a DexBonus of 50,
+    2-hand mindam of 18 and a 2-hand maxdam of 24.
 
-spawnstack: It tells how large is the stack when the item spawns.
+    Now, if the player has 100 Strength and 120 Dexterity, the item's damage
+    output will be 83-111 instead of 18-24.
 
-quest: handles some hardcoded ID's for quest items. Quest items are counted as
-Uniques and cannot be sold to NPC's.
+    By Strength, it will be affected this way:
+      - Min = 18 * 100 / 80 = 22.5
+      - Max = 24 * 100 / 80 = 30
 
-questdiffcheck: indicates that the item has a difficulty check. When set to 1,
-this item will only work in the difficulty in which it's been found.
+    By Dexterity, it will be affected this way:
+      - Min = 18 * 120 / 50 = 43.2
+      - Max = 24 * 120 / 50 = 57.6
 
-missiletype: Missile gfx to load when the item is thrown, taken from
-Missiles.txt
+    Total
+      - Min damages = 18 + 22 + 43 = 83
+      - Max damages = 24 + 30 + 57 = 111
 
-spellicon: It tells which spellicon should be used, when you use the item (eg.
-the throwing-icon for jav's )
-
-pSpell: Pspell is an index from a hardcoded table which allows several different effects for items that are meant to be used in game. All temporary potions can use pSpell = 6. This is a parameter for the function that handles the temporary items.
-
-state - cstate1 - cstate2: This parameter is for getting an Overlay effect.
-this is only a visual effect.  NOTE: state and cstate1 needs to be the same
-stat id from States.txt NOTE 2: cstate1 is used to get a state from States.txt.
-It is really important that you remember which state you have chosen when
-you're using stat1, otherwise you will get a known bug (which is actually a
-misunderstanding in regards of how temporary items work).
-
-len: This parameter is used to set the timer for the temporal items. This
-cannot be 0.
-
-stat1 - stat3 - calc1 - calc3: stat X tells which stat to add to the player
-who's using the item (this is used in conjuction with cState X) calc X
-specifies the value of the stat.
-
-spelldesc: it ranges from 0 to 3
-
-    0 = don't use any description or calculation.
-    1 = use spelldescrtr only
-    2 = use spelldescrtr and spelldesccalc.
-
-spelldescstr: This gives a description to your temporal item. It may come in
-handy to give players a short description about what to expect when using the
-item.
-
-spelldesccalc: This shows the total effect of all your items for this stats
-based on stat1-3.
-
-gemoffset: unknown
-
-nameable : Used by the reward of Anya's quest and tells if the item can be
-personalized or not. ( 1 : yes ; 0 : no).
-
-BetterGem: Used only by Gems. It indicates which gem code is the next in class
-when it's upgraded by a shrine or cube. You need to write "non" for non-gems or
-items you don't want to be upgraded this way, or else you just fill this field
-with the 3-4 letter code.
+gemoffset: Placeholder field used to link a socketable item with the
+corresponding record in Gems.txt, where one exists. Data is filled in during
+the game loading. It is unknown if non-zero values allow multiple record
+selectivity.
 
 bitfield1: Bitfield used primarily for various things, most remarkably the item
 material.
@@ -325,12 +369,5 @@ NightmareUpgrade - HellUpgrade: These columns handle the code of the item the
 Vendor will sell instead of this item in Nightmare / Hell. Set these to 'xxx'
 for not having any change
 
-mindam - maxdam: Minimum and Maximum damage that this item provide. If used on
-a shield or on a pair of boots, the damage in question will be either Smite or
-Kick damage.
-
-multibuy = A value of 0 means that Multibuy is not used, while 1 allows to
-Multibuy this item, which means that when you buy this item via right click +
-shift , you will instantly fill your belt.
-
-*eol: End of Line
+nameable: Used by the reward of Anya's quest and tells if the item can be
+personalized or not. ( 1 : yes ; 0 : no).
