@@ -91,7 +91,7 @@ class _GameData:
 
         base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
-        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='ascii') as csvfile:
+        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='cp1252') as csvfile:
             reader = csv.DictReader(csvfile, delimiter='\t')
             entries = {row[primary_key]: row for row in reader}
 
@@ -110,7 +110,7 @@ class _GameData:
 
         base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
-        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='ascii') as csvfile:
+        with open(os.path.join(base, f'{table}.txt'), 'r', encoding='cp1252') as csvfile:
             reader = csv.DictReader(csvfile, delimiter='\t')
             entries = list(reader)
 
@@ -168,7 +168,7 @@ class _GameData:
                 if next_byte == 0:
                     break
                 res.append(next_byte)
-            return res.decode('utf-8')
+            return res.decode('cp1252')
 
         with open(filename, 'rb') as tbl:
             header = tbl.read(21)

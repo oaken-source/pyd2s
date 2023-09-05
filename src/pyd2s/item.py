@@ -234,6 +234,25 @@ class SimpleItem(Item):
         return struct.pack('<L', num).decode('ascii').strip()
 
     @property
+    def item_types(self):
+        '''
+        the list of item types of the item
+        '''
+        types = []
+        frontier = [self._itemdata['type'], self._itemdata['type2']]
+
+        while frontier:
+            item_type, frontier = frontier[0], frontier[1:]
+            if not item_type:
+                continue
+
+            types.append(item_type)
+            data = GameData.itemtypes[item_type]
+            frontier.extend([data['Equiv1'], data['Equiv2']])
+
+        return types
+
+    @property
     def num_socketed(self):
         '''
         the number of filled sockets
@@ -528,6 +547,11 @@ class ExtendedItem(SimpleItem):
             set_data = GameData.setitems[int(self._attributes['set_id'])]
             res = max(res, int(set_data['lvl req'] or 1))
 
+        # unique item required level
+        if 'unique_id' in self._attributes and self._attributes['unique_id'] != 0xfff:
+            unique_data = GameData.uniqueitems[self._attributes['unique_id']]
+            res = max(res, int(unique_data['lvl req']))
+
         # socketables required levels
         for item in self._socketed:
             res = max(res, item.required_level)
@@ -564,7 +588,8 @@ class ExtendedItem(SimpleItem):
             name = f'{name_1} {name_2}'
         if self.quality == ItemQuality.UNIQUE:
             if self._attributes['unique_id'] != 0xfff:
-                raise NotImplementedError()
+                unique_item = GameData.uniqueitems[self._attributes['unique_id']]
+                name = GameData.get_string(unique_item['index'])
 
         # runewords are treated differently
         if self.is_runeword:
@@ -694,7 +719,7 @@ class ExtendedItem(SimpleItem):
                 block.append(f'Defense: {defense}')
 
         # handle block
-        if self._itemdata['type'] in ['shie', 'head']:
+        if 'shld' in self.item_types:
             # excluding character-specific bonus to block chance
             chance = int(self._itemdata['block']) + 20
             mods = [
@@ -706,9 +731,38 @@ class ExtendedItem(SimpleItem):
 
         # handle damage
         if 'minmisdam' in self._itemdata and int(self._itemdata['minmisdam'] or 0):
-            block.append(
-                'Throw Damage: '
-                f'{self._itemdata["minmisdam"]} to {self._itemdata["maxmisdam"]}')
+            mindam = int(self._itemdata['minmisdam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                mindam = mindam * 75 // 100
+            new_mindam = mindam
+            maxdam = int(self._itemdata['maxmisdam'])
+            if self.quality == ItemQuality.LOW_QUALITY:
+                maxdam = maxdam * 75 // 100
+            new_maxdam = maxdam
+
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat == 'item_maxdamage_percent']
+            if mods and self.is_identified:
+                new_mindam = (mindam * (100 + mods[0].value)) // 100
+                new_maxdam = (maxdam * (100 + mods[0].value)) // 100
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
+            if mods and self.is_identified:
+                new_maxdam = new_maxdam + mods[0].value
+            mods = [
+                enhancement for enhancement in self._attributes['enhancements']
+                if enhancement.stat == 'mindamage']
+            if mods and self.is_identified:
+                new_mindam = new_mindam + mods[0].value
+            if new_maxdam > maxdam or new_mindam > mindam:
+                block.append(
+                    'Throw Damage: '
+                    f'{colorama.Fore.BLUE}{new_mindam} to '
+                    f'{new_maxdam}{colorama.Fore.RESET}')
+            else:
+                block.append(f'Throw Damage: {mindam} to {maxdam}')
 
         if 'mindam' in self._itemdata and int(self._itemdata['mindam'] or 0):
             mindam = int(self._itemdata['mindam'])

@@ -38,13 +38,13 @@ class SaveBuffer(bytearray):
             '''
             read a 7-bit ascii null-terminated string from the buffer
             '''
-            res = ''
+            res = bytearray()
             while True:
                 next_char = self.read_bits(7)
                 if next_char == 0:
                     break
-                res += chr(next_char)
-            return res
+                res.append(next_char)
+            return res.decode('ascii')
 
         @property
         def distance(self):
