@@ -432,6 +432,8 @@ class ExtendedItem(SimpleItem):
         if self.is_runeword:
             self._attributes['runeword_id'], pos = advance_bits(pos, 12)
             pos += 4
+            pos -= 16
+            self._attributes['runeword_decode'], pos = advance_bits(pos, 16)
 
         # personalization details
         if self.is_personalized:
@@ -515,8 +517,24 @@ class ExtendedItem(SimpleItem):
             if set_properties == 3:
                 self._attributes['set_enhancements_3'], pos = read_mod_list(pos)
 
-        # mark the length of the item in bits
-        self._length = pos
+        if self.is_runeword:
+            enhancements, pos = read_mod_list(pos)
+            self._attributes['enhancements'].extend(enhancements)
+
+        # round the item length up to the neearest byte
+        length = math.ceil(pos / 8)
+
+        # handle items placed in sockets
+        self._socketed = []
+        start = offset + length
+        for i in range(self.num_socketed):
+            item = Item.from_data(self._buffer, start)
+            start += item.length
+            length += item.length
+            self._socketed.append(item)
+
+        # mark the length of the item in bytes
+        self._length = length
 
     @property
     def required_level(self):
@@ -574,9 +592,22 @@ class ExtendedItem(SimpleItem):
                 GameData.rareaffix[self._attributes['rare_name_2']]['name'])
             name = f'{name_1} {name_2}'
         if self.quality == ItemQuality.UNIQUE:
-            raise NotImplementedError()
+            if self._attributes['unique_id'] != 0xfff:
+                raise NotImplementedError()
         if self.quality == ItemQuality.CRAFTED:
             raise NotImplementedError()
+
+        if self.is_runeword:
+            runes = [item.type for item in self._socketed]
+
+            # pad with empty strings
+            runes.extend([''] * (6 - len(runes)))
+
+            runeword = next(rune for rune in GameData.runes.values() if all(
+                rune[f'Rune{i + 1}'] == runes[i] for i in range(6)))
+            name = GameData.get_string(runeword['Name'])
+        elif self.num_socketed:
+            name = f'Gemmed {name}'
 
         return name
 
@@ -594,6 +625,13 @@ class ExtendedItem(SimpleItem):
         '''
         the color of the item name
         '''
+        # R0911 complains for too many return statements here, but it sholud still be okay
+        # pylint: disable=R0911
+
+        if self.is_runeword:
+            return colorama.Fore.YELLOW + colorama.Style.DIM
+
+        # determine color by item quality
         if self.quality == ItemQuality.MAGICAL:
             return colorama.Fore.BLUE
         if self.quality == ItemQuality.SET:
@@ -601,11 +639,11 @@ class ExtendedItem(SimpleItem):
         if self.quality == ItemQuality.RARE:
             return colorama.Fore.YELLOW
         if self.quality == ItemQuality.UNIQUE:
-            raise NotImplementedError()
+            return colorama.Fore.YELLOW + colorama.Style.DIM
         if self.quality == ItemQuality.CRAFTED:
-            raise NotImplementedError()
+            return colorama.Fore.RED + colorama.Style.DIM
 
-        # only normal / hq / lq items are left, check for sockets / ethereal
+        # otherwise, check for sockets / ethereal
         if self.is_socketed or self.is_ethereal:
             return colorama.Fore.LIGHTBLACK_EX
 
@@ -637,18 +675,24 @@ class ExtendedItem(SimpleItem):
         '''
         the length of the item in bytes
         '''
-        return math.ceil(self._length / 8)
+        return self._length
 
     def __str__(self):
         '''
         a string representation of the item
         '''
-        name = self.display_name
-        if self.quality > ItemQuality.MAGICAL and self.is_identified:
-            name += f'\n{self.name}'
-        name = f'{self.name_color}{name}{colorama.Fore.RESET}'
+        # handle colored item name
+        block = [f'{self.name_color}{self.display_name}{colorama.Style.RESET_ALL}']
 
-        block = [name]
+        # handle sub-name
+        if (self.quality > ItemQuality.MAGICAL
+                and self.is_identified
+                and self.name != self.display_name):
+            block.append(f'{self.name_color}{self.name}{colorama.Style.RESET_ALL}')
+        elif self.is_runeword:
+            block.append(f'{colorama.Fore.LIGHTBLACK_EX}{self.name}{colorama.Fore.RESET}')
+            runes = [GameData.gems[item.type]['letter'] for item in self._socketed]
+            block.append(f"{self.name_color}'{''.join(runes)}'{colorama.Style.RESET_ALL}")
 
         # handle charms
         if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
@@ -782,11 +826,19 @@ class ExtendedItem(SimpleItem):
 
         # handle dex requirement
         if 'reqdex' in self._itemdata and int(self._itemdata['reqdex'] or 0):
-            block.append(f'Required Dexterity: {self._itemdata["reqdex"]}')
+            reqdex = int(self._itemdata['reqdex'])
+            if self.is_ethereal:
+                reqdex -= 10
+            if reqdex > 0:
+                block.append(f'Required Dexterity: {reqdex}')
 
         # handle str requirement
         if 'reqstr' in self._itemdata and int(self._itemdata['reqstr'] or 0):
-            block.append(f'Required Strength: {self._itemdata["reqstr"]}')
+            reqstr = int(self._itemdata['reqstr'])
+            if self.is_ethereal:
+                reqstr -= 10
+            if reqstr > 0:
+                block.append(f'Required Strength: {reqstr}')
 
         levelreq = self.required_level
 
@@ -845,6 +897,11 @@ class ExtendedItem(SimpleItem):
         if (self._itemdata['kind'] == 'weapons' and
                 weapon_classes[self._itemdata['type']] in ['mace', 'staff']):
             block.append(f'{colorama.Fore.BLUE}+50% Damage to Undead{colorama.Fore.RESET}')
+
+        # handle ethereal items
+        if self.is_ethereal:
+            block.append(
+                f'{colorama.Fore.BLUE}Ethereal (Cannot be Repaired){colorama.Fore.RESET}')
 
         # handle sockets
         if self.is_socketed:

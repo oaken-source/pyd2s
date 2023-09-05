@@ -26,6 +26,7 @@ class _GameData:
         'skilldesc': 'skilldesc',
         'gems': 'code',
         'properties': 'code',
+        'runes': 'Name',
     }
     _TABLE_INDICES = {
         'itemstatcost': 'Stat',

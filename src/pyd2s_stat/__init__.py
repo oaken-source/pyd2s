@@ -240,7 +240,7 @@ def make_testdata_entries(itemdata):
 
         staging_path = f'tests/itemdata/new/{key}.desc'
         with open(staging_path, 'w', encoding='ascii') as descfile:
-            descfile.write(str(item))
+            descfile.write(str(item) + '\n')
 
 
 def pyd2s_stat(argv=None):
