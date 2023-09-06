@@ -39,7 +39,9 @@ class _GameData:
         'rareaffix': 1,
     }
     _TABLE_INDEX_SKIPS_EXPANSION = {
-        'charstats'
+        'charstats',
+        'setitems',
+        'uniqueitems',
     }
 
     def __init__(self):
@@ -207,7 +209,8 @@ class _GameData:
                 tbl.seek(val_offset)
                 val = read_null_terminated_string(tbl)
 
-                entry_dict[key] = val
+                if key not in entry_dict:
+                    entry_dict[key] = val
 
         return entry_dict
 

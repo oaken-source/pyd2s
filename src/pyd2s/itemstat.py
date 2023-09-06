@@ -160,6 +160,17 @@ class ItemStat:
         '''
         the value of the stat
         '''
+        if self._itemstat['op']:
+            # little benefit to deviate from the original names just to placate pylint
+            # pylint: disable=C0103
+            op = int(self._itemstat['op'] or 0)
+            op_param = int(self._itemstat['op param'] or 0)
+
+            logging.debug(self._itemstat)
+
+            if op in [2, 4]:
+                return self._value / (2 ** op_param)
+
         return self._value
 
     @property
@@ -234,8 +245,8 @@ class ItemStat:
         str2 = self._itemstat['descstr2']
 
         logging.debug('ItemStat.__str__:item_stat: %s', self._itemstat)
-        logging.debug('ItemStat.__str__:value: %#04x', self.value)
-        logging.debug('ItemStat.__str__:param: %#04x', self.param)
+        logging.debug('ItemStat.__str__:value: %s (%s)', self.value, self._value)
+        logging.debug('ItemStat.__str__:param: %s', self.param)
         logging.debug('ItemStat.__str__:desc_func: %d', desc_func)
         logging.debug('ItemStat.__str__:str1: %s', str1)
         logging.debug('ItemStat.__str__:str2: %s', str2)
@@ -288,7 +299,7 @@ class ItemStat:
         1 - +[value] [string1]
         '''
         line = f'{GameData.get_string(str1)}'
-        value = f'+{self.value}'
+        value = f'{self.value:+}'
         return self._order_by_descval(line, value)
 
     def _str_formatter_2(self, str1, _):
@@ -312,7 +323,7 @@ class ItemStat:
         4 - +[value]% [string1]
         '''
         line = f'{GameData.get_string(str1)}'
-        value = f'+{self.value}%'
+        value = f'{self.value:+}%'
         return self._order_by_descval(line, value)
 
     def _str_formatter_5(self, str1, _):
@@ -327,8 +338,9 @@ class ItemStat:
         '''
         6 - +[value] [string1] [string2]
         '''
+
         line = f'{GameData.get_string(str1)} {GameData.get_string(str2)}'
-        value = f'{+self.value}'
+        value = f'{self.value:+}'
         return self._order_by_descval(line, value)
 
 #     7 - [value]% [string1] [string2]
@@ -346,9 +358,8 @@ class ItemStat:
         '''
         12 - +[value] [string1]
         '''
-        line = f'{GameData.get_string(str1)}'
-        value = f'+{self.value}'
-        return self._order_by_descval(line, value)
+        # this is only used by item_stupidity and item_freeze, I think value is ignored here
+        return GameData.get_string(str1)
 
     def _str_formatter_13(self, *_):
         '''
@@ -356,18 +367,16 @@ class ItemStat:
         '''
         # str1 is misleading. instead, grab from charstats.txt
         str1 = GameData.charstats[self._param]['StrAllSkills']
-        return f'+{self.value} {GameData.get_string(str1)}'
+        return f'{self.value:+} {GameData.get_string(str1)}'
 
-    def _str_formatter_14(self, str1, _):
+    def _str_formatter_14(self, *_):
         '''
         14 - +[value] to [skilltab] Skill Levels ([class] Only)
         '''
-        skill_data = GameData.skills[self.param]
-        class_code = skill_data['charclass']
-        class_name = GameData.playerclass[class_code]['Player Class']
-        charstats = next(charstat for charstat in GameData.charstats
-                         if charstat['class'] == class_name)
-        str2 = charstats['StrClassOnly']
+        # str1 is misleading. instead, grab from charstats.txt
+        charstats = GameData.charstats[self._param >> 3]
+        str1 = charstats[f'StrSkillTab{(self._param & 0x7) + 1}']
+        str2 = GameData.get_string(charstats['StrClassOnly'])
         return GameData.get_string(str1) % self._value + ' ' + str2
 
     def _str_formatter_15(self, str1, _):
@@ -413,7 +422,16 @@ class ItemStat:
         '''
         24 - Level {value} {skill} ({num}/{max} Charges)
         '''
-        return f'Level {None} {None} ({GameData.get_string(str1)})'
+        charges = self._value & 0xff
+        max_charges = self._value >> 8
+
+        level = self._param & 0x3f
+        skill_data = GameData.skills[self._param >> 6]
+        skill_desc = GameData.skilldesc[skill_data['skilldesc']]
+        skill_name = GameData.get_string(skill_desc['str name'])
+
+        return (f'Level {level} {skill_name}'
+                f' {GameData.get_string(str1) % (charges, max_charges)}')
 
 #    25 - not used by vanilla, present in the code but I didn't test it yet
 #    26 - not used by vanilla, present in the code but I didn't test it yet
@@ -430,7 +448,7 @@ class ItemStat:
         charstats = next(charstat for charstat in GameData.charstats
                          if charstat['class'] == class_name)
         str2 = GameData.get_string(charstats['StrClassOnly'])
-        return f'+{self.value} to {skill_name} {str2}'
+        return f'{self.value:+} to {skill_name} {str2}'
 
 #    28 - +[value] to [skill]
 

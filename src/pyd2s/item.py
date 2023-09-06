@@ -7,6 +7,7 @@ this module provides classes to manage individual item instances of a d2s save
 
 import math
 import struct
+import logging
 from enum import Enum
 from functools import total_ordering
 
@@ -587,7 +588,8 @@ class ExtendedItem(SimpleItem):
                 affix = GameData.magicsuffix[self._attributes['magic_suffix']]
                 name = f'{name} {GameData.get_string(affix["Name"])}'
         if self.quality == ItemQuality.SET:
-            name = GameData.setitems[self._attributes['set_id']]['index']
+            name = GameData.get_string(
+                GameData.setitems[self._attributes['set_id']]['index'])
         if self.quality in [ItemQuality.RARE, ItemQuality.CRAFTED]:
             name_1 = GameData.get_string(
                 GameData.rareaffix[self._attributes['rare_name_1']]['name'])
@@ -597,6 +599,7 @@ class ExtendedItem(SimpleItem):
         if self.quality == ItemQuality.UNIQUE:
             if self._attributes['unique_id'] != 0xfff:
                 unique_item = GameData.uniqueitems[self._attributes['unique_id']]
+                logging.debug(unique_item)
                 name = GameData.get_string(unique_item['index'])
 
         # runewords are treated differently
@@ -683,6 +686,7 @@ class ExtendedItem(SimpleItem):
         '''
         convenience method for recurring calculations
         '''
+        # I could probably do this using the op field in itemstatcost
         res = value
 
         mods = [
@@ -749,7 +753,7 @@ class ExtendedItem(SimpleItem):
             new_defense = self._apply_mods(
                 defense,
                 percent=['item_armor_percent'],
-                add=['armorclass'])
+                add=['armorclass', 'item_armor_perlevel'])
 
             line = GameData.get_string('itemstats1h')
             if self.is_identified and new_defense != defense:
@@ -789,6 +793,9 @@ class ExtendedItem(SimpleItem):
         if self.quality == ItemQuality.LOW_QUALITY:
             mindam = mindam * 75 // 100
             maxdam = maxdam * 75 // 100
+        if self.is_ethereal:
+            mindam = mindam * 3 // 2
+            maxdam = maxdam * 3 // 2
 
         new_mindam = self._apply_mods(
             mindam,
@@ -798,6 +805,8 @@ class ExtendedItem(SimpleItem):
             maxdam,
             percent=['item_maxdamage_percent'],
             add=['maxdamage', 'secondary_maxdamage'])
+
+        new_maxdam = max(new_maxdam, new_mindam + 1)
 
         line = GameData.get_string(str1)
         if self.is_identified and (mindam != new_mindam or maxdam != new_maxdam):
@@ -952,15 +961,19 @@ class ExtendedItem(SimpleItem):
             block.append(f'{colorama.Fore.BLUE}+50% Damage to Undead{colorama.Fore.RESET}')
 
         # handle ethereal items
+        line = []
         if self.is_ethereal:
-            block.append(
+            line.append(
                 f'{colorama.Fore.BLUE}Ethereal (Cannot be Repaired){colorama.Fore.RESET}')
 
         # handle sockets
         if self.is_socketed:
-            block.append(
+            line.append(
                 f'{colorama.Fore.BLUE}Socketed '
                 f'({self._attributes["socket_count"]}){colorama.Fore.RESET}')
+
+        if line:
+            block.append(', '.join(line))
 
         return block
 
@@ -976,12 +989,14 @@ class ExtendedItem(SimpleItem):
         if self.quality == ItemQuality.SET:
             set_name = GameData.setitems[int(self._attributes['set_id'])]['set']
             block.append(f'\n{colorama.Fore.YELLOW}{colorama.Style.DIM}'
-                         f'{set_name}'
+                         f'{GameData.get_string(set_name)}'
                          f'{colorama.Style.RESET_ALL}')
 
             for set_item in reversed(
                     [item for item in GameData.setitems if item['set'] == set_name]):
-                block.append(f'{colorama.Fore.GREEN}{set_item["index"]}{colorama.Fore.RESET}')
+                block.append(f'{colorama.Fore.GREEN}'
+                             f'{GameData.get_string(set_item["index"])}'
+                             f'{colorama.Fore.RESET}')
 
         return block
 
