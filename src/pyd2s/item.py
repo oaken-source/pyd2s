@@ -1,6 +1,9 @@
 '''
 this module provides classes to manage individual item instances of a d2s save
 '''
+# I know that this file is getting a little too long, but I don't think there
+# is a lot of good to gain by moving things somewhere else.
+# pylint: disable=C0302
 
 import math
 import struct
@@ -291,12 +294,16 @@ class SimpleItem(Item):
             block.append(GameData.get_string(self._itemdata['spelldescstr']))
 
         if self._itemdata['code'] in GameData.gems:
-            block.append('Can be Inserted into Socketed Items')
+            block.append(GameData.get_string('exinsertsockets'))
 
-            block.append(f'\nWeapons: {", ".join(map(str, self.modifiers(0)))}')
-            block.append(f'Armor: {", ".join(map(str, self.modifiers(1)))}')
-            block.append(f'Helms: {", ".join(map(str, self.modifiers(1)))}')
-            block.append(f'Shields: {", ".join(map(str, self.modifiers(2)))}')
+            block.append(f'\n{GameData.get_string("strgemx3")}'
+                         f' {", ".join(map(str, self.modifiers(0)))}')
+            block.append(f'{GameData.get_string("strgemx4")}'
+                         f' {", ".join(map(str, self.modifiers(1)))}')
+            block.append(f'{GameData.get_string("strgemx1")}'
+                         f' {", ".join(map(str, self.modifiers(1)))}')
+            block.append(f'{GameData.get_string("strgemx2")}'
+                         f' {", ".join(map(str, self.modifiers(2)))}')
 
         if self.required_level > 1:
             block.append(f'\nRequired Level: {self.required_level}')
@@ -489,8 +496,9 @@ class ExtendedItem(SimpleItem):
 
         # set items have one or two extra modifier lists
         if self.quality == ItemQuality.SET:
-            self._attributes['set_enhancements_1'] = ItemStat.read_list(ptr)
-            if set_properties == 3:
+            if set_properties >= 1:
+                self._attributes['set_enhancements_1'] = ItemStat.read_list(ptr)
+            if set_properties >= 3:
                 self._attributes['set_enhancements_3'] = ItemStat.read_list(ptr)
 
         # rune words have their own modifier list
@@ -618,7 +626,8 @@ class ExtendedItem(SimpleItem):
         '''
         the color of the item name
         '''
-        # R0911 complains for too many return statements here, but it sholud still be okay
+        # R0911 complains for too many return statements here, but it should still be okay
+        # it might make sense to encode the item color in the ItemQuality Enum though.
         # pylint: disable=R0911
 
         if self.is_runeword:
@@ -670,215 +679,162 @@ class ExtendedItem(SimpleItem):
         '''
         return self._length
 
-    def __str__(self):
+    def _apply_mods(self, value, percent, add):
         '''
-        a string representation of the item
+        convenience method for recurring calculations
         '''
-        # handle colored item name
+        res = value
+
+        mods = [
+            enhancement for enhancement in self._attributes['enhancements']
+            if enhancement.stat in percent]
+        res = (value * (100 + sum(mod.value for mod in mods))) // 100
+
+        mods = [
+            enhancement for enhancement in self._attributes['enhancements']
+            if enhancement.stat in add]
+        res += sum(mod.value for mod in mods)
+
+        return res
+
+    def _str_block_header(self):
+        '''
+        the header of the item string, includes:
+            - the item name
+            - the item subname, if any
+            - rune letters, if any
+            - charm and socketables messages
+        '''
+        # start with the colored item name
         block = [f'{self.name_color}{self.display_name}{colorama.Style.RESET_ALL}']
 
-        # handle sub-name
-        if (self.quality > ItemQuality.MAGICAL
-                and self.is_identified
-                and self.name != self.display_name):
+        # if the item is rare, set, unique or crafted add a the base name in the name color
+        # unless SkipName is set, or the unique id is 0xFFF
+        if (self.quality > ItemQuality.MAGICAL and self.is_identified
+                and not int(self._itemdata['SkipName'] or 0)
+                and not self._attributes.get('unique_id', 0) == 0xfff):
             block.append(f'{self.name_color}{self.name}{colorama.Style.RESET_ALL}')
-        elif self.is_runeword:
+
+        # if the item is a runeword, add the base name grey
+        if self.is_runeword:
             block.append(f'{colorama.Fore.LIGHTBLACK_EX}{self.name}{colorama.Fore.RESET}')
 
-        # show the rune letters
+        # if the item has runes socketed show the rune letters
         if self._socketed:
             runes = [GameData.gems[item.type]['letter'] for item in self._socketed]
             block.append(f"{colorama.Fore.YELLOW}{colorama.Style.DIM}"
                          f"'{''.join(runes)}'{colorama.Style.RESET_ALL}")
 
-        # handle charms
+        # add the charm line
         if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
-            block.append('Keep in Inventory to Gain Bonus')
+            block.append(GameData.get_string('charmdes'))
 
-        # handle socketables
+        # add the socketables line for jewels
         if self._itemdata['code'] == 'jew':
-            block.append('Can be Inserted into Socketed Items')
+            block.append(GameData.get_string('exinsertsocketsx'))
 
-        # handle defense
+        return block
+
+    def _str_block_armor(self):
+        '''
+        the armor details block of the item string, includes:
+            - the defense, if any (blue if magically enhanced)
+            - the block chance, if this is a shield
+        '''
+        block = []
+
+        # handle defense, if recorded in the attributes
         if 'defense' in self._attributes:
             defense = self._attributes['defense']
-            new_defense = defense
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'item_armor_percent']
-            if mods and self.is_identified:
-                new_defense = (defense * (100 + mods[0].value)) // 100
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'armorclass']
-            if mods and self.is_identified:
-                new_defense += mods[0].value
-            if new_defense > defense:
-                block.append(f'Defense: {colorama.Fore.BLUE}{new_defense}{colorama.Fore.RESET}')
-            else:
-                block.append(f'Defense: {defense}')
+            new_defense = self._apply_mods(
+                defense,
+                percent=['item_armor_percent'],
+                add=['armorclass'])
 
-        # handle block
+            line = GameData.get_string('itemstats1h')
+            if self.is_identified and new_defense != defense:
+                line += f' {colorama.Fore.BLUE}{new_defense}{colorama.Fore.RESET}'
+            else:
+                line += f' {defense}'
+            block.append(line)
+
+        # handle block for shields
         if 'shld' in self.item_types:
-            # excluding character-specific bonus to block chance
+            # this calculation does not include the class bonus to block chance
             chance = int(self._itemdata['block']) + 20
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'toblock']
-            if mods and self.is_identified:
-                chance += int(mods[0].value)
-            block.append(f'Chance to Block: {colorama.Fore.BLUE}{chance}%{colorama.Fore.RESET}')
+            new_chance = self._apply_mods(
+                chance,
+                percent=[],
+                add=['toblock'])
 
-        # handle damage
-        if 'minmisdam' in self._itemdata and int(self._itemdata['minmisdam'] or 0):
-            mindam = int(self._itemdata['minmisdam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                mindam = mindam * 75 // 100
-            new_mindam = mindam
-            maxdam = int(self._itemdata['maxmisdam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                maxdam = maxdam * 75 // 100
-            new_maxdam = maxdam
-
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'item_maxdamage_percent']
-            if mods and self.is_identified:
-                new_mindam = (mindam * (100 + mods[0].value)) // 100
-                new_maxdam = (maxdam * (100 + mods[0].value)) // 100
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
-            if mods and self.is_identified:
-                new_maxdam = new_maxdam + mods[0].value
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'mindamage']
-            if mods and self.is_identified:
-                new_mindam = new_mindam + mods[0].value
-            if new_maxdam > maxdam or new_mindam > mindam:
-                block.append(
-                    'Throw Damage: '
-                    f'{colorama.Fore.BLUE}{new_mindam} to '
-                    f'{new_maxdam}{colorama.Fore.RESET}')
+            line = GameData.get_string('itemstats1r')
+            if self.is_identified:
+                line += f'{colorama.Fore.BLUE}{new_chance}%{colorama.Fore.RESET}'
             else:
-                block.append(f'Throw Damage: {mindam} to {maxdam}')
+                line += f'{colorama.Fore.BLUE}{chance}%{colorama.Fore.RESET}'
+            block.append(line)
 
-        if 'mindam' in self._itemdata and int(self._itemdata['mindam'] or 0):
-            mindam = int(self._itemdata['mindam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                mindam = mindam * 75 // 100
-            new_mindam = mindam
-            maxdam = int(self._itemdata['maxdam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                maxdam = maxdam * 75 // 100
-            new_maxdam = maxdam
+        return block
 
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'item_maxdamage_percent']
-            if mods and self.is_identified:
-                new_mindam = (mindam * (100 + mods[0].value)) // 100
-                new_maxdam = (maxdam * (100 + mods[0].value)) // 100
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
-            if mods and self.is_identified:
-                new_maxdam = new_maxdam + mods[0].value
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'mindamage']
-            if mods and self.is_identified:
-                new_mindam = new_mindam + mods[0].value
-            if new_maxdam > maxdam or new_mindam > mindam:
-                block.append(
-                    'One-Hand Damage: '
-                    f'{colorama.Fore.BLUE}{new_mindam} to '
-                    f'{new_maxdam}{colorama.Fore.RESET}')
-            else:
-                block.append(f'One-Hand Damage: {mindam} to {maxdam}')
+    def _str_block_damage_single(self, key_mindam, key_maxdam, str1):
+        '''
+        one line of damage data for a given damage type
+        '''
+        if key_mindam not in self._itemdata or not int(self._itemdata[key_mindam] or 0):
+            return []
 
-        if '2handmindam' in self._itemdata and int(self._itemdata['2handmindam'] or 0):
-            mindam = int(self._itemdata['2handmindam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                mindam = mindam * 75 // 100
-            new_mindam = mindam
-            maxdam = int(self._itemdata['2handmaxdam'])
-            if self.quality == ItemQuality.LOW_QUALITY:
-                maxdam = maxdam * 75 // 100
-            new_maxdam = maxdam
+        mindam = int(self._itemdata[key_mindam])
+        maxdam = int(self._itemdata[key_maxdam])
 
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'item_maxdamage_percent']
-            if mods and self.is_identified:
-                new_mindam = (mindam * (100 + mods[0].value)) // 100
-                new_maxdam = (maxdam * (100 + mods[0].value)) // 100
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat in ['maxdamage', 'secondary_maxdamage']]
-            if mods and self.is_identified:
-                new_maxdam = new_maxdam + mods[0].value
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'mindamage']
-            if mods and self.is_identified:
-                new_mindam = new_mindam + mods[0].value
-            if new_maxdam > maxdam or new_mindam > mindam:
-                block.append(
-                    'Two-Hand Damage: '
-                    f'{colorama.Fore.BLUE}{new_mindam} to '
-                    f'{new_maxdam}{colorama.Fore.RESET}')
-            else:
-                block.append(f'Two-Hand Damage: {mindam} to {maxdam}')
+        if self.quality == ItemQuality.LOW_QUALITY:
+            mindam = mindam * 75 // 100
+            maxdam = maxdam * 75 // 100
 
-        # handle quantity
-        if 'quantity' in self._attributes:
-            block.append(f'Quantity: {self._attributes["quantity"]}')
+        new_mindam = self._apply_mods(
+            mindam,
+            percent=['item_maxdamage_percent'],
+            add=['mindamage'])
+        new_maxdam = self._apply_mods(
+            maxdam,
+            percent=['item_maxdamage_percent'],
+            add=['maxdamage', 'secondary_maxdamage'])
 
-        # handle durability
-        elif ('durability' in self._attributes
-              and not int(self._itemdata['nodurability'] or 0)):
-            durability = self._attributes['durability']
-            max_durability = self._attributes['max_durability']
-            new_max_durability = max_durability
-            mods = [
-                enhancement for enhancement in self._attributes['enhancements']
-                if enhancement.stat == 'item_maxdurability_percent']
-            if mods and self.is_identified:
-                new_max_durability = (max_durability * (100 + mods[0].value)) // 100
-            block.append(f'Durability: {durability} of {new_max_durability}')
+        line = GameData.get_string(str1)
+        if self.is_identified and (mindam != new_mindam or maxdam != new_maxdam):
+            line += (f' {colorama.Fore.BLUE}{new_mindam} to '
+                     f'{new_maxdam}{colorama.Fore.RESET}')
+        else:
+            line += f' {mindam} to {maxdam}'
 
-        # handle class requirement
-        if 'type' in self._itemdata and self._itemdata['type']:
-            item_class = GameData.itemtypes[self._itemdata['type']]
-            if item_class['Class']:
-                block.append(
-                    f'{colorama.Fore.RED}'
-                    f'({GameData.get_string("partychar" + item_class["Class"])} Only)'
-                    f'{colorama.Fore.RESET}')
+        return [line]
 
-        # handle dex requirement
-        if 'reqdex' in self._itemdata and int(self._itemdata['reqdex'] or 0):
-            reqdex = int(self._itemdata['reqdex'])
-            if self.is_ethereal:
-                reqdex -= 10
-            if reqdex > 0:
-                block.append(f'Required Dexterity: {reqdex}')
+    def _str_block_damage(self):
+        '''
+        the weapon damage details block of the item string, includes:
+            - the throw damage, if any (blue if magically enhanced)
+            - the one-hand damage, if any (blue if magically enhanced)
+            - the two-hand damage, if any (blue if magically enhanced)
+        '''
+        block = []
 
-        # handle str requirement
-        if 'reqstr' in self._itemdata and int(self._itemdata['reqstr'] or 0):
-            reqstr = int(self._itemdata['reqstr'])
-            if self.is_ethereal:
-                reqstr -= 10
-            if reqstr > 0:
-                block.append(f'Required Strength: {reqstr}')
+        # first throw damage
+        block.extend(self._str_block_damage_single('minmisdam', 'maxmisdam', 'itemstats1n'))
+        # second one-handed damage
+        block.extend(self._str_block_damage_single('mindam', 'maxdam', 'itemstats1l'))
+        # third two-handed damage
+        block.extend(self._str_block_damage_single('2handmindam', '2handmaxdam', 'itemstats1m'))
 
-        # handle level requirement
-        if self.required_level > 1 and self.is_identified:
-            block.append(f'Required Level: {self.required_level}')
+        return block
 
-        # handle weapon class and attack speed
+    def _str_block_attack_speed(self):
+        '''
+        attack speed details. this is displayed numerically instead of the labels in-game
+        since the attack speed varies depending on class bonuses. so little point.
+        '''
+        if 'weap' not in self.item_types:
+            return []
+
+        # this could probably be handled better. but how?
         weapon_classes = {
             'mace': 'mace',
             'club': 'mace',
@@ -901,13 +857,87 @@ class ExtendedItem(SimpleItem):
             'pole': 'polearm',
             'xbow': 'crossbow',
             'h2h': 'h2h',
-            'h2h2': 'h2h2',
+            'h2h2': 'h2h',
         }
-        if self._itemdata['kind'] == 'weapons':
-            weapon_class = GameData.get_string(
-                f'weapondesc{weapon_classes[self._itemdata["type"]]}')
-            speed = int(self._itemdata['speed'] or 0)
-            block.append(f'{weapon_class} - [{speed}] Attack Speed')
+
+        weapon_class = GameData.get_string(
+            f'weapondesc{weapon_classes[self._itemdata["type"]]}')
+        speed = int(self._itemdata['speed'] or 0)
+        return [f'{weapon_class} - [{speed}] Attack Speed']
+
+    def _str_block_durability(self):
+        '''
+        durability and quantity information about the item, includes:
+            - durability and max durability, if any and not stacked
+            - quantity if any
+        '''
+        block = []
+
+        # handle quantity
+        if 'quantity' in self._attributes:
+            block.append(f'Quantity: {self._attributes["quantity"]}')
+
+        # handle durability
+        elif ('durability' in self._attributes
+              and not int(self._itemdata['nodurability'] or 0)):
+            durability = self._attributes['durability']
+            max_durability = self._attributes['max_durability']
+
+            new_max_durability = self._apply_mods(
+                max_durability,
+                percent=['item_maxdurability_percent'],
+                add=[])
+
+            line = GameData.get_string('itemstats1d')
+            line += f' {durability} of {new_max_durability}'
+
+            block.append(line)
+
+        return block
+
+    def _str_block_requirements(self):
+        '''
+        requirements information about the item, includes:
+            - required class, if any
+            - required strength, if any
+            - required dexterity, if any
+            - required level, if any
+        '''
+        block = []
+
+        # handle class requirement
+        if 'type' in self._itemdata and self._itemdata['type']:
+            item_class = GameData.itemtypes[self._itemdata['type']]
+            if item_class['Class']:
+                block.append(
+                    f'{colorama.Fore.RED}'
+                    f'({GameData.get_string("partychar" + item_class["Class"])} Only)'
+                    f'{colorama.Fore.RESET}')
+
+        # handle str / dex requirement
+        for (req, str1) in [('reqdex', 'itemstats1f'), ('reqstr', 'itemstats1e')]:
+            if req in self._itemdata and int(self._itemdata[req] or 0):
+                value = int(self._itemdata[req])
+                if self.is_ethereal:
+                    value -= 10
+                if value > 0:
+                    block.append(f'{GameData.get_string(str1)} {value}')
+
+        # handle level requirement
+        if self.required_level > 1 and self.is_identified:
+            block.append(f'{GameData.get_string("itemstats1p")} {self.required_level}')
+
+        return block
+
+    def _str_block_magic_mods(self):
+        '''
+        the magic modifiers list of the item, includes:
+            - any mods added by magic / rare / set affixes
+            - +50% dmg to undead for blunt weapons
+            - ethereal
+            - sockets
+        '''
+        block = []
 
         # handle magical properties
         if self.quality.value >= ItemQuality.MAGICAL.value and not self.is_identified:
@@ -918,8 +948,7 @@ class ExtendedItem(SimpleItem):
                     block.append(f'{colorama.Fore.BLUE}{enhancement}{colorama.Fore.RESET}')
 
         # handle blunt weapons
-        if (self._itemdata['kind'] == 'weapons' and
-                weapon_classes[self._itemdata['type']] in ['mace', 'staff']):
+        if 'blun' in self.item_types:
             block.append(f'{colorama.Fore.BLUE}+50% Damage to Undead{colorama.Fore.RESET}')
 
         # handle ethereal items
@@ -933,6 +962,16 @@ class ExtendedItem(SimpleItem):
                 f'{colorama.Fore.BLUE}Socketed '
                 f'({self._attributes["socket_count"]}){colorama.Fore.RESET}')
 
+        return block
+
+    def _str_block_set_list(self):
+        '''
+        the set list of the item, includes:
+            - the name of the set
+            - all members of the set
+        '''
+        block = []
+
         # handle set lists
         if self.quality == ItemQuality.SET:
             set_name = GameData.setitems[int(self._attributes['set_id'])]['set']
@@ -944,4 +983,40 @@ class ExtendedItem(SimpleItem):
                     [item for item in GameData.setitems if item['set'] == set_name]):
                 block.append(f'{colorama.Fore.GREEN}{set_item["index"]}{colorama.Fore.RESET}')
 
+        return block
+
+    def __str__(self):
+        '''
+        a string representation of the item
+        '''
+        # start with the header
+        block = self._str_block_header()
+
+        # followed by armor properties
+        block.extend(self._str_block_armor())
+
+        # followed by damage properties
+        block.extend(self._str_block_damage())
+
+        # followed by attack speed, if this a set item (mad, I know.)
+        if self.quality == ItemQuality.SET:
+            block.extend(self._str_block_attack_speed())
+
+        # followed by quantity and durability
+        block.extend(self._str_block_durability())
+
+        # followed by requirements
+        block.extend(self._str_block_requirements())
+
+        # followed by attack speed, if this is not a set item
+        if self.quality != ItemQuality.SET:
+            block.extend(self._str_block_attack_speed())
+
+        # followed by magic modifiers
+        block.extend(self._str_block_magic_mods())
+
+        # followed by set details
+        block.extend(self._str_block_set_list())
+
+        # and done.
         return '\n'.join(block)

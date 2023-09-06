@@ -3,6 +3,7 @@ display diablo 2 save file information using pyd2s
 '''
 
 import os
+import logging
 import argparse
 import datetime
 
@@ -36,9 +37,15 @@ parser_config = [
     (['-i'], {
         'action': 'store_true',
         'help': 'display inventory information'}),
-    (['-t'], {
+    (['-x'], {
         'action': 'store_true',
-        'help': 'create testdata entries from input (dev option)'}),
+        'help': 'extract all saved items as .d2i files'}),
+    (['-O'], {
+        'metavar': 'DEST', 'default': '.',
+        'help': 'the output directory when writing d2i files'}),
+    (['-v'], {
+        'action': 'count', 'default': 0,
+        'help': 'increase verbosity. useful for debugging'}),
 ]
 
 parser = argparse.ArgumentParser(
@@ -271,11 +278,19 @@ Count       : { len(d2s_item.gdata) }''')
     return True
 
 
-def make_testdata_entries(itemdata):
+def extract_items(d2s, dest):
     '''
     write test data files for creating test cases with real data
     '''
-    for item in itemdata.pdata + itemdata.cdata + itemdata.mdata + itemdata.gdata:
+    items = []
+    if d2s.type == SaveFile.Type.D2S:
+        items = d2s.itemdata.pdata + d2s.itemdata.cdata + d2s.itemdata.mdata + d2s.itemdata.gdata
+    elif d2s.type == SaveFile.Type.D2I:
+        items = [d2s.item]
+    elif d2s.type in [SaveFile.Type.SSS, SaveFile.Type.D2X]:
+        items = [item for page in d2s.pages for item in page.idata]
+
+    for item in items:
         if item.quality >= ItemQuality.MAGICAL:
             item.is_identified = True
 
@@ -285,18 +300,12 @@ def make_testdata_entries(itemdata):
         if isinstance(item, ExtendedItem):
             key += f' - {item.uid:#010x}'
 
-        path = f'tests/itemdata/{key}.data'
-        if os.path.exists(path):
-            continue
+        path = f'{key}.d2i'
+        if dest:
+            path = os.path.join(dest, path)
 
-        print(f'writing testdata for item {key}')
-        staging_path = f'tests/itemdata/new/{key}.d2i'
-        with open(staging_path, 'wb') as itemfile:
+        with open(path, 'wb') as itemfile:
             itemfile.write(raw_data)
-
-        staging_path = f'tests/itemdata/new/{key}.desc'
-        with open(staging_path, 'w', encoding='ascii') as descfile:
-            descfile.write(str(item) + '\n')
 
 
 def pyd2s_stat(argv=None):
@@ -304,15 +313,14 @@ def pyd2s_stat(argv=None):
     main entry point
     '''
     args = parser.parse_args(argv)
+
+    logging.basicConfig(level=30 - args.v * 10)
+
     path = args.filename
 
     needs_newline = False
 
     d2s = pyd2s.SaveFile.open(path)
-
-    if args.t:
-        make_testdata_entries(d2s.itemdata)
-        return
 
     if args.a or args.s:
         needs_newline = print_savefile_data(d2s, path)
@@ -341,3 +349,6 @@ def pyd2s_stat(argv=None):
         if needs_newline:
             print('')
         needs_newline = print_item_data(d2s)
+
+    if args.x:
+        extract_items(d2s, args.O)

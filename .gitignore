@@ -2,6 +2,9 @@
 # python generated files
 *.pyc
 
+# staging area for test data files
+tests/itemdata/new/
+
 # setup.py generated files
 build/
 dist/

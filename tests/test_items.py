@@ -1,9 +1,12 @@
 
 import os
+import logging
 
 from pyd2s import SaveFile
 
 import pytest
+
+logging.basicConfig(level=10)
 
 
 def item_source():

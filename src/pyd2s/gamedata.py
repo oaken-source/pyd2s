@@ -6,6 +6,7 @@ this module provides access to the games data files
 import os
 import csv
 import struct
+import logging
 
 
 class _GameData:
@@ -27,6 +28,7 @@ class _GameData:
         'gems': 'code',
         'properties': 'code',
         'runes': 'Name',
+        'playerclass': 'Code',
     }
     _TABLE_INDICES = {
         'itemstatcost': 'Stat',
@@ -35,6 +37,9 @@ class _GameData:
         'magicprefix': 1,
         'magicsuffix': 1,
         'rareaffix': 1,
+    }
+    _TABLE_INDEX_SKIPS_EXPANSION = {
+        'charstats'
     }
 
     def __init__(self):
@@ -92,8 +97,13 @@ class _GameData:
         base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
         with open(os.path.join(base, f'{table}.txt'), 'r', encoding='cp1252') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter='\t')
-            entries = {row[primary_key]: row for row in reader}
+            lines = csvfile.readlines()
+        data_source = (line for line in lines)
+        if table in self._TABLE_INDEX_SKIPS_EXPANSION:
+            data_source = filter(lambda e: not e.startswith('Expansion'), data_source)
+
+        reader = csv.DictReader(data_source, delimiter='\t')
+        entries = {row[primary_key]: row for row in reader}
 
         return entries
 
@@ -111,8 +121,13 @@ class _GameData:
         base = f'gamedata/d2{"exp" if self._expansion else "data"}/data/global/excel/'
 
         with open(os.path.join(base, f'{table}.txt'), 'r', encoding='cp1252') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter='\t')
-            entries = list(reader)
+            lines = csvfile.readlines()
+        data_source = (line for line in lines)
+        if table in self._TABLE_INDEX_SKIPS_EXPANSION:
+            data_source = filter(lambda e: not e.startswith('Expansion'), data_source)
+
+        reader = csv.DictReader(data_source, delimiter='\t')
+        entries = list(reader)
 
         # fix incorrect usage of ModStre9t
         if table == 'itemstatcost':
@@ -200,7 +215,9 @@ class _GameData:
         '''
         produce a string from the string.tbl files
         '''
-        return self.strings.get(key.lower(), key)
+        res = self.strings.get(key.lower(), key)
+        logging.debug('string.tbl:%s:%s', key, res)
+        return res
 
     def get_consecutive_item_stat_blocks(self, eid):
         '''

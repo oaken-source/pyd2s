@@ -2,6 +2,8 @@
 this module provides classes for item enhancements and properties
 '''
 
+import logging
+
 from pyd2s.gamedata import GameData
 
 
@@ -52,6 +54,12 @@ STAT_GROUPS.extend([
         'dgrpfunc': 1,
         'dgrpstrpos': 'ModStr1f',
         'dgrgstrneg': 'ModStr1f',
+    },
+    {
+        'dgrp': ['mindamage', 'secondary_mindamage'],
+        'dgrpfunc': 1,
+        'dgrpstrpos': 'ModStr1g',
+        'dgrgstrneg': 'ModStr1g',
     },
 ])
 
@@ -217,9 +225,20 @@ class ItemStat:
         '''
         a string representation of the magical enhancement
         '''
+        if not self._itemstat['descfunc']:
+            return ''
+
         # determine formatter for individual stat
         desc_func = int(self._itemstat['descfunc'])
         str1 = self._itemstat['descstrpos'] if self.value >= 0 else self._itemstat['descstrneg']
+        str2 = self._itemstat['descstr2']
+
+        logging.debug('ItemStat.__str__:item_stat: %s', self._itemstat)
+        logging.debug('ItemStat.__str__:value: %#04x', self.value)
+        logging.debug('ItemStat.__str__:param: %#04x', self.param)
+        logging.debug('ItemStat.__str__:desc_func: %d', desc_func)
+        logging.debug('ItemStat.__str__:str1: %s', str1)
+        logging.debug('ItemStat.__str__:str2: %s', str2)
 
         # determine if we're grouping to a common description
         if self.stat in STAT_GROUPS_INDEX:
@@ -244,7 +263,7 @@ class ItemStat:
             formatter = getattr(self, f'_str_formatter_{desc_func}')
         except AttributeError as exc:
             raise NotImplementedError(f'_str_formatter_{desc_func}') from exc
-        return formatter(str1)
+        return formatter(str1, str2)
 
     def _order_by_descval(self, line, value):
         '''
@@ -264,65 +283,96 @@ class ItemStat:
     # across an item that is not covered here, please use the test-case generation function
     # of pyd2s_stat to create a test case and submit an issue or pull request.
 
-    def _str_formatter_1(self, str1):
+    def _str_formatter_1(self, str1, _):
         '''
-        +[value] [string1]
+        1 - +[value] [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'+{self.value}'
         return self._order_by_descval(line, value)
 
-    def _str_formatter_2(self, str1):
+    def _str_formatter_2(self, str1, _):
         '''
-        [value]% [string1]
+        2 - [value]% [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'{self.value}%'
         return self._order_by_descval(line, value)
 
-    def _str_formatter_3(self, str1):
+    def _str_formatter_3(self, str1, _):
         '''
-        [value] [string1]
+        3 - [value] [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'{self.value}'
         return self._order_by_descval(line, value)
 
-    def _str_formatter_4(self, str1):
+    def _str_formatter_4(self, str1, _):
         '''
-        +[value]% [string1]
+        4 - +[value]% [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'+{self.value}%'
         return self._order_by_descval(line, value)
 
-    def _str_formatter_5(self, str1):
+    def _str_formatter_5(self, str1, _):
         '''
-        [value]% [string1]
+        5 - [value]% [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'{round(self.value * 100 / 128)}%'
         return self._order_by_descval(line, value)
 
-#     6 - +[value] [string1] [string2]
+    def _str_formatter_6(self, str1, str2):
+        '''
+        6 - +[value] [string1] [string2]
+        '''
+        line = f'{GameData.get_string(str1)} {GameData.get_string(str2)}'
+        value = f'{+self.value}'
+        return self._order_by_descval(line, value)
+
 #     7 - [value]% [string1] [string2]
 #     8 - +[value]% [string1] [string2]
 #     9 - [value] [string1] [string2]
 #    10 - [value*100/128]% [string1] [string2]
 
-    def _str_formatter_11(self, str1):
+    def _str_formatter_11(self, str1, _):
         '''
-        Repairs 1 Durability In [100 / value] Seconds
+        11 - Repairs 1 Durability In [100 / value] Seconds
         '''
         return GameData.get_string(str1) % (1, 100 // self.value)
 
-#    12 - +[value] [string1]
-#    13 - +[value] to [class] Skill Levels
-#    14 - +[value] to [skilltab] Skill Levels ([class] Only)
-
-    def _str_formatter_15(self, str1):
+    def _str_formatter_12(self, str1, _):
         '''
-        [chance]% to case [slvl] [skill] on [event]
+        12 - +[value] [string1]
+        '''
+        line = f'{GameData.get_string(str1)}'
+        value = f'+{self.value}'
+        return self._order_by_descval(line, value)
+
+    def _str_formatter_13(self, *_):
+        '''
+        13 - +[value] to [class] Skill Levels
+        '''
+        # str1 is misleading. instead, grab from charstats.txt
+        str1 = GameData.charstats[self._param]['StrAllSkills']
+        return f'+{self.value} {GameData.get_string(str1)}'
+
+    def _str_formatter_14(self, str1, _):
+        '''
+        14 - +[value] to [skilltab] Skill Levels ([class] Only)
+        '''
+        skill_data = GameData.skills[self.param]
+        class_code = skill_data['charclass']
+        class_name = GameData.playerclass[class_code]['Player Class']
+        charstats = next(charstat for charstat in GameData.charstats
+                         if charstat['class'] == class_name)
+        str2 = charstats['StrClassOnly']
+        return GameData.get_string(str1) % self._value + ' ' + str2
+
+    def _str_formatter_15(self, str1, _):
+        '''
+        15 - [chance]% to case [slvl] [skill] on [event]
         '''
         skill_data = GameData.skills[self.param >> 6]
         skill_desc = GameData.skilldesc[skill_data['skilldesc']]
@@ -333,23 +383,23 @@ class ItemStat:
 #    17 - [value] [string1] (Increases near [time])
 #    18 - [value]% [string1] (Increases near [time])
 
-    def _str_formatter_19(self, str1):
+    def _str_formatter_19(self, str1, _):
         '''
-        this is used by stats that use Blizzard's sprintf implementation
+        19 - this is used by stats that use Blizzard's sprintf implementation
         '''
         return GameData.get_string(str1) % (self.value, )
 
-    def _str_formatter_20(self, str1):
+    def _str_formatter_20(self, str1, _):
         '''
-        [value * -1]% [string1]
+        20 - [value * -1]% [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'{self.value * -1}%'
         return self._order_by_descval(line, value)
 
-    def _str_formatter_21(self, str1):
+    def _str_formatter_21(self, str1, _):
         '''
-        [value * -1] [string1]
+        21 - [value * -1] [string1]
         '''
         line = f'{GameData.get_string(str1)}'
         value = f'{self.value * -1}'
@@ -358,20 +408,29 @@ class ItemStat:
 #    22 - [value]% [string1] [montype] (warning: this is bugged in vanilla and
 #         doesn't work properly, see CE forum)
 #    23 - [value]% [string1] [monster]
-#    24 - used for charges, we all know how that desc looks
+
+    def _str_formatter_24(self, str1, _):
+        '''
+        24 - Level {value} {skill} ({num}/{max} Charges)
+        '''
+        return f'Level {None} {None} ({GameData.get_string(str1)})'
+
 #    25 - not used by vanilla, present in the code but I didn't test it yet
 #    26 - not used by vanilla, present in the code but I didn't test it yet
 
-    def _str_formatter_27(self, _):
+    def _str_formatter_27(self, *_):
         '''
-        +[value] to [skill] ([class] Only)
+        27 - +[value] to [skill] ([class] Only)
         '''
         skill_data = GameData.skills[self.param]
         skill_desc = GameData.skilldesc[skill_data['skilldesc']]
         skill_name = GameData.get_string(skill_desc['str name'])
-        character_class = GameData.get_string("partychar" + skill_data["charclass"])
-        # there seems to be no string constant for this one
-        return f'+{self.value} to {skill_name} ({character_class} Only)'
+        class_code = skill_data['charclass']
+        class_name = GameData.playerclass[class_code]['Player Class']
+        charstats = next(charstat for charstat in GameData.charstats
+                         if charstat['class'] == class_name)
+        str2 = GameData.get_string(charstats['StrClassOnly'])
+        return f'+{self.value} to {skill_name} {str2}'
 
 #    28 - +[value] to [skill]
 
@@ -379,7 +438,7 @@ class ItemStat:
     # custom skill groups that are not part of the data files but seem to be
     # hard coded in the game instead.
 
-    def _str_formatter_30(self, str1):
+    def _str_formatter_30(self, str1, _):
         '''
         non-poison-damage type grouping
         '''
@@ -394,7 +453,7 @@ class ItemStat:
 
         return GameData.get_string(str1) % args
 
-    def _str_formatter_31(self, str1):
+    def _str_formatter_31(self, str1, _):
         '''
         poison-damage type grouping
         '''
@@ -429,9 +488,11 @@ class ItemProperty:
 
         self._property = GameData.properties[self._code]
 
-        # this property has no stat assigned
+        # fix properties with no stat assigned
         if self._code == 'dmg-max':
             self._property['stat1'] = 'maxdamage'
+        if self._code == 'dmg-min':
+            self._property['stat1'] = 'mindamage'
 
         self._itemstat = ItemStat(self._property['stat1'], param, min_value)
         for i in range(2, 8):

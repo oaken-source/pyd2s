@@ -271,7 +271,7 @@ class PlugyPersonalStash:
         '''
         indicate the type of save file this is
         '''
-        return SaveFile.Type.D2I
+        return SaveFile.Type.D2X
 
     @property
     def header(self):
