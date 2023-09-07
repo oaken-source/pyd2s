@@ -358,8 +358,13 @@ class ItemStat:
         '''
         12 - +[value] [string1]
         '''
-        # this is only used by item_stupidity and item_freeze, I think value is ignored here
-        return GameData.get_string(str1)
+        # this is only used by item_stupidity and item_freeze
+        # value is only printed if >1
+        line = GameData.get_string(str1)
+        value = f'{self.value:+}'
+        if self.value > 1:
+            return self._order_by_descval(line, value)
+        return line
 
     def _str_formatter_13(self, *_):
         '''

@@ -800,7 +800,7 @@ class ExtendedItem(SimpleItem):
         new_mindam = self._apply_mods(
             mindam,
             percent=['item_maxdamage_percent'],
-            add=['mindamage'])
+            add=['mindamage', 'secondary_mindamage'])
         new_maxdam = self._apply_mods(
             maxdam,
             percent=['item_maxdamage_percent'],
