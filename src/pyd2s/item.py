@@ -682,24 +682,13 @@ class ExtendedItem(SimpleItem):
         '''
         return self._length
 
-    def _apply_mods(self, value, percent, add):
+    def _apply_mods(self, value, stat):
         '''
-        convenience method for recurring calculations
+        apply the modifiers to the given stat
         '''
-        # I could probably do this using the op field in itemstatcost
-        res = value
-
-        mods = [
-            enhancement for enhancement in self._attributes['enhancements']
-            if enhancement.stat in percent]
-        res = (value * (100 + sum(mod.value for mod in mods))) // 100
-
-        mods = [
-            enhancement for enhancement in self._attributes['enhancements']
-            if enhancement.stat in add]
-        res += sum(mod.value for mod in mods)
-
-        return res
+        mods = [mod for mod in self._attributes['enhancements'] if stat in mod.applies_to]
+        bonus = sum(mod.apply_to(value) for mod in mods)
+        return value + bonus
 
     def _str_block_header(self):
         '''
@@ -719,7 +708,7 @@ class ExtendedItem(SimpleItem):
                 and not self._attributes.get('unique_id', 0) == 0xfff):
             block.append(f'{self.name_color}{self.name}{colorama.Style.RESET_ALL}')
 
-        # if the item is a runeword, add the base name grey
+        # if the item is a runeword, add the base name in grey
         if self.is_runeword:
             block.append(f'{colorama.Fore.LIGHTBLACK_EX}{self.name}{colorama.Fore.RESET}')
 
@@ -750,10 +739,7 @@ class ExtendedItem(SimpleItem):
         # handle defense, if recorded in the attributes
         if 'defense' in self._attributes:
             defense = self._attributes['defense']
-            new_defense = self._apply_mods(
-                defense,
-                percent=['item_armor_percent'],
-                add=['armorclass', 'item_armor_perlevel'])
+            new_defense = self._apply_mods(defense, 'armorclass')
 
             line = GameData.get_string('itemstats1h')
             if self.is_identified and new_defense != defense:
@@ -766,10 +752,7 @@ class ExtendedItem(SimpleItem):
         if 'shld' in self.item_types:
             # this calculation does not include the class bonus to block chance
             chance = int(self._itemdata['block']) + 20
-            new_chance = self._apply_mods(
-                chance,
-                percent=[],
-                add=['toblock'])
+            new_chance = self._apply_mods(chance, 'toblock')
 
             line = GameData.get_string('itemstats1r')
             if self.is_identified:
@@ -780,15 +763,15 @@ class ExtendedItem(SimpleItem):
 
         return block
 
-    def _str_block_damage_single(self, key_mindam, key_maxdam, str1):
+    def _str_block_damage_single(self, key_dam, str1, key_stat):
         '''
         one line of damage data for a given damage type
         '''
-        if key_mindam not in self._itemdata or not int(self._itemdata[key_mindam] or 0):
+        if key_dam % 'min' not in self._itemdata or not int(self._itemdata[key_dam % 'min'] or 0):
             return []
 
-        mindam = int(self._itemdata[key_mindam])
-        maxdam = int(self._itemdata[key_maxdam])
+        mindam = int(self._itemdata[key_dam % 'min'])
+        maxdam = int(self._itemdata[key_dam % 'max'])
 
         if self.quality == ItemQuality.LOW_QUALITY:
             mindam = mindam * 75 // 100
@@ -797,14 +780,8 @@ class ExtendedItem(SimpleItem):
             mindam = mindam * 3 // 2
             maxdam = maxdam * 3 // 2
 
-        new_mindam = self._apply_mods(
-            mindam,
-            percent=['item_maxdamage_percent'],
-            add=['mindamage', 'secondary_mindamage'])
-        new_maxdam = self._apply_mods(
-            maxdam,
-            percent=['item_maxdamage_percent'],
-            add=['maxdamage', 'secondary_maxdamage'])
+        new_mindam = self._apply_mods(mindam, key_stat % 'min')
+        new_maxdam = self._apply_mods(maxdam, key_stat % 'max')
 
         new_maxdam = max(new_maxdam, new_mindam + 1)
 
@@ -827,11 +804,14 @@ class ExtendedItem(SimpleItem):
         block = []
 
         # first throw damage
-        block.extend(self._str_block_damage_single('minmisdam', 'maxmisdam', 'itemstats1n'))
+        block.extend(self._str_block_damage_single(
+            '%smisdam', 'itemstats1n', 'item_throw_%sdamage'))
         # second one-handed damage
-        block.extend(self._str_block_damage_single('mindam', 'maxdam', 'itemstats1l'))
+        block.extend(self._str_block_damage_single(
+            '%sdam', 'itemstats1l', '%sdamage'))
         # third two-handed damage
-        block.extend(self._str_block_damage_single('2handmindam', '2handmaxdam', 'itemstats1m'))
+        block.extend(self._str_block_damage_single(
+            '2hand%sdam', 'itemstats1m', 'secondary_%sdamage'))
 
         return block
 
@@ -892,10 +872,7 @@ class ExtendedItem(SimpleItem):
             durability = self._attributes['durability']
             max_durability = self._attributes['max_durability']
 
-            new_max_durability = self._apply_mods(
-                max_durability,
-                percent=['item_maxdurability_percent'],
-                add=[])
+            new_max_durability = self._apply_mods(max_durability, 'maxdurability')
 
             line = GameData.get_string('itemstats1d')
             line += f' {durability} of {new_max_durability}'

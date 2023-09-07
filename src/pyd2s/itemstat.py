@@ -187,6 +187,37 @@ class ItemStat:
         '''
         return self._param
 
+    @property
+    def applies_to(self):
+        '''
+        indicate whether the modifier applies to the given stat
+        '''
+        stats = [
+            self._itemstat['Stat'],
+            *(
+                self._itemstat[f'op stat{i}']
+                for i in range(1, 4) if self._itemstat[f'op stat{i}']),
+            *(stat for child in self._children for stat in child.applies_to)]
+        return stats
+
+    def apply_to(self, base_value):
+        '''
+        modify the given value by this stat and return the bonus
+        '''
+        # little benefit to deviate from the original names just to placate pylint
+        # pylint: disable=C0103
+        op = int(self._itemstat['op'] or 0)
+
+        if op == 0:
+            return self.value
+        if op in [2, 4]:
+            # conversion already covered in value property
+            return self.value
+        if op == 13:
+            return base_value * self.value // 100
+
+        raise NotImplementedError(op)
+
     def add_child(self, child):
         '''
         add a child property
