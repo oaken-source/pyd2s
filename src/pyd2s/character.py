@@ -4,7 +4,6 @@ this module provides a class that manages character data
 '''
 
 import re
-import math
 from enum import Enum
 from os.path import dirname, join, isfile
 
@@ -35,15 +34,7 @@ class CharacterClass(Enum):
         '''
         produce the short code of the character class
         '''
-        return {
-            self.AMAZON: 'ama',
-            self.SORCERESS: 'sor',
-            self.NECROMANCER: 'nec',
-            self.PALADIN: 'pal',
-            self.BARBARIAN: 'bar',
-            self.DRUID: 'dru',
-            self.ASSASSIN: 'ass',
-        }[self]
+        return GameData.playerclass[self.value]['Code']
 
     def __str__(self):
         '''
@@ -83,7 +74,7 @@ class SkillTree(Enum):
         '''
         produce the title of the skill
         '''
-        return GameData.skills[self.value]['skill']
+        return GameData.get_string(GameData.skills[self.value]['skill'])
 
 
 class AmazonSkillTree(SkillTree):
@@ -388,24 +379,7 @@ class Character:
                 '''
                 the bit width of the stat value
                 '''
-                return {
-                    self.STRENGTH: 10,
-                    self.ENERGY: 10,
-                    self.DEXTERITY: 10,
-                    self.VITALITY: 10,
-                    self.STATPTS: 10,
-                    self.NEWSKILLS: 8,
-                    self.HITPOINTS: 21,
-                    self.MAXHP: 21,
-                    self.MANA: 21,
-                    self.MAXMANA: 21,
-                    self.STAMINA: 21,
-                    self.MAXSTAMINA: 21,
-                    self.LEVEL: 7,
-                    self.EXPERIENCE: 32,
-                    self.GOLD: 25,
-                    self.GOLDBANK: 25,
-                }[self]
+                return int(GameData.itemstatcost[self.value]['CSvBits'])
 
         def __init__(self, buffer):
             '''
@@ -424,15 +398,15 @@ class Character:
             if self._buffer.sparse:
                 return
 
-            position = 767 * 8
+            ptr = self._buffer.BitReadPointer(self._buffer, 767 * 8)
             while True:
-                statid = self._buffer.getbits(position, 9)
+                statid = ptr.read_bits(9)
                 if statid == 0x1FF:
                     break
                 stat = self.CharacterStat(statid)
-                self._positions[stat] = position + 9
-                position += 9 + stat.bits
-            self._end = position
+                self._positions[stat] = ptr.value
+                ptr.read_bits(stat.bits)
+            self._end = ptr.value
 
         @property
         def _header(self):
@@ -448,7 +422,7 @@ class Character:
             '''
             the length of the stat section in bytes
             '''
-            return math.ceil((self._end + 9) / 8) - 765
+            return (self._end - 1) // 8 + 1 - 765
 
         def __getitem__(self, statid):
             '''
@@ -493,7 +467,7 @@ class Character:
             constructor - propagate buffer and parse stats section
             '''
             self._buffer = buffer
-            self._offset = offset
+            self._offset = buffer.dynamic_offset(offset)
 
             if self._header != 'if':
                 raise ValueError('invalid save: mismatched stat data section header')

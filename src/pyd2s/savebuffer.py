@@ -47,11 +47,46 @@ class SaveBuffer(bytearray):
             return res.decode('ascii')
 
         @property
+        def value(self):
+            '''
+            the current value of the pointer
+            '''
+            return self._pos
+
+        @property
         def distance(self):
             '''
             the distance the pointer has travelled in bits
             '''
             return self._pos - self._start
+
+    class DynamicOffset:
+        '''
+        an offset into the save buffer that is kept around and updated when necessary
+        '''
+        def __init__(self, offset):
+            '''
+            constructor
+            '''
+            self._offset = offset
+
+        def __add__(self, other):
+            '''
+            add to the offset
+            '''
+            return self._offset + other
+
+        def __mul__(self, other):
+            '''
+            multiply the offset
+            '''
+            return self._offset * other
+
+        def __index__(self):
+            '''
+            use the offset as an index
+            '''
+            return self._offset
 
     def __init__(self, path):
         '''
@@ -59,6 +94,7 @@ class SaveBuffer(bytearray):
         '''
         self._path = path
         self._newpath = None
+        self._dynamic_offsets = []
 
         with open(path, 'rb') as save:
             super().__init__(save.read())
@@ -138,6 +174,14 @@ class SaveBuffer(bytearray):
         fill = (math.ceil((align_at + length) / 8.0) - byte) * [0]
         self[byte:byte] = fill
         self.setbits(start + length, self.getbits(start, align_at - start), align_at - start)
+
+    def dynamic_offset(self, offset):
+        '''
+        produce a dynamic reference to an offset into the buffer
+        '''
+        res = self.DynamicOffset(offset)
+        self._dynamic_offsets.append(res)
+        return res
 
     def flush(self):
         '''

@@ -18,7 +18,7 @@ class ItemData:
         constructor - propagate buffer
         '''
         self._buffer = buffer
-        self._offset = offset
+        self._offset = buffer.dynamic_offset(offset)
 
         # items on player / belt / cursor / in stash
         self._pdata = []
@@ -100,6 +100,10 @@ class ItemData:
         if self._buffer[ptr:ptr+2].decode('ascii') != 'jf':
             raise ValueError('invalid save: mismatched mercenary item data section header')
         ptr += 2
+
+        if self._buffer[ptr:ptr+2].decode('ascii') == 'kf':
+            # no mercenary data
+            return ptr + 2
 
         if self._buffer[ptr:ptr+2].decode('ascii') != 'JM':
             raise ValueError('invalid save: mismatched mercenary item data section header')

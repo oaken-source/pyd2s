@@ -28,10 +28,10 @@ class _GameData:
         'gems': 'code',
         'properties': 'code',
         'runes': 'Name',
-        'playerclass': 'Code',
     }
     _TABLE_INDICES = {
         'itemstatcost': 'Stat',
+        'playerclass': 'Code',
     }
     _TABLE_INDEX_OFFSETS = {
         'magicprefix': 1,
@@ -175,42 +175,29 @@ class _GameData:
         '''
         load one string table file into memory
         '''
-        def read_null_terminated_string(file):
-            '''
-            read a null-terminated string from a given file-like object
-            '''
-            res = bytearray()
-            while True:
-                next_byte = file.read(1)[0]
-                if next_byte == 0:
-                    break
-                res.append(next_byte)
-            return res.decode('cp1252')
-
         with open(filename, 'rb') as tbl:
-            header = tbl.read(21)
-            num_entries = struct.unpack_from('<H', header, 2)[0]
+            data = tbl.read()
 
-            entries = []
-            for _ in range(num_entries):
-                entries.append(struct.unpack('<H', tbl.read(2))[0])
+        pos = 0
+        num_entries = struct.unpack_from('<H', data, pos + 2)[0]
 
-            node_start = 21 + num_entries * 2
+        pos = 21
+        entries = []
+        for i in range(num_entries):
+            entries.append(struct.unpack_from('<H', data, pos + 2 * i)[0])
 
-            entry_dict = {}
-            for entry in entries:
-                tbl.seek(node_start + entry * 17)
-                hash_entry = tbl.read(17)
-                key_offset = struct.unpack_from('<L', hash_entry, 7)[0]
-                val_offset = struct.unpack_from('<L', hash_entry, 11)[0]
+        pos = 21 + num_entries * 2
+        entry_dict = {}
+        for entry in entries:
+            _pos = pos + entry * 17
+            key_offset = struct.unpack_from('<L', data, _pos + 7)[0]
+            val_offset = struct.unpack_from('<L', data, _pos + 11)[0]
 
-                tbl.seek(key_offset)
-                key = read_null_terminated_string(tbl).lower()
-                tbl.seek(val_offset)
-                val = read_null_terminated_string(tbl)
+            key = data[key_offset:data.index(0, key_offset)].decode('cp1252').lower()
+            val = data[val_offset:data.index(0, val_offset)].decode('cp1252')
 
-                if key not in entry_dict:
-                    entry_dict[key] = val
+            if key not in entry_dict:
+                entry_dict[key] = val
 
         return entry_dict
 

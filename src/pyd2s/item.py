@@ -78,7 +78,7 @@ class Item:
         constructor
         '''
         self._buffer = buffer
-        self._offset = offset
+        self._offset = buffer.dynamic_offset(offset)
 
         self._itemdata = GameData.itemdata[self.type]
 

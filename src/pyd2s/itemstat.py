@@ -480,7 +480,7 @@ class ItemStat:
         skill_desc = GameData.skilldesc[skill_data['skilldesc']]
         skill_name = GameData.get_string(skill_desc['str name'])
         class_code = skill_data['charclass']
-        class_name = GameData.playerclass[class_code]['Player Class']
+        class_name = GameData.playerclass_index[class_code]['Player Class']
         charstats = next(charstat for charstat in GameData.charstats
                          if charstat['class'] == class_name)
         str2 = GameData.get_string(charstats['StrClassOnly'])
