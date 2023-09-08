@@ -72,6 +72,7 @@ class D2SaveFile:
         '''
         constructor - initialize buffer and do sanity checks
         '''
+        logging.debug('D2SaveFile:__init__')
         self._buffer = buffer
 
         if self.magic != 0xaa55aa55:
@@ -88,7 +89,7 @@ class D2SaveFile:
         self.mercenary = Mercenary(self._buffer)
         self.questdata = QuestData(self._buffer)
         self.waypointdata = WaypointData(self._buffer)
-        self.itemdata = ItemData(self._buffer, 765 + self.character.stats.length + 32)
+        self.itemdata = ItemData(self, self._buffer, 765 + self.character.stats.length + 32)
 
     @property
     def type(self):
@@ -102,7 +103,7 @@ class D2SaveFile:
         '''
         get the magic number of d2s files - should be 0xaa55aa55
         '''
-        return struct.unpack_from('<L', self._buffer)[0]
+        return struct.unpack_from('<L', self._buffer, 0)[0]
 
     @property
     def version(self):
@@ -122,7 +123,7 @@ class D2SaveFile:
         '''
         flush the save data back to file, if not newer on disk
         '''
-        tmp = D2SaveFile(self._buffer.path)
+        tmp = SaveFile.open(self._buffer.path)
         if tmp.timestamp > self.timestamp:
             raise ValueError('flush failed: refusing to overwrite newer version')
         self._buffer.flush()

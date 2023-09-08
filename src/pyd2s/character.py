@@ -4,6 +4,7 @@ this module provides a class that manages character data
 '''
 
 import re
+import logging
 from enum import Enum
 from os.path import dirname, join, isfile
 
@@ -405,7 +406,8 @@ class Character:
                     break
                 stat = self.CharacterStat(statid)
                 self._positions[stat] = ptr.value
-                ptr.read_bits(stat.bits)
+                value = ptr.read_bits(stat.bits)
+                logging.debug('character:%s = %d', stat, value)
             self._end = ptr.value
 
         @property
@@ -445,11 +447,29 @@ class Character:
 
             position = self._positions[statid]
             if position is None:
+                # insert a new field after the end of the stats
+                length = 9 + statid.bits
+                logging.debug('StatData:appending stat with 9 + %d = %d bits length',
+                              statid.bits, length)
+                bits_over = length - (8 - self._end % 8) % 8
+                logging.debug('StatData:%d bits over at _end %d (%d mod 8)',
+                              bits_over, self._end, self._end % 8)
+                bytes_over = (bits_over - 1) // 8 + 1
+                logging.debug('StatData:allocating %d bytes over',
+                              bytes_over)
+
+                self._buffer.insert_bytes((self._end - 1) // 8 + 1, bytes_over)
+
+                # override the last stat block end mark
+                self._buffer.setbits(self._end - 9, statid.value, 9)
+                # write the stat value
+                self._buffer.setbits(self._end, value, statid.bits)
+                # write the new stat block end mark
+                self._buffer.setbits(self._end + statid.bits, 0x1ff, 9)
+
+                # register the stat position and increase the length
                 self._positions[statid] = self._end
-                self._buffer.addbits(self._end, 9 + statid.bits, self._end + 9)
-                self._buffer.setbits(self._end, statid.value, 9)
-                self._buffer.setbits(self._end + 9, value, statid.bits)
-                self._end += 9 + statid.bits
+                self._end += length
             else:
                 self._buffer.setbits(position, value, statid.bits)
 
@@ -470,7 +490,7 @@ class Character:
             self._offset = buffer.dynamic_offset(offset)
 
             if self._header != 'if':
-                raise ValueError('invalid save: mismatched stat data section header')
+                raise ValueError('invalid save: mismatched skill data section header')
 
         @property
         def _header(self):
@@ -509,6 +529,7 @@ class Character:
         '''
         constructor - propagate buffer
         '''
+        logging.debug('Character:__init__')
         self._buffer = buffer
 
         GameData.set_expansion(self.is_expansion)

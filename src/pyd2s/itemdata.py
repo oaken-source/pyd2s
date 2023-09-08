@@ -6,17 +6,17 @@ this module provides classes to manage item data of a d2s save
 import struct
 
 from pyd2s.item import Item
-from pyd2s.character import Character, CharacterClass
 
 
 class ItemData:
     '''
     save data related to item
     '''
-    def __init__(self, buffer, offset):
+    def __init__(self, d2s, buffer, offset):
         '''
         constructor - propagate buffer
         '''
+        self._d2s = d2s
         self._buffer = buffer
         self._offset = buffer.dynamic_offset(offset)
 
@@ -44,7 +44,7 @@ class ItemData:
         ptr = self._read_gdata(ptr)
 
         if ptr != len(self._buffer):
-            raise ValueError('invalid save: trailing data')
+            raise ValueError(f'invalid save: trailing data: {self._buffer[ptr:]}')
 
     def _read_pdata(self, ptr):
         '''
@@ -94,7 +94,7 @@ class ItemData:
         '''
         parse mercenary item data from the save buffer
         '''
-        if not Character(self._buffer).is_expansion:
+        if not self._d2s.character.is_expansion:
             return ptr
 
         if self._buffer[ptr:ptr+2].decode('ascii') != 'jf':
@@ -127,9 +127,6 @@ class ItemData:
         '''
         parse golem item data from the save buffer
         '''
-        if Character(self._buffer).character_class != CharacterClass.NECROMANCER:
-            return ptr
-
         gcount = self._buffer[ptr]
         ptr += 1
 

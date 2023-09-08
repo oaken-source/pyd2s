@@ -4,6 +4,7 @@ this module provides a class to manage mercenary data
 '''
 
 import struct
+import logging
 
 from pyd2s.gamedata import GameData
 
@@ -17,6 +18,7 @@ class Mercenary:
         '''
         constructor - propagate buffer
         '''
+        logging.debug('Mercenary:__init__')
         self._buffer = buffer
 
         self._merc_data = next(

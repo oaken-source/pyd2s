@@ -4,8 +4,8 @@ this module provides a change-aware buffer for d2s files
 '''
 
 import glob
-import math
 import struct
+import logging
 from os import rename
 from os.path import dirname, basename, join
 
@@ -88,6 +88,18 @@ class SaveBuffer(bytearray):
             '''
             return self._offset
 
+        def __ge__(self, other):
+            '''
+            enable integer comparison
+            '''
+            return self._offset >= other
+
+        def adjust_by(self, value):
+            '''
+            adjust the dynamic offset in the buffer
+            '''
+            self._offset += value
+
     def __init__(self, path):
         '''
         constructor - read the input file into memory
@@ -148,6 +160,18 @@ class SaveBuffer(bytearray):
         '''
         self._newpath = value
 
+    def insert_bytes(self, start, length):
+        '''
+        insert the given number of zero bytes in the buffer
+        '''
+        logging.debug('SaveBuffer:inserting %d bytes at %d', length, start)
+        self[start:start] = [0] * length
+
+        # update the dynamic offsets
+        for offset in self._dynamic_offsets:
+            if offset >= start:
+                offset.adjust_by(length)
+
     def getbits(self, start, length):
         '''
         produce an integer from the given bit position and length
@@ -165,15 +189,6 @@ class SaveBuffer(bytearray):
         for i in range(length):
             pos = start + i
             self[pos >> 3] ^= (-((value >> i) & 0x1) ^ self[pos >> 3]) & (1 << (pos & 0x07))
-
-    def addbits(self, start, length, align_at):
-        '''
-        add the given bits to the given position, keeping the byte-alignment intact
-        '''
-        byte = math.ceil(align_at / 8.0)
-        fill = (math.ceil((align_at + length) / 8.0) - byte) * [0]
-        self[byte:byte] = fill
-        self.setbits(start + length, self.getbits(start, align_at - start), align_at - start)
 
     def dynamic_offset(self, offset):
         '''
