@@ -82,7 +82,7 @@ class ItemStat:
         res = []
 
         while True:
-            eid = ptr.read_bits(9)
+            eid = ptr.read(9)
             if eid == 0x1FF:
                 break
 
@@ -94,10 +94,10 @@ class ItemStat:
                 item_stat_cost = GameData.itemstatcost[_eid]
 
                 field_width = int(item_stat_cost['Save Param Bits'] or 0)
-                param = ptr.read_bits(field_width)
+                param = ptr.read(field_width)
 
                 field_width = int(item_stat_cost['Save Bits'] or 0)
-                value = ptr.read_bits(field_width)
+                value = ptr.read(field_width)
                 value -= int(item_stat_cost['Save Add'] or 0)
 
                 group.append(ItemStat(_eid, param, value))

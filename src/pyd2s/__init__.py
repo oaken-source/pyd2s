@@ -41,16 +41,15 @@ class SaveFile:
         '''
         open a file by path and parse the data
         '''
-        buffer = SaveBuffer(path)
-        return cls.from_buffer(buffer)
+        return cls.from_data(SaveBuffer.open(path))
 
     @classmethod
-    def from_buffer(cls, buffer):
+    def from_data(cls, buffer):
         '''
         open a file from a given savebuffer
         '''
         if not isinstance(buffer, SaveBuffer):
-            raise TypeError('usage: buffer must be pyd2s.SaveBuffer instance')
+            buffer = SaveBuffer(buffer)
 
         if struct.unpack_from('<L', buffer)[0] == 0xaa55aa55:
             return D2SaveFile(buffer)
@@ -63,8 +62,20 @@ class SaveFile:
 
         raise ValueError('invalid save: unrecognized file header')
 
+    def __init__(self, buffer):
+        '''
+        constructor
+        '''
+        self._buffer = buffer
 
-class D2SaveFile:
+    def flush(self):
+        '''
+        flush the savebuffer, writing changes to disk
+        '''
+        self._buffer.flush()
+
+
+class D2SaveFile(SaveFile):
     '''
     a .d2s file containing diablo 2 save game data
     '''
@@ -72,8 +83,7 @@ class D2SaveFile:
         '''
         constructor - initialize buffer and do sanity checks
         '''
-        logging.debug('D2SaveFile:__init__')
-        self._buffer = buffer
+        super().__init__(buffer)
 
         if self.magic != 0xaa55aa55:
             raise ValueError('invalid save: mismatched magic number')
@@ -82,7 +92,7 @@ class D2SaveFile:
         if len(self._buffer) < 335:
             raise ValueError('invalid save: truncated data')
 
-        if self._buffer.sparse:
+        if len(buffer) <= 335:
             logging.warning('sparse save: has never been saved in-game.')
 
         self.character = Character(self._buffer)
@@ -119,17 +129,36 @@ class D2SaveFile:
         '''
         return struct.unpack_from('<L', self._buffer, 0x30)[0]
 
+    @property
+    def _checksum(self):
+        '''
+        get the checksum of the save data
+        '''
+        return struct.unpack_from('<L', self._buffer, 0x0c)[0]
+
+    @_checksum.setter
+    def _checksum(self, value):
+        '''
+        set the checksum of the save data
+        '''
+        struct.pack_into('<L', self._buffer, 0x0c, value)
+
     def flush(self):
         '''
         flush the save data back to file, if not newer on disk
         '''
-        tmp = SaveFile.open(self._buffer.path)
-        if tmp.timestamp > self.timestamp:
-            raise ValueError('flush failed: refusing to overwrite newer version')
-        self._buffer.flush()
+        # update checksum
+        self._checksum = 0
+
+        checksum = 0
+        for byte in self._buffer:
+            checksum = (((checksum << 1) | (checksum & 0x80000000 > 0)) + byte) & 0xffffffff
+        self._checksum = checksum
+
+        super().flush()
 
 
-class D2ItemFile:
+class D2ItemFile(SaveFile):
     '''
     a .d2i file containing data for exactly one item
     '''
@@ -137,29 +166,17 @@ class D2ItemFile:
         '''
         constructor - initialize buffer and do sanity checks
         '''
-        self._buffer = buffer
+        super().__init__(buffer)
 
         if self.header != 'JM':
             raise ValueError('invalid save: invalid item header')
+        if self.version != 0x60:
+            raise ValueError('invalid save: pre 1.10 and post 1.14 saves are not supported')
 
-        self._item = Item.from_data(buffer, 0)
+        self._item = Item.from_data(buffer, 0x06)
 
-        if len(buffer) != self._item.length:
+        if len(buffer) != self._item.length + 0x06:
             raise ValueError('invalid save: trailing data')
-
-    @property
-    def version(self):
-        '''
-        .d2i files are always version 0x60
-        '''
-        return 0x60
-
-    @property
-    def type(self):
-        '''
-        indicate the type of save file this is
-        '''
-        return SaveFile.Type.D2I
 
     @property
     def header(self):
@@ -169,6 +186,20 @@ class D2ItemFile:
         return self._buffer[:2].decode('ascii')
 
     @property
+    def version(self):
+        '''
+        get the version of the file - supported values are 0x60 for >=1.10
+        '''
+        return struct.unpack_from('<L', self._buffer, 0x02)[0]
+
+    @property
+    def type(self):
+        '''
+        indicate the type of save file this is
+        '''
+        return SaveFile.Type.D2I
+
+    @property
     def item(self):
         '''
         produce the item of the item file
@@ -176,7 +207,7 @@ class D2ItemFile:
         return self._item
 
 
-class PlugySharedStash:
+class PlugySharedStash(SaveFile):
     '''
     an .xxx file containing shared stash data
     '''
@@ -184,16 +215,13 @@ class PlugySharedStash:
         '''
         constructor - initialize buffer and do sanity checks
         '''
-        self._buffer = buffer
+        super().__init__(buffer)
 
         if self.header != 'SSS\0':
             raise ValueError('invalid save: mismatched file header')
 
         ptr = 6
-
-        self._stored_gold = 0
         if self.version == 2:
-            self._stored_gold = struct.unpack_from('<L', self._buffer, ptr)[0]
             ptr += 4
 
         num_pages = struct.unpack_from('<L', self._buffer, ptr)[0]
@@ -205,12 +233,7 @@ class PlugySharedStash:
             ptr += page.length
             self._pages.append(page)
 
-    @property
-    def type(self):
-        '''
-        indicate the type of save file this is
-        '''
-        return SaveFile.Type.SSS
+        # after the pages, other mod may have stored data. so we can't compare length here
 
     @property
     def header(self):
@@ -226,12 +249,40 @@ class PlugySharedStash:
         '''
         return int(self._buffer[4:6].decode('ascii'))
 
+    @version.setter
+    def _version(self, value):
+        '''
+        set the version of the stash file
+        '''
+        if value not in [1, 2]:
+            raise ValueError(f'unsupported version: {value}')
+        self._buffer[4:6] = f'{value:02}'.encode('ascii')
+
+    @property
+    def type(self):
+        '''
+        indicate the type of save file this is
+        '''
+        return SaveFile.Type.SSS
+
     @property
     def stored_gold(self):
         '''
         the amount of gold stored in the stash, only if version == 2
         '''
-        return self._stored_gold
+        if self.version != 2:
+            return 0
+        return struct.unpack_from('<L', self._buffer, 0x06)[0]
+
+    @stored_gold.setter
+    def stored_gold(self, value):
+        '''
+        set the amount of stored gold in the stash
+        '''
+        if self.version != 2:
+            self.version = 2
+            self._buffer.insert_bytes(0x06, 4)
+        struct.pack_into('<L', self._buffer, 0x06, value)
 
     @property
     def pages(self):
@@ -241,7 +292,7 @@ class PlugySharedStash:
         return self._pages
 
 
-class PlugyPersonalStash:
+class PlugyPersonalStash(SaveFile):
     '''
     a .d2x file containing personal stash data
     '''
@@ -249,7 +300,7 @@ class PlugyPersonalStash:
         '''
         constructor - initialize buffer and do sanity checks
         '''
-        self._buffer = buffer
+        super().__init__(buffer)
 
         if self.header != 'CSTM':
             raise ValueError('invalid save: mismatched file header')

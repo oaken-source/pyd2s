@@ -110,7 +110,7 @@ class WaypointData:
             if not isinstance(waypoint, Waypoint):
                 waypoint = Waypoint(waypoint)
 
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return waypoint == Waypoint.ROGUE_ENCAMPMENT
 
             return (self._value & (1 << waypoint.value)) != 0
@@ -119,7 +119,7 @@ class WaypointData:
             '''
             set the state of a given waypoint
             '''
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 raise ValueError('unable to set waypoint data on sparse save.')
 
             if not isinstance(waypoint, Waypoint):
@@ -148,6 +148,6 @@ class WaypointData:
         '''
         produce the header of the section - should be 'WS'
         '''
-        if self._buffer.sparse:
+        if len(self._buffer) <= 335:
             return 'WS'
         return self._buffer[633:635].decode('ascii')

@@ -98,13 +98,13 @@ class QuestData:
             if not isinstance(quest, Quest):
                 quest = Quest(quest)
 
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return 0
 
             return struct.unpack_from('<H', self._buffer, 345 + self._offset + quest.offset)[0]
 
         def __setitem__(self, quest, value):
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 raise ValueError('unable to set quest data on sparse save.')
 
             if not isinstance(quest, Quest):
@@ -130,6 +130,6 @@ class QuestData:
         '''
         produce the header of the section - should be 'Woo!'
         '''
-        if self._buffer.sparse:
+        if len(self._buffer) <= 335:
             return 'Woo!'
         return self._buffer[335:339].decode('ascii')

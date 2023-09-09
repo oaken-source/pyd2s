@@ -363,7 +363,7 @@ class EarItem(Item):
         '''
         the name of the character who used to own this ear
         '''
-        ptr = self._buffer.BitReadPointer(self._buffer, self._offset * 8 + 86)
+        ptr = self._buffer.bit_pointer(self._offset * 8 + 86)
         return ptr.read_string()
 
     @property
@@ -399,63 +399,63 @@ class ExtendedItem(SimpleItem):
 
         self._attributes = {}
 
-        ptr = buffer.BitReadPointer(buffer, self._offset * 8 + 154)
+        ptr = buffer.bit_pointer(self._offset * 8 + 154)
 
         # icon select
-        if ptr.read_bits(1):
-            self._attributes['icon_id'] = ptr.read_bits(3)
+        if ptr.read(1):
+            self._attributes['icon_id'] = ptr.read(3)
 
         # class item affix
-        if ptr.read_bits(1):
-            self._attributes['class_affix'] = ptr.read_bits(11)
+        if ptr.read(1):
+            self._attributes['class_affix'] = ptr.read(11)
 
         # low quality details
         if self.quality == ItemQuality.LOW_QUALITY:
-            self._attributes['lq_affix'] = ptr.read_bits(3)
+            self._attributes['lq_affix'] = ptr.read(3)
 
         # high quality details
         if self.quality == ItemQuality.HIGH_QUALITY:
-            self._attributes['hq_affix'] = ptr.read_bits(3)
+            self._attributes['hq_affix'] = ptr.read(3)
 
         # magic item details
         if self.quality == ItemQuality.MAGICAL:
-            self._attributes['magic_prefix'] = ptr.read_bits(11)
-            self._attributes['magic_suffix'] = ptr.read_bits(11)
+            self._attributes['magic_prefix'] = ptr.read(11)
+            self._attributes['magic_suffix'] = ptr.read(11)
 
         # set item details part 1
         if self.quality == ItemQuality.SET:
-            self._attributes['set_id'] = ptr.read_bits(12)
+            self._attributes['set_id'] = ptr.read(12)
 
         # rare item details
         if self.quality == ItemQuality.RARE:
-            self._attributes['rare_name_1'] = ptr.read_bits(8)
-            self._attributes['rare_name_2'] = ptr.read_bits(8)
+            self._attributes['rare_name_1'] = ptr.read(8)
+            self._attributes['rare_name_2'] = ptr.read(8)
 
             for i in range(1, 4):
-                if ptr.read_bits(1):
-                    self._attributes[f'rare_prefix_{i}'] = ptr.read_bits(11)
-                if ptr.read_bits(1):
-                    self._attributes[f'rare_suffix_{i}'] = ptr.read_bits(11)
+                if ptr.read(1):
+                    self._attributes[f'rare_prefix_{i}'] = ptr.read(11)
+                if ptr.read(1):
+                    self._attributes[f'rare_suffix_{i}'] = ptr.read(11)
 
         # unique item details
         if self.quality == ItemQuality.UNIQUE:
-            self._attributes['unique_id'] = ptr.read_bits(12)
+            self._attributes['unique_id'] = ptr.read(12)
 
         # crafted item details
         if self.quality == ItemQuality.CRAFTED:
-            self._attributes['crafted_name_1'] = ptr.read_bits(8)
-            self._attributes['crafted_name_2'] = ptr.read_bits(8)
+            self._attributes['crafted_name_1'] = ptr.read(8)
+            self._attributes['crafted_name_2'] = ptr.read(8)
 
             for i in range(1, 4):
-                if ptr.read_bits(1):
-                    self._attributes[f'crafted_prefix_{i}'] = ptr.read_bits(11)
-                if ptr.read_bits(1):
-                    self._attributes[f'crafted_suffix_{i}'] = ptr.read_bits(11)
+                if ptr.read(1):
+                    self._attributes[f'crafted_prefix_{i}'] = ptr.read(11)
+                if ptr.read(1):
+                    self._attributes[f'crafted_suffix_{i}'] = ptr.read(11)
 
         # rune word details
         if self.is_runeword:
-            self._attributes['runeword_id'] = ptr.read_bits(12)
-            ptr.read_bits(4)
+            self._attributes['runeword_id'] = ptr.read(12)
+            ptr.read(4)
 
         # personalization details
         if self.is_personalized:
@@ -463,34 +463,34 @@ class ExtendedItem(SimpleItem):
 
         # tomes
         if self._itemdata['type'] == 'book':
-            ptr.read_bits(5)
+            ptr.read(5)
 
         # skip one unknown bit
-        ptr.read_bits(1)
+        ptr.read(1)
 
         # armor details
         if self._itemdata['kind'] == 'armor':
-            self._attributes['defense'] = ptr.read_bits(11) - 10
+            self._attributes['defense'] = ptr.read(11) - 10
 
         # durability
         if self._itemdata['kind'] in ['armor', 'weapons']:
-            max_durability = ptr.read_bits(8)
+            max_durability = ptr.read(8)
             if max_durability > 0:
                 self._attributes['max_durability'] = max_durability
-                self._attributes['durability'] = ptr.read_bits(8)
-                ptr.read_bits(1)
+                self._attributes['durability'] = ptr.read(8)
+                ptr.read(1)
 
         # stackables
         if self._itemdata.get('stackable', 0) == '1':
-            self._attributes['quantity'] = ptr.read_bits(9)
+            self._attributes['quantity'] = ptr.read(9)
 
         # socketed items
         if self.is_socketed:
-            self._attributes['socket_count'] = ptr.read_bits(4)
+            self._attributes['socket_count'] = ptr.read(4)
 
         # set details part 2
         if self.quality == ItemQuality.SET:
-            set_properties = ptr.read_bits(5)
+            set_properties = ptr.read(5)
 
         # the first attribute list are regular affixes and modifiers
         self._attributes['enhancements'] = ItemStat.read_list(ptr)

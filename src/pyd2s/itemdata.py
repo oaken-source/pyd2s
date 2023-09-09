@@ -33,7 +33,7 @@ class ItemData:
             raise ValueError('invalid save: mismatched item data section header')
 
         # we can stop looking for item data on a sparse input file
-        if self._buffer.sparse:
+        if len(self._buffer) <= 335:
             return
 
         ptr = self._offset + 2
@@ -142,7 +142,7 @@ class ItemData:
         '''
         produce the header of the items section - should be 'JM'
         '''
-        if self._buffer.sparse:
+        if len(self._buffer) <= 335:
             return 'JM'
         return self._buffer[self._offset:self._offset + 2].decode('ascii')
 

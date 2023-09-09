@@ -3,6 +3,7 @@ display diablo 2 save file information using pyd2s
 '''
 
 import os
+import struct
 import logging
 import argparse
 import datetime
@@ -305,6 +306,11 @@ def extract_items(d2s, dest):
             path = os.path.join(dest, path)
 
         with open(path, 'wb') as itemfile:
+            header = bytearray()
+            header.extend('JM'.encode('ascii'))
+            header.extend(struct.pack('<L', 0x60))
+            assert len(header) == 6
+            itemfile.write(header)
             itemfile.write(raw_data)
 
 

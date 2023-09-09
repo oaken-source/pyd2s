@@ -16,7 +16,7 @@ class PlugyStashPage:
         parse a page of plugy data from the buffer
         '''
         self._buffer = buffer
-        self._offset = offset
+        self._offset = buffer.dynamic_offset(offset)
 
         if self.header != 'ST':
             raise ValueError('invalid save: mismatched page header')

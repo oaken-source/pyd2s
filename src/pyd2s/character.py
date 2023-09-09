@@ -396,17 +396,17 @@ class Character:
             self._stats_end = 0
 
             # if this is a sparse save file, we can stop looking for stat data
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return
 
-            ptr = self._buffer.BitReadPointer(self._buffer, 767 * 8)
+            ptr = self._buffer.bit_pointer(767 * 8)
             while True:
-                statid = ptr.read_bits(9)
+                statid = ptr.read(9)
                 if statid == 0x1FF:
                     break
                 stat = self.CharacterStat(statid)
                 self._positions[stat] = ptr.value
-                value = ptr.read_bits(stat.bits)
+                value = ptr.read(stat.bits)
                 logging.debug('character:%s = %d', stat, value)
             self._end = ptr.value
 
@@ -415,7 +415,7 @@ class Character:
             '''
             produce the header of the section - should be 'gf'
             '''
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return 'gf'
             return self._buffer[765:767].decode('ascii')
 
@@ -497,7 +497,7 @@ class Character:
             '''
             produce the header of the section - should be 'if'
             '''
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return 'if'
             return self._buffer[self._offset:self._offset + 2].decode('ascii')
 
@@ -508,7 +508,7 @@ class Character:
             if isinstance(skillid, SkillTree):
                 skillid = skillid.value - skillid.offset()
 
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 return 0
 
             return self._buffer[self._offset + 2 + skillid]
@@ -517,7 +517,7 @@ class Character:
             '''
             set the skill by id to value
             '''
-            if self._buffer.sparse:
+            if len(self._buffer) <= 335:
                 raise ValueError('unable to set skill data on sparse save.')
 
             if isinstance(skillid, SkillTree):

@@ -3,18 +3,15 @@
 this module provides a change-aware buffer for d2s files
 '''
 
-import glob
 import struct
 import logging
-from os import rename
-from os.path import dirname, basename, join
 
 
 class SaveBuffer(bytearray):
     '''
     manage the buffer of a save file and maintain its checksum
     '''
-    class BitReadPointer:
+    class BitPointer:
         '''
         a self-advancing bit-wise read pointer
         '''
@@ -26,7 +23,7 @@ class SaveBuffer(bytearray):
             self._start = offset
             self._pos = offset
 
-        def read_bits(self, length):
+        def read(self, length):
             '''
             read the next length bits and return as integer, advancing the pointer
             '''
@@ -34,13 +31,20 @@ class SaveBuffer(bytearray):
             self._pos += length
             return res
 
+        def write(self, length, value):
+            '''
+            overwrite the next length bits with the given integer, advancing the pointer
+            '''
+            self._buffer.setbits(self._pos, value, length)
+            self._pos += length
+
         def read_string(self):
             '''
             read a 7-bit ascii null-terminated string from the buffer
             '''
             res = bytearray()
             while True:
-                next_char = self.read_bits(7)
+                next_char = self.read(7)
                 if next_char == 0:
                     break
                 res.append(next_char)
@@ -100,16 +104,24 @@ class SaveBuffer(bytearray):
             '''
             self._offset += value
 
-    def __init__(self, path):
+    @classmethod
+    def open(cls, path):
         '''
-        constructor - read the input file into memory
+        read the input file into memory
         '''
-        self._path = path
-        self._newpath = None
-        self._dynamic_offsets = []
-
         with open(path, 'rb') as save:
-            super().__init__(save.read())
+            res = cls(save.read())
+        res._path = path
+        return res
+
+    def __init__(self, data):
+        '''
+        constructor
+        '''
+        super().__init__(data)
+
+        self._path = None
+        self._dynamic_offsets = []
 
     @property
     def _size(self):
@@ -126,39 +138,25 @@ class SaveBuffer(bytearray):
         struct.pack_into('<L', self, 0x08, value)
 
     @property
-    def sparse(self):
-        '''
-        indicate whether the save file in sparse (has never been saved in-game)
-        '''
-        return len(self) <= 335
-
-    @property
-    def _checksum(self):
-        '''
-        get the checksum of the save data
-        '''
-        return struct.unpack_from('<L', self, 0x0c)[0]
-
-    @_checksum.setter
-    def _checksum(self, value):
-        '''
-        set the checksum of the save data
-        '''
-        struct.pack_into('<L', self, 0x0c, value)
-
-    @property
     def path(self):
         '''
         produce the path to the save file
         '''
         return self._path
 
-    @path.setter
-    def path(self, value):
+    def dynamic_offset(self, offset):
         '''
-        set the new path to the save file - move on flush
+        produce a dynamic reference to an offset into the buffer
         '''
-        self._newpath = value
+        res = self.DynamicOffset(offset)
+        self._dynamic_offsets.append(res)
+        return res
+
+    def bit_pointer(self, offset):
+        '''
+        produce a bit pointer into the buffer
+        '''
+        return self.BitPointer(self, offset)
 
     def insert_bytes(self, start, length):
         '''
@@ -190,37 +188,9 @@ class SaveBuffer(bytearray):
             pos = start + i
             self[pos >> 3] ^= (-((value >> i) & 0x1) ^ self[pos >> 3]) & (1 << (pos & 0x07))
 
-    def dynamic_offset(self, offset):
-        '''
-        produce a dynamic reference to an offset into the buffer
-        '''
-        res = self.DynamicOffset(offset)
-        self._dynamic_offsets.append(res)
-        return res
-
     def flush(self):
         '''
         write the changed data back to disk
         '''
-        # move the character files, if the path has been changed
-        if self._newpath is not None:
-            oldprefix = join(dirname(self._path), basename(self._path).partition('.')[0])
-            newprefix = join(dirname(self._newpath), basename(self._newpath).partition('.')[0])
-            extensions = ['.' + basename(f).partition('.')[2] for f in glob.glob(oldprefix + '.*')]
-            for extension in extensions:
-                rename(oldprefix + extension, newprefix + extension)
-
-            self._path, self._newpath = self._newpath, None
-
-        # update size and checksum
-        self._size = len(self)
-        self._checksum = 0
-
-        checksum = 0
-        for byte in self:
-            checksum = (((checksum << 1) | (checksum & 0x80000000 > 0)) + byte) & 0xffffffff
-        self._checksum = checksum
-
-        # write back
         with open(self._path, 'wb') as save:
             save.write(self)
