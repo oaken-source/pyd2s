@@ -16,6 +16,7 @@ import colorama
 from pyd2s.gamedata import GameData
 from pyd2s.character import CharacterClass
 from pyd2s.itemstat import ItemProperty, ItemStat
+from pyd2s.itemlocation import ItemLocation
 
 
 @total_ordering
@@ -81,6 +82,14 @@ class Item:
         self._offset = buffer.dynamic_offset(offset)
 
         self._itemdata = GameData.itemdata[self.type]
+
+        self._location = ItemLocation(
+            location=self._buffer.getbits(self._offset * 8 + 58, 3),
+            equipped=self._buffer.getbits(self._offset * 8 + 61, 4),
+            position=(
+                self._buffer.getbits(self._offset * 8 + 65, 4),
+                self._buffer.getbits(self._offset * 8 + 69, 3)),
+            stored=self._buffer.getbits(self._offset * 8 + 73, 3))
 
         if self._header != 'JM':
             raise ValueError('invalid save: mismatched item data header')
@@ -167,12 +176,21 @@ class Item:
         '''
         the location of the item
         '''
-        loc = self._buffer.getbits(self._offset * 8 + 58, 3)
-        equ = self._buffer.getbits(self._offset * 8 + 61, 4)
-        col = self._buffer.getbits(self._offset * 8 + 65, 4)
-        row = self._buffer.getbits(self._offset * 8 + 69, 3)
-        sto = self._buffer.getbits(self._offset * 8 + 73, 3)
-        return (loc, equ, col, row, sto)
+        return self._location
+
+    @location.setter
+    def location(self, value):
+        '''
+        set the location of the item
+        '''
+        self._location = value
+        raw = value.raw_data
+
+        self._buffer.setbits(self._offset * 8 + 58, raw[0], 3)
+        self._buffer.setbits(self._offset * 8 + 61, raw[1], 4)
+        self._buffer.setbits(self._offset * 8 + 65, raw[2], 4)
+        self._buffer.setbits(self._offset * 8 + 69, raw[3], 3)
+        self._buffer.setbits(self._offset * 8 + 73, raw[4], 3)
 
     @property
     def dimensions(self):

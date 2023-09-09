@@ -13,6 +13,7 @@ from pyd2s import SaveFile
 from pyd2s.questdata import Quest
 from pyd2s.character import Character
 from pyd2s.item import ItemQuality, ExtendedItem
+from pyd2s.itemlocation import ItemLocation
 
 parser_config = [
     (['filename'], {
@@ -228,6 +229,7 @@ def print_item_data(d2s):
         item = d2s.item
         item.is_identified = True
         print(str(item))
+        print(str(item.location))
         return True
 
     if d2s.type in [SaveFile.Type.SSS, SaveFile.Type.D2X]:
@@ -240,6 +242,7 @@ Pages       : { len(d2s.pages) }''')
             for (j, item) in enumerate(page.idata):
                 item.is_identified = True
                 print(f'  {j:3} ' + '\n      '.join(str(item).splitlines()))
+                print(f'      {item.location}')
         return True
 
     d2s_item = d2s.itemdata
@@ -248,25 +251,61 @@ Pages       : { len(d2s.pages) }''')
 [[ Player Item Information ]]
 Count       : { len(d2s_item.pdata) }''')
 
-    for (i, item) in enumerate(d2s_item.pdata):
+    equipment = [item for item in d2s_item.pdata
+                 if item.location.get_location() == ItemLocation.LocationType.EQUIPPED]
+    equipment.sort(key=lambda e: e.location)
+    print(f'''
+[[ Player Equipment Information ]]
+Count       : { len(equipment) }''')
+
+    for (i, item) in enumerate(equipment):
         item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
+
+    inventory = [item for item in d2s_item.pdata
+                 if item.location.get_location() == ItemLocation.LocationType.STORED
+                 and item.location.get_stored() == ItemLocation.StoredType.INVENTORY]
+    inventory.sort(key=lambda e: e.location)
+    print(f'''
+[[ Player Inventory Information ]]
+Count       : { len(inventory) }''')
+
+    for (i, item) in enumerate(inventory):
+        item.is_identified = True
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
+
+    storage = [item for item in d2s_item.pdata
+               if item.location.get_location() == ItemLocation.LocationType.STORED
+               and item.location.get_stored() != ItemLocation.StoredType.INVENTORY]
+    inventory.sort(key=lambda e: e.location)
+    print(f'''
+[[ Player Storage Information ]]
+Count       : { len(storage) }''')
+
+    for (i, item) in enumerate(storage):
+        item.is_identified = True
+        print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
 
     print(f'''
-[[ Corpse Item Information ]]
+[[ Player Corpse Information ]]
 Count       : { len(d2s_item.cdata) }''')
 
     for (i, item) in enumerate(d2s_item.cdata):
         item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
 
     print(f'''
-[[ Mercenary Item Information ]]
+[[ Mercenary Equipment Information ]]
 Count       : { len(d2s_item.mdata) }''')
 
     for (i, item) in enumerate(d2s_item.mdata):
         item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
 
     print(f'''
 [[ Iron Golem Item Information ]]
@@ -275,6 +314,7 @@ Count       : { len(d2s_item.gdata) }''')
     for (i, item) in enumerate(d2s_item.gdata):
         item.is_identified = True
         print(f'{i:3} ' + '\n    '.join(str(item).splitlines()))
+        print(f'    {item.location}')
 
     return True
 
