@@ -242,14 +242,12 @@ the future. All sizes are in bits unless otherwise specified.
 │        │       │inventory has four rows (numbered 0-3), your stash has four │
 │        │       │in normal characters or eight in Expansion Set characters,  │
 │        │       │and the Horadric Cube has four. (In the belt, this field is │
-│69      │3      │always zero.)                                               │
+│69      │4      │always zero.)                                               │
 │        │       │                                                            │
 │        │       │Note: If the item is equipped, tucked in your belt, glued to│
 │        │       │a socket, or in transit, then this field appears to contain │
 │        │       │old data from the last time the item was stored. I.e., it   │
 │        │       │may be non-zero, but the value is unused.                   │
-├────────┼───────┼────────────────────────────────────────────────────────────┤
-│72      │1      │unknown                                                     │
 ├────────┼───────┼────────────────────────────────────────────────────────────┤
 │        │       │Actually, bit 74 seems to always be 0, but since bits 73 and│
 │        │       │75 are related I just lump them all together. If the item is│

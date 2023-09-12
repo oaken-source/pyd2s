@@ -5,6 +5,66 @@ this module contains classes for managing item storage locations
 from enum import Enum
 
 
+class ItemMap:
+    '''
+    a rectangular inventory space
+    '''
+    def __init__(self, width, height, items):
+        '''
+        constructor
+        '''
+        self._items = []
+
+        self._width = width
+        self._height = height
+
+        self._map = [[None] * self._height for _ in range(self._width)]
+
+        for item in items:
+            self.put(item)
+
+    @property
+    def items(self):
+        '''
+        the list of items on the grid
+        '''
+        return self._items
+
+    def take(self, item):
+        '''
+        remove an item from the grid
+        '''
+        self._items.remove(item)
+
+        (col, row) = item.location.get_pos()
+
+        assert col >= 0 and row >= 0
+        assert col + item.width <= self._width and row + item.height <= self._height
+
+        for i in range(item.width):
+            for j in range(item.height):
+                assert self._map[col + i][row + j] == item
+                self._map[col + i][row + j] = None
+
+        return item
+
+    def put(self, item):
+        '''
+        add an item to the grid
+        '''
+        self._items.append(item)
+
+        (col, row) = item.location.get_pos()
+
+        assert col >= 0 and row >= 0
+        assert col + item.width <= self._width and row + item.height <= self._height
+
+        for i in range(item.width):
+            for j in range(item.height):
+                assert self._map[col + i][row + j] is None
+                self._map[col + i][row + j] = item
+
+
 class ItemLocation:
     '''
     where an item is located
@@ -152,6 +212,7 @@ class ItemLocation:
         '''
         return self._pos
 
+    @property
     def raw_data(self):
         '''
         the raw data fields of this location info

@@ -14,6 +14,7 @@ from functools import total_ordering
 import colorama
 
 from pyd2s.gamedata import GameData
+from pyd2s.savebuffer import SaveBuffer
 from pyd2s.character import CharacterClass
 from pyd2s.itemstat import ItemProperty, ItemStat
 from pyd2s.itemlocation import ItemLocation
@@ -88,7 +89,7 @@ class Item:
             equipped=self._buffer.getbits(self._offset * 8 + 61, 4),
             position=(
                 self._buffer.getbits(self._offset * 8 + 65, 4),
-                self._buffer.getbits(self._offset * 8 + 69, 3)),
+                self._buffer.getbits(self._offset * 8 + 69, 4)),
             stored=self._buffer.getbits(self._offset * 8 + 73, 3))
 
         if self._header != 'JM':
@@ -107,6 +108,20 @@ class Item:
         the type of the item
         '''
         raise NotImplementedError()
+
+    @property
+    def width(self):
+        '''
+        the inventory width of the item
+        '''
+        return int(self._itemdata['invwidth'])
+
+    @property
+    def height(self):
+        '''
+        the inventory height of the item
+        '''
+        return int(self._itemdata['invheight'])
 
     @property
     def name(self):
@@ -189,7 +204,7 @@ class Item:
         self._buffer.setbits(self._offset * 8 + 58, raw[0], 3)
         self._buffer.setbits(self._offset * 8 + 61, raw[1], 4)
         self._buffer.setbits(self._offset * 8 + 65, raw[2], 4)
-        self._buffer.setbits(self._offset * 8 + 69, raw[3], 3)
+        self._buffer.setbits(self._offset * 8 + 69, raw[3], 4)
         self._buffer.setbits(self._offset * 8 + 73, raw[4], 3)
 
     @property
@@ -207,7 +222,7 @@ class Item:
         return ItemQuality.NORMAL
 
     @property
-    def rawdata(self):
+    def raw_data(self):
         '''
         the raw data of the item
         '''
@@ -219,6 +234,35 @@ class Item:
         the length of the item in bytes (to be overwritten by subclasses)
         '''
         raise NotImplementedError()
+
+    def detach(self):
+        '''
+        replace the parent buffer with a new one containing this items rawdata
+        '''
+        new_buffer = SaveBuffer(self.raw_data)
+        self._buffer.remove_dynamic_offset(self._offset)
+        self._buffer.remove_bytes(self._offset, self.length)
+        self._buffer = new_buffer
+        self._offset = 0
+
+    def attach(self, buffer, offset):
+        '''
+        attach the item to a new buffer
+        '''
+        if self._offset != 0:
+            self.detach()
+
+        buffer.insert_bytes(offset, self.length)
+        buffer[offset:offset + self.length] = self.raw_data
+
+        self._buffer = buffer
+        self._offset = self._buffer.dynamic_offset(offset)
+
+    def short_str(self):
+        '''
+        a short string representation of the item
+        '''
+        return self.name
 
 
 class SimpleItem(Item):
@@ -714,7 +758,6 @@ class ExtendedItem(SimpleItem):
             - the item name
             - the item subname, if any
             - rune letters, if any
-            - charm and socketables messages
         '''
         # start with the colored item name
         block = [f'{self.name_color}{self.display_name}{colorama.Style.RESET_ALL}']
@@ -735,6 +778,15 @@ class ExtendedItem(SimpleItem):
             runes = [GameData.gems[item.type]['letter'] for item in self._socketed]
             block.append(f"{colorama.Fore.YELLOW}{colorama.Style.DIM}"
                          f"'{''.join(runes)}'{colorama.Style.RESET_ALL}")
+
+        return block
+
+    def _str_block_misc(self):
+        '''
+        miscellaneous details, includes:
+            - charm and socketables messages
+        '''
+        block = []
 
         # add the charm line
         if GameData.itemtypes[self._itemdata['type']]['Equiv1'] == 'char':
@@ -1002,6 +1054,9 @@ class ExtendedItem(SimpleItem):
         # start with the header
         block = self._str_block_header()
 
+        # followed by miscellaneous messages
+        block.extend(self._str_block_misc())
+
         # followed by armor properties
         block.extend(self._str_block_armor())
 
@@ -1030,3 +1085,9 @@ class ExtendedItem(SimpleItem):
 
         # and done.
         return '\n'.join(block)
+
+    def short_str(self):
+        '''
+        a short string representation of the item
+        '''
+        return '\n'.join(self._str_block_header())

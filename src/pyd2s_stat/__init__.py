@@ -238,7 +238,7 @@ def print_item_data(d2s):
 Pages       : { len(d2s.pages) }''')
         for (i, page) in enumerate(d2s.pages):
             print(f'''\
-  - Page #{i} - '{page.name}' ''')
+  - Page #{i + 1} - '{page.name}' ''')
             for (j, item) in enumerate(page.idata):
                 item.is_identified = True
                 print(f'  {j:3} ' + '\n      '.join(str(item).splitlines()))
@@ -335,7 +335,7 @@ def extract_items(d2s, dest):
         if item.quality >= ItemQuality.MAGICAL:
             item.is_identified = True
 
-        raw_data = item.rawdata
+        raw_data = item.raw_data
 
         key = item.name
         if isinstance(item, ExtendedItem):

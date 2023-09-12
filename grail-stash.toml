@@ -1,0 +1,49 @@
+
+[[section]]
+key = "overflow"
+crafting_inventory = true
+
+[[section]]
+key = "runes"
+overflow = "cube"
+crafting_inventory = true
+align = 10
+
+[[match]]
+match_type = "regex"
+item_class = "r[0-3][0-9]"
+section = "runes"
+limit_columns = 2
+
+[[section]]
+key = "gems"
+overflow = "cube"
+crafting_inventory = true
+align = 10
+
+[[match]]
+match_type = "regex"
+item_type = "gem[0-4]"
+section = "gems"
+limit_columns = 2
+
+[[section]]
+key = "jewels"
+align = 10
+
+[[match]]
+item_class = "jew"
+item_quality = [4, 5]
+section = "jewels"
+
+[set.layout]
+HELMET = [4, 0]
+AMULET = [6, 1]
+ARMOR = [4, 3]
+RIGHT_HAND = [1, 2]
+LEFT_HAND = [7, 2]
+RIGHT_RING = [3, 7]
+LEFT_RING = [6, 7]
+BELT = [4, 7]
+BOOTS = [7, 7]
+GLOVES = [1, 7]

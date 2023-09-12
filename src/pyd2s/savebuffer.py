@@ -3,8 +3,10 @@
 this module provides a change-aware buffer for d2s files
 '''
 
+import os
 import struct
 import logging
+import datetime
 
 
 class SaveBuffer(bytearray):
@@ -78,13 +80,19 @@ class SaveBuffer(bytearray):
             '''
             add to the offset
             '''
-            return self._offset + other
+            return int(self) + int(other)
+
+        def __sub__(self, other):
+            '''
+            subtract from the offset
+            '''
+            return int(self) - int(other)
 
         def __mul__(self, other):
             '''
             multiply the offset
             '''
-            return self._offset * other
+            return int(self) * int(other)
 
         def __index__(self):
             '''
@@ -96,6 +104,8 @@ class SaveBuffer(bytearray):
             '''
             enable integer comparison
             '''
+            if self.__class__ is other.__class__:
+                return self._offset >= other._offset
             return self._offset >= other
 
         def adjust_by(self, value):
@@ -152,6 +162,12 @@ class SaveBuffer(bytearray):
         self._dynamic_offsets.append(res)
         return res
 
+    def remove_dynamic_offset(self, offset):
+        '''
+        stop tracking the given offset
+        '''
+        self._dynamic_offsets.remove(offset)
+
     def bit_pointer(self, offset):
         '''
         produce a bit pointer into the buffer
@@ -169,6 +185,18 @@ class SaveBuffer(bytearray):
         for offset in self._dynamic_offsets:
             if offset >= start:
                 offset.adjust_by(length)
+
+    def remove_bytes(self, start, length):
+        '''
+        take the given number of bytes from the buffer
+        '''
+        logging.debug('SaveBuffer:removing %d bytes at %d', length, start)
+        self[start:start + length] = []
+
+        # update the dynamic offsets
+        for offset in self._dynamic_offsets:
+            if offset >= start:
+                offset.adjust_by(-length)
 
     def getbits(self, start, length):
         '''
@@ -188,9 +216,14 @@ class SaveBuffer(bytearray):
             pos = start + i
             self[pos >> 3] ^= (-((value >> i) & 0x1) ^ self[pos >> 3]) & (1 << (pos & 0x07))
 
-    def flush(self):
+    def flush(self, backup=False):
         '''
-        write the changed data back to disk
+        write the changed data back to disk, with optional backup
         '''
+        if backup:
+            mtime = os.path.getmtime(self._path)
+            timestamp = datetime.datetime.fromtimestamp(mtime).strftime("%Y%m%d-%H%M%S")
+            os.rename(self._path, self._path + "_" + timestamp)
+
         with open(self._path, 'wb') as save:
             save.write(self)
