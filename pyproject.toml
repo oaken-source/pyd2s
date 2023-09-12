@@ -9,7 +9,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-dependencies = ['colorama']
+dependencies = ['colorama', 'tomllib']
 
 [project.optional-dependencies]
 tests = [
