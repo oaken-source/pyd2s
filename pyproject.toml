@@ -2,14 +2,15 @@
 [project]
 name = "pyd2s"
 description = "a python library to read and write diablo 2 save files"
-version = "0.0.0"
+version = "0.1.0"
+requires-python = ">=3.11"
 authors = [
     { name = "Andreas Grapentin", email = "andreas@grapentin.org" },
 ]
 readme = "README.md"
 license = { text = "MIT" }
 
-dependencies = ['colorama', 'tomllib']
+dependencies = ['colorama']
 
 [project.optional-dependencies]
 tests = [
