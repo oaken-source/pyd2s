@@ -68,11 +68,11 @@ class SaveFile:
         '''
         self._buffer = buffer
 
-    def flush(self):
+    def flush(self, backup=False):
         '''
         flush the savebuffer, writing changes to disk
         '''
-        self._buffer.flush()
+        self._buffer.flush(backup)
 
 
 class D2SaveFile(SaveFile):
@@ -143,7 +143,7 @@ class D2SaveFile(SaveFile):
         '''
         struct.pack_into('<L', self._buffer, 0x0c, value)
 
-    def flush(self):
+    def flush(self, backup=False):
         '''
         flush the save data back to file, if not newer on disk
         '''
@@ -155,7 +155,7 @@ class D2SaveFile(SaveFile):
             checksum = (((checksum << 1) | (checksum & 0x80000000 > 0)) + byte) & 0xffffffff
         self._checksum = checksum
 
-        super().flush()
+        super().flush(backup)
 
 
 class D2ItemFile(SaveFile):
@@ -207,34 +207,25 @@ class D2ItemFile(SaveFile):
         return self._item
 
 
-class PlugySharedStash(SaveFile):
+class PlugyStash(SaveFile):
     '''
-    an .xxx file containing shared stash data
+    a plugy stash file, either private or shared
     '''
     def __init__(self, buffer):
         '''
-        constructor - initialize buffer and do sanity checks
+        constructor
         '''
         super().__init__(buffer)
 
-        if self.header != 'SSS\0':
-            raise ValueError('invalid save: mismatched file header')
-
-        ptr = 6
-        if self.version == 2:
-            ptr += 4
-
-        num_pages = struct.unpack_from('<L', self._buffer, ptr)[0]
-        ptr += 4
-
         self._pages = []
-        for _ in range(num_pages):
-            page = PlugyStashPage(self._buffer, ptr)
-            ptr += page.length
-            self._pages.append(page)
+        self._end = None
 
-        # after the pages, other mod may have stored data. so we can't compare length here
-        self._end = self._buffer.dynamic_offset(ptr)
+    @property
+    def _pcount_pos(self):
+        '''
+        the position of the page count - to be overwritten by subclasses
+        '''
+        return NotImplemented
 
     @property
     def header(self):
@@ -249,6 +240,102 @@ class PlugySharedStash(SaveFile):
         the version of the stash file
         '''
         return int(self._buffer[4:6].decode('ascii'))
+
+    @property
+    def pages(self):
+        '''
+        the pages in the stash
+        '''
+        return self._pages
+
+    def _read_pages(self):
+        '''
+        read the pages in the stash
+        '''
+        num_pages = struct.unpack_from('<L', self._buffer, self._pcount_pos)[0]
+
+        ptr = self._pcount_pos + 4
+
+        for _ in range(num_pages):
+            page = PlugyStashPage(self._buffer, ptr)
+            ptr += page.length
+            self._pages.append(page)
+
+        # after the pages, other mod may have stored data. so we can't compare length here
+        self._end = self._buffer.dynamic_offset(ptr)
+
+    def remove_page(self, page):
+        '''
+        remove a page from the stash
+        '''
+        # remove from the page list
+        self._pages.remove(page)
+
+        # update the page count
+        struct.pack_into('<L', self._buffer, self._pcount_pos, len(self._pages))
+
+        # detach the page from the buffer
+        page.detach()
+
+        return page
+
+    def append_page(self):
+        '''
+        add an empty page to the stash
+        '''
+        # prepare a bit of memory for the page
+        page_ptr = int(self._end)
+        self._buffer.insert_bytes(self._end, 11)
+        self._buffer[page_ptr:page_ptr + 2] = 'ST'.encode('ascii')
+        self._buffer[page_ptr + 7:page_ptr + 9] = 'JM'.encode('ascii')
+
+        # create the page with the buffer reference
+        page = PlugyStashPage(self._buffer, page_ptr)
+
+        # add the page to the list
+        self._pages.append(page)
+
+        # update the page count
+        struct.pack_into('<L', self._buffer, self._pcount_pos, len(self._pages))
+
+    def clear(self):
+        '''
+        remove all items and pages from the stash and return the items
+        '''
+        items = []
+
+        while self._pages:
+            page = self._pages[0]
+            while page.idata:
+                items.append(page.take(page.idata[0]))
+            self.remove_page(page)
+
+        return items
+
+
+class PlugySharedStash(PlugyStash):
+    '''
+    an .xxx file containing shared stash data
+    '''
+    def __init__(self, buffer):
+        '''
+        constructor - initialize buffer and do sanity checks
+        '''
+        super().__init__(buffer)
+
+        if self.header != 'SSS\0':
+            raise ValueError('invalid save: mismatched file header')
+        if self.version not in [1, 2]:
+            raise ValueError('invalid save: unrecognized version header')
+
+        self._read_pages()
+
+    @property
+    def _pcount_pos(self):
+        '''
+        the buffer offset of the item count
+        '''
+        return 6 + (4 if self.version == 2 else 0)
 
     @property
     def type(self):
@@ -276,31 +363,8 @@ class PlugySharedStash(SaveFile):
             self._buffer.insert_bytes(0x06, 4)
         struct.pack_into('<L', self._buffer, 0x06, value)
 
-    @property
-    def pages(self):
-        '''
-        the pages in the stash
-        '''
-        return self._pages
 
-    def remove_page(self, page):
-        '''
-        remove a page from the stash
-        '''
-        # remove from the page list
-        self._pages.remove(page)
-
-        # update the page count
-        pos = 6 + (4 if self.version == 2 else 0)
-        struct.pack_into('<L', self._buffer, pos, len(self._pages))
-
-        # detach the page from the buffer
-        page.detach()
-
-        return page
-
-
-class PlugyPersonalStash(SaveFile):
+class PlugyPersonalStash(PlugyStash):
     '''
     a .d2x file containing personal stash data
     '''
@@ -315,19 +379,14 @@ class PlugyPersonalStash(SaveFile):
         if self.version != 1:
             raise ValueError('invalid save: unrecognized version header')
 
-        ptr = 10
+        self._read_pages()
 
-        num_pages = struct.unpack_from('<L', self._buffer, ptr)[0]
-        ptr += 4
-
-        self._pages = []
-        for _ in range(num_pages):
-            page = PlugyStashPage(self._buffer, ptr)
-            ptr += page.length
-            self._pages.append(page)
-
-        # after the pages, other mod may have stored data. so we can't compare length here
-        self._end = self._buffer.dynamic_offset(ptr)
+    @property
+    def _pcount_pos(self):
+        '''
+        the buffer offset of the item count
+        '''
+        return 10
 
     @property
     def type(self):
@@ -335,58 +394,3 @@ class PlugyPersonalStash(SaveFile):
         indicate the type of save file this is
         '''
         return SaveFile.Type.D2X
-
-    @property
-    def header(self):
-        '''
-        the header of the stash file
-        '''
-        return self._buffer[:4].decode('ascii')
-
-    @property
-    def version(self):
-        '''
-        the version of the stash file
-        '''
-        return int(self._buffer[4:6].decode('ascii'))
-
-    @property
-    def pages(self):
-        '''
-        the pages in the stash
-        '''
-        return self._pages
-
-    def remove_page(self, page):
-        '''
-        remove a page from the stash
-        '''
-        # remove from the page list
-        self._pages.remove(page)
-
-        # update the page count
-        struct.pack_into('<L', self._buffer, 10, len(self._pages))
-
-        # detach the page from the buffer
-        page.detach()
-
-        return page
-
-    def append_page(self):
-        '''
-        add an empty page to the stash
-        '''
-        # prepare a bit of memory for the page
-        page_ptr = int(self._end)
-        self._buffer.insert_bytes(self._end, 11)
-        self._buffer[page_ptr:page_ptr + 2] = 'ST'.encode('ascii')
-        self._buffer[page_ptr + 7:page_ptr + 9] = 'JM'.encode('ascii')
-
-        # create the page with the buffer reference
-        page = PlugyStashPage(self._buffer, page_ptr)
-
-        # add the page to the list
-        self._pages.append(page)
-
-        # update the page count
-        struct.pack_into('<L', self._buffer, 10, len(self._pages))

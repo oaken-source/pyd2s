@@ -3,6 +3,7 @@ this module provides classes specific to PlugY stash data
 '''
 
 import struct
+from enum import Enum
 
 from pyd2s.item import Item
 from pyd2s.itemlocation import ItemMap
@@ -13,6 +14,15 @@ class PlugyStashPage:
     '''
     a page of data in a plugy stash
     '''
+    class Flags(Enum):
+        '''
+        the flags on the page
+        '''
+        SHARED = 1
+        INDEX = 2
+        MAIN_INDEX = 4
+        RESERVED = 8
+
     def __init__(self, buffer, offset):
         '''
         parse a page of plugy data from the buffer
@@ -53,7 +63,14 @@ class PlugyStashPage:
         '''
         the flags of the page
         '''
-        return struct.unpack_from('<L', self._buffer, self._offset + 2)
+        return struct.unpack_from('<L', self._buffer, self._offset + 2)[0]
+
+    @flags.setter
+    def flags(self, value):
+        '''
+        set the flags on the page
+        '''
+        struct.pack_into('<L', self._buffer, self._offset + 2, value)
 
     @property
     def name(self):

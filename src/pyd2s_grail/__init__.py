@@ -13,30 +13,31 @@ from functools import reduce
 from pyd2s import SaveFile
 from pyd2s.item import ItemLocation
 from pyd2s.gamedata import GameData
+from pyd2s.plugydata import PlugyStashPage
 
 parser_config = [
     (['filename'], {
         'help': 'the path to the shared stash file'}),
-    (['-v'], {
+    (['stashes'], {
+        'nargs': '*',
+        'help': 'the path to additional stash files'}),
+    (['-v', '--verbose'], {
         'action': 'count', 'default': 0,
         'help': 'increase verbosity. useful for debugging'}),
-    # (['-a', '--add-from'], {
-    #     'metavar': 'FILE',
-    #     'help': 'add files from another save file to the stash'}),
-    # (['-d', '--dry-run'], {
-    #     'action': 'store_true',
-    #     'help': "don't actually move items"}),
-    # (['-i', '--interactive'], {
-    #     'action': 'store_true',
-    #     'help': 'ask before moving items'}),
+    (['-B', '--backup'], {
+        'action': 'store_true',
+        'help': 'make backups before writing stash files'}),
+    (['-o', '--reorganize'], {
+        'action': 'store_true',
+        'help': 'reorganize the stash'}),
     (['-c', '--config'], {
-        'metavar': 'FILE',
+        'metavar': 'CONFIG',
         'help': 'a config defining how items are moved and organized'}),
 ]
 
 parser = argparse.ArgumentParser(
     prog='pyd2s_grail',
-    description='organize a diablo 2 PlugY stash'
+    description='rate organize a diablo 2 PlugY holy grail stash'
 )
 for parser_arg in parser_config:
     parser.add_argument(*parser_arg[0], **parser_arg[1])
@@ -46,8 +47,8 @@ def applies(obj, comparable):
     '''
     a comparison helper between objects and iterables
     '''
-    return not set(comparable if hasattr(comparable, '__iter__') else [comparable]).isdisjoint(
-            set(obj if hasattr(obj, '__iter__') else [obj]))
+    return not set(comparable if isinstance(comparable, list) else [comparable]).isdisjoint(
+            set(obj if isinstance(obj, list) else [obj]))
 
 
 class Grail:
@@ -62,7 +63,7 @@ class Grail:
         self._sss = sss
 
         self._sections = {section['key']: GrailSection(**section) for section in config['section']}
-        self._matches = [GrailMatch(**match) for match in config['match']]
+        self._matches = [GrailMatch(**match) for match in config.get('match', [])]
 
     def place(self, item):
         '''
@@ -86,16 +87,32 @@ class Grail:
         logging.debug('  section %s with rules %s', section, rules)
         res = self._sections[section].place(item, **rules)
         if not res:
-            self._sections['overflow'].place(item)
+            res = self._sections['overflow'].place(item)
+        return res
 
-    def flush(self):
+    def flush(self, backup=False):
         '''
         put all items into the stash file
         '''
         for section in self._sections:
             logging.debug('writing stash section %s', section)
             self._sections[section].append_to(self._sss)
-        self._sss.flush()
+        self.fix_flags()
+        self._sss.flush(backup)
+
+    def fix_flags(self):
+        '''
+        fix the flags of the grail pages for correct indexes and shared state
+        '''
+        for (i, page) in enumerate(self._sss.pages):
+            flags = 0
+            if self._sss.type == SaveFile.Type.SSS:
+                flags |= PlugyStashPage.Flags.SHARED.value
+            if i == 0 or not (i + 1) % 10:
+                flags |= PlugyStashPage.Flags.INDEX.value
+            if i == 0 or not (i + 1) % 100:
+                flags |= PlugyStashPage.Flags.MAIN_INDEX.value
+            page.flags = flags
 
 
 class GrailSection:
@@ -171,7 +188,7 @@ class GrailSection:
             sss.append_page()
             for item in page.items:
                 logging.debug('adding item %s to stash page %s at %s',
-                              item.short_str, len(sss.pages), item.location.get_pos())
+                              item.short_str(), len(sss.pages), item.location.get_pos())
                 sss.pages[-1].put(item)
 
 
@@ -298,33 +315,61 @@ def pyd2s_grail(argv=None):
     '''
     main entry point
     '''
-    args = parser.parse_args(argv)
+    args = parser.parse_intermixed_args(argv)
 
-    logging.basicConfig(level=30 - args.v * 10)
+    # set the logging verbosity
+    logging.basicConfig(level=30 - args.verbose * 10)
 
-    sss = SaveFile.open(args.filename)
-    if sss.type not in [SaveFile.Type.SSS, SaveFile.Type.D2X]:
-        raise ValueError(f'unsupported stash type: {sss.type}')
+    # initialize a default sorting config
+    config = tomllib.loads('''
+[[section]]
+key = "overflow"
+''')
 
-    items = []
-    while sss.pages:
-        page = sss.pages[0]
-        while page.idata:
-            items.append(page.take(page.idata[0]))
-        sss.remove_page(page)
-
-    config = None
+    # and replace with the given config, if any
     if args.config:
         with open(args.config, 'rb') as toml:
             config = tomllib.load(toml)
 
     logging.debug(json.dumps(config, indent=4))
 
+    # open the output stash file, making sure it's actually a PlugY stash
+    sss = SaveFile.open(args.filename)
+    if sss.type not in [SaveFile.Type.SSS, SaveFile.Type.D2X]:
+        raise ValueError(f'unsupported stash type: {sss.type}')
+
+    items = []
+
+    # if we reorganize, pull all items from the stash
+    if args.reorganize:
+        items.extend(sss.clear())
+
+    # if we add from other, pull all items from those
+    source_stashes = []
+    if args.stashes:
+        for stash in args.stashes:
+            d2s = SaveFile.open(stash)
+            if d2s.type in [SaveFile.Type.D2X, SaveFile.Type.SSS]:
+                # take all files from stash files
+                source_stashes.append(d2s)
+                items.extend(d2s.clear())
+            if d2s.type == SaveFile.Type.D2S:
+                # this could get weird, since PlugY overwrites the stash inventory
+                # it could happen that we would pull items from the stash into itself
+                # so I'm skipping that for now.
+                raise NotImplementedError()
+            if d2s.type == SaveFile.Type.D2I:
+                # individual item, shouldn't be too difficult
+                items.append(d2s.item)
+
     grail = Grail(sss, config)
 
     for item in items:
         logging.debug('attempting to place item %s in grail stash',
-                      item.short_str)
-        grail.place(item)
+                      item.short_str())
+        if not grail.place(item):
+            raise ValueError(f'unable to place item {item.short_str()}')
 
-    grail.flush()
+    grail.flush(args.backup)
+    for stash in source_stashes:
+        stash.flush(args.backup)
